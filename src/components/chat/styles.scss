@@ -1,0 +1,177 @@
+.chat-content {
+    .chat-name {
+        font-size: 32px;
+        line-height: 160%;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    .chat-name::after {
+        content: " >>";
+        color: #ccc;
+    }
+
+    .chat-box {
+        width: 100%;
+        padding: 20px 0;
+
+        .chat-history {
+            display: flex;
+            flex-direction: column-reverse;
+            width: 100%;
+            height: 100%;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            background: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            max-height: 60vh;
+
+            overflow-y: scroll;
+
+            .message-box {
+                display: flex;
+                align-items: end;
+                width: 100%;
+                gap: 8px;
+
+                margin-top: 3px;
+                margin-bottom: 3px;
+
+                background: #fff;
+                padding: 5px 10px;
+                box-sizing: border-box;
+                border-radius: 3px;
+
+                .author {
+                    font-weight: bold;
+                }
+
+                &.admin {
+                    .author {
+                        color: #f35;
+                    }
+
+                    .text {
+                        color: #000;
+                    }
+                }
+
+                .send-date {
+                    font-size: 14px;
+                    color: #888;
+                }
+
+                .text {
+                    max-inline-size: max-content;
+                    word-break: break-word;
+                    font-family: Arial;
+                    font-size: 17px;
+                    margin-left: 10px;
+                }
+            }
+        }
+
+        .create-message-box {
+            margin-top: 20px;
+
+            .nickname-box {
+                span {
+                    margin-right: 10px;
+                }
+
+                span.error-message {
+                    margin-left: 10px;
+                    font-size: 16px;
+                }
+            }
+
+            .type-box {
+                margin-top: 10px;
+                display: flex;
+                justify-content: space-between;
+                gap: 8px;
+
+                border: 1px solid #ccc;
+                border-radius: 64px;
+
+                input.message-input {
+                    width: 100%;
+                    border: none;
+                }
+
+                button {
+                    font-size: 14px;
+                    text-align: center;
+                    font-weight: bold;
+                    padding: 0;
+                    width: 36px;
+                    height: 36px;
+                    min-width: 36px;
+                    min-height: 36px;
+
+                    user-select: none;
+
+                    .send-icon-container {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+
+                        user-select: none;
+
+                        .send-icon {
+                            margin-left: 2px;
+                            width: 16px;
+                            filter: invert(1);
+
+                            user-select: none;
+                        }
+                    }
+                }
+
+                button:enabled:active {
+                    .send-icon-container {
+                        .send-icon {
+                            filter: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .chat-content {
+        .chat-box {
+            .chat-history {
+                max-height: 50vh;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 639px) {
+    .chat-content {
+        .chat-box {
+            .message-box {
+                font-size: 15px;
+                gap: 4px !important;
+
+                .author {
+                    font-size: 14px;
+                }
+
+                .send-date {
+                    font-size: 10px !important;
+                }
+
+                .text {
+                    font-size: 14px !important;
+                }
+            }
+        }
+    }
+}

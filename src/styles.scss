@@ -1,0 +1,102 @@
+@font-face {
+    font-family: "Manrope";
+    src: url(/public/assets/fonts/manrope.ttf);
+}
+
+@font-face {
+    font-family: "SansBold";
+    src: url(/public/assets/fonts/sans-bold.ttf);
+}
+
+html,
+body {
+    font-family: "Manrope";
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    overflow-x: hidden;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.non-underlined-link {
+    text-decoration: none;
+}
+
+.content {
+    display: flex;
+}
+
+@media screen and (min-width: 1200px) {
+    .wrapper {
+        width: 100%;
+        padding: 0 200px;
+    }
+
+    .content {
+        justify-content: space-between;
+    }
+}
+
+
+@media screen and (max-width: 1199px) and (min-width: 640px) {
+    .wrapper {
+        width: 100%;
+        padding: 0 50px;
+        box-sizing: border-box;
+    }
+
+    .content {
+        flex-direction: column-reverse;
+    }
+}
+
+@media screen and (max-width: 639px) {
+    .wrapper {
+        width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+
+    .content {
+        flex-direction: column-reverse;
+    }
+}
+
+input {
+    font-size: 16px;
+    padding: 7px 15px;
+    border: 1px solid #ccc;
+    border-radius: 32px;
+    outline: none;
+}
+
+button {
+    font-size: 16px;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 128px;
+    background: #333;
+    color: white;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #aaa;
+    cursor: default;
+}
+
+button:enabled:hover {
+    background: #444;
+}
+
+button:enabled:active {
+    background: #fff;
+    border: 1px solid black;
+    color: #000;
+}

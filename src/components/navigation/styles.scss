@@ -1,0 +1,34 @@
+.navigation-box {
+    width: 300px;
+    min-width: 300px;
+
+    a {
+        color: inherit;
+        text-decoration: none !important;
+    }
+
+    .navigation {
+        width: 100%;
+        padding: 10px 40px;
+        border-bottom: 1px solid #ccc;
+        box-sizing: border-box;
+
+        cursor: pointer;
+
+        &.active {
+            background-color: #444;
+            color: white;
+        }
+
+        &.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .navigation-box {
+        width: 100%;
+    }
+}

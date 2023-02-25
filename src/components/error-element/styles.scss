@@ -1,0 +1,17 @@
+.error-message-content {
+    text-align: center;
+    font-size: 20px;
+
+    h1 {
+        padding: 40px 0;
+    }
+
+    p {
+        padding: 10px 0;
+        font-size: 22px;
+
+        &.large-text {
+            font-size: 24px;
+        }
+    }
+}
