@@ -7,6 +7,8 @@ import IGetTokenMessage from "./request/get-token-message";
 import ICreateAccountMessage from "./request/create-account-message";
 import IGetUserDataMessage from "./request/get-user-data-message";
 import ISetUserDataMessage from "./response/set-user-data-message";
+import IAuthorizeUserRequestMessage from "./request/authorize-user-message";
+import IAuthorizeUserResponseMessage from "./response/authorize-user-message";
 import IErrorMessage from "./response/error-message";
 
 type RequestType = "send" | "subscribe" | "unsubscribe all" | "get token" | "create account" | "get user data";
@@ -20,12 +22,14 @@ type RequestMessage<T extends RequestType = RequestType> =
         | IGetTokenMessage
         | ICreateAccountMessage
         | IGetUserDataMessage
+        | IAuthorizeUserRequestMessage
     ) & { type: T }; // Use this method instead of just union of conditional types for proper typings
 
 type ResponseMessage =
     | INewMessageEvent
     | ISetTokenMessage
     | ISetUserDataMessage
+    | IAuthorizeUserResponseMessage
     | IErrorMessage;
 
 type Message = RequestMessage | ResponseMessage;
