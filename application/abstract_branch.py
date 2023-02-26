@@ -1,13 +1,21 @@
 from flask_socketio import send
+from flask_sqlalchemy import SQLAlchemy
+
+from database.models import UsersModel
 
 
 class AbstractBranch:
-    def __init__(self):
+    def __init__(self, database: SQLAlchemy):
         self.clients = []
+        self.database = database
 
     def get_user_data(self, token: str) -> dict:
-        # TODO: запрос к бд
-        pass
+        user = UsersModel.query.filter_by(token=token).first()
+        response = {
+            'nickname': user.nickname
+        }
+
+        return response
 
     def connect_client(self, sid: str):
         self.clients.append(sid)
