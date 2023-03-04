@@ -1,7 +1,9 @@
-from flask_socketio import send
+from typing import Callable
+
 from flask_sqlalchemy import SQLAlchemy
 from application.abstract_branch import AbstractBranch
-from database.models import AuthBranchModel
+
+from database.queries import get_latest_message_from_auth, add_message_to_auth
 import datetime
 
 
@@ -11,10 +13,10 @@ class AuthBranch(AbstractBranch):
 
     def get_latest_messages(self) -> dict:
         response = {
-                "type": "new message",
-                "result": []}
+            "type": "new message",
+            "result": []}
 
-        last_messages = AuthBranchModel.query.all()
+        last_messages = get_latest_message_from_auth()
         for item in last_messages:
             message = {
                 'nickname': self.get_user_data(item.token)['nickname'],
@@ -26,13 +28,12 @@ class AuthBranch(AbstractBranch):
         return response
 
     def add_message_to_database(self, message):
-        message = AuthBranchModel(time=f'{datetime.datetime.now()}', token=message['token'],
-                                  text=message['text'])
-        self.database.session.add(message)
-        self.database.session.commit()
+        add_message_to_auth(session=self.database.session, time=f'{datetime.datetime.now()}', token=message['token'],
+                            text=message['text'])
 
-    def handle_message(self, query: dict):
+    def handle_message(self, query: dict, callback: Callable):
         self.add_message_to_database(query['parameters'])
+
         for client in self.clients:
             new_data = {
                 "type": "new message",
@@ -42,4 +43,4 @@ class AuthBranch(AbstractBranch):
                     "time": f'{datetime.datetime.now()}'
                 }]
             }
-            send(new_data, to=client)
+            callback(new_data, client)

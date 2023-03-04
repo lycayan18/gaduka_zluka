@@ -1,21 +1,24 @@
-from flask_socketio import send
+from typing import Callable
+
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 
 from application.abstract_branch import AbstractBranch
-from database.models import AnonBranchModel
+
+from database.queries import get_latest_message_from_anon, add_message_to_anon
 
 
 class AnonBranch(AbstractBranch):
     def __init__(self, database: SQLAlchemy):
         super(AnonBranch, self).__init__(database)
 
-    def get_latest_messages(self) -> dict:
+    @staticmethod
+    def get_latest_messages() -> dict:
         response = {
-                "type": "new message",
-                "result": []}
+            "type": "new message",
+            "result": []}
 
-        last_messages = AnonBranchModel.query.all()
+        last_messages = get_latest_message_from_anon()
         for item in last_messages:
             message = {
                 'nickname': item.nickname,
@@ -27,13 +30,12 @@ class AnonBranch(AbstractBranch):
         return response
 
     def add_message_to_database(self, message):
-        message = AnonBranchModel(time=f'{datetime.datetime.now()}',
-                                  text=message['text'], nickname=message['nickname'])
-        self.database.session.add(message)
-        self.database.session.commit()
+        add_message_to_anon(session=self.database.session, time=f'{datetime.datetime.now()}', text=message['text'],
+                            nickname=message['nickname'])
 
-    def handle_message(self, query: dict):
+    def handle_message(self, query: dict, callback: Callable):
         self.add_message_to_database(query['parameters'])
+
         for client in self.clients:
             new_data = {
                 "type": "new message",
@@ -43,4 +45,4 @@ class AnonBranch(AbstractBranch):
                     "time": f'{datetime.datetime.now()}'
                 }]
             }
-            send(new_data, to=client)
+            callback(new_data, client)

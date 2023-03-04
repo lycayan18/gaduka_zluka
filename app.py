@@ -8,6 +8,7 @@ from application.auth_branch import AuthBranch
 from database.models import UsersModel
 
 from encryption.hashing import generate_token
+from database.queries import *
 
 
 class App:
@@ -32,10 +33,10 @@ class App:
         if query['type'] == 'subscribe':
             for branch in self.branches.values():
                 branch.disconnect_client(sid)
-            self.branches[query['parameters']['branch']].connect_client(sid)
+            self.branches[query['parameters']['branch']].connect_client(sid, callback=self.send_message_to_client)
 
         elif query['type'] == 'send':
-            self.branches[query['parameters']['branch']].handle_message(query)
+            self.branches[query['parameters']['branch']].handle_message(query, callback=self.send_message_to_client)
 
         elif query['type'] == 'unsubscribe all':
             for branch in self.branches.values():
@@ -54,9 +55,14 @@ class App:
         elif query['type'] == 'get user data':
             send(self.get_user_data(query['id'], query_parameters['token']), to=sid)
 
-    def get_token(self, login: str, password: str, message_id: int):
+    @staticmethod
+    def send_message_to_client(message: str, sid: str):
+        send(message, to=sid)
+
+    @staticmethod
+    def get_token(login: str, password: str, message_id: int):
         token = generate_token(login, password)
-        if not UsersModel.query.filter_by(token=token).first():
+        if not get_user_data(token=token):
             error = {
                 "type": "error",
                 "id": message_id,
@@ -77,20 +83,29 @@ class App:
 
             return response
 
-    def get_user_data(self, message_id: int, token: str) -> dict:
-        user = UsersModel.query.filter_by(token=token).first()
-        response = {
-            'type': 'set user data',
-            'id': message_id,
-            'result': {
-                'nickname': user.nickname,
-            }}
+    @staticmethod
+    def get_user_data(message_id: int, token: str) -> dict:
+        user = get_user_data(token=token)
+        if user:
+            response = {
+                'type': 'set user data',
+                'id': message_id,
+                'result': {
+                    'nickname': user.nickname,
+                }}
+        else:
+            response = {
+                'type': 'set user data',
+                'id': message_id,
+                'result': {
+                    'nickname': '',
+                }}
 
         return response
 
     def create_account(self, nickname: str, login: str, password: str, message_id: int) -> dict:
         token = generate_token(login, password)
-        if UsersModel.query.filter_by(token=token).first():
+        if get_user_data(token=token):
             error = {
                 "type": "error",
                 "id": message_id,
@@ -101,7 +116,7 @@ class App:
             }
             return error
 
-        elif UsersModel.query.filter_by(nickname=nickname).first():
+        elif get_user_data(nickname=nickname):
             error = {
                 "type": "error",
                 "id": message_id,
@@ -117,9 +132,7 @@ class App:
                         'id': message_id,
                         'result': {'token': token}}
 
-            user = UsersModel(nickname=nickname, token=token)
-            self.database.session.add(user)
-            self.database.session.commit()
+            add_user(session=self.database.session, token=token, nickname=nickname)
 
             return response
 
