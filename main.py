@@ -1,4 +1,4 @@
-from app import App
+from application.app import App
 from config import app, database, socketio
 
 

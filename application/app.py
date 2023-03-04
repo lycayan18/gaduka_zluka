@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from application import main_handlers
 from application.anon_branch import AnonBranch
 from application.auth_branch import AuthBranch
-from database.models import UsersModel
 
 from encryption.hashing import generate_token
 from database.queries import *
@@ -142,4 +141,4 @@ class App:
 
     def run(self):
         self.register_handlers()
-        self.socketio.run(self.app, host='127.0.0.1', port=8080, debug=True)
+        self.socketio.run(self.app, host='192.168.222.127', port=8080, debug=True)

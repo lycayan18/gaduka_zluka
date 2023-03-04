@@ -3,7 +3,7 @@ from typing import Callable
 from flask_sqlalchemy import SQLAlchemy
 from application.abstract_branch import AbstractBranch
 
-from database.queries import get_latest_message_from_auth, add_message_to_auth
+from database.queries import get_latest_message_from_auth, add_message_to_auth, get_user_data
 import datetime
 
 
@@ -19,7 +19,7 @@ class AuthBranch(AbstractBranch):
         last_messages = get_latest_message_from_auth()
         for item in last_messages:
             message = {
-                'nickname': self.get_user_data(item.token)['nickname'],
+                'nickname': get_user_data(token=item.token).nickname,
                 'text': item.text,
                 'time': item.time
             }
@@ -38,7 +38,7 @@ class AuthBranch(AbstractBranch):
             new_data = {
                 "type": "new message",
                 "result": [{
-                    "nickname": self.get_user_data(query['parameters']['token'])['nickname'],
+                    "nickname": get_user_data(token=query['parameters']['token']).nickname,
                     "text": query['parameters']['text'],
                     "time": f'{datetime.datetime.now()}'
                 }]

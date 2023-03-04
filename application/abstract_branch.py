@@ -2,22 +2,11 @@ from typing import Callable
 
 from flask_sqlalchemy import SQLAlchemy
 
-from database.queries import get_user_data
-
 
 class AbstractBranch:
     def __init__(self, database: SQLAlchemy):
         self.clients = []
         self.database = database
-
-    @staticmethod
-    def get_user_data(token: str) -> dict:
-        user = get_user_data(token=token)
-        response = {
-            'nickname': user.nickname
-        }
-
-        return response
 
     def connect_client(self, sid: str, callback: Callable):
         self.clients.append(sid)
