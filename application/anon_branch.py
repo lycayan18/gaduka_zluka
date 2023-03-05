@@ -4,8 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 
 from application.abstract_branch import AbstractBranch
-
 from database.queries import get_latest_message_from_anon, add_message_to_anon
+from application.utils.responses import *
 
 
 class AnonBranch(AbstractBranch):
@@ -20,11 +20,7 @@ class AnonBranch(AbstractBranch):
 
         last_messages = get_latest_message_from_anon()
         for item in last_messages:
-            message = {
-                'nickname': item.nickname,
-                'text': item.text,
-                'time': item.time
-            }
+            message = create_message(nickname=item.nickname, text=item.text, time=item.time)
             response['result'].append(message)
 
         return response
@@ -37,12 +33,7 @@ class AnonBranch(AbstractBranch):
         self.add_message_to_database(query['parameters'])
 
         for client in self.clients:
-            new_data = {
-                "type": "new message",
-                "result": [{
-                    "nickname": query['parameters']['nickname'],
-                    "text": query['parameters']['text'],
-                    "time": f'{datetime.datetime.now()}'
-                }]
-            }
-            callback(new_data, client)
+            response = create_new_message_response(nickname=query['parameters']['nickname'],
+                                                   text=query['parameters']['text'], time=f'{datetime.datetime.now()}')
+
+            callback(response, client)
