@@ -15,6 +15,11 @@
         width: 100%;
         padding: 20px 0;
 
+        .participant-status {
+            color: #888;
+            padding: 15px 5px;
+        }
+
         .chat-history {
             display: flex;
             flex-direction: column-reverse;

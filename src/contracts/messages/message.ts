@@ -1,17 +1,18 @@
 import { IAnonSendChatMessageMessage, IAuthSendChatMessageMessage } from "./request/send-chat-message-message";
 import ISubscribeMessage from "./request/subscribe-message";
 import IUnsibscribeAllMessage from "./request/unsubscribe-all-message";
-import INewMessageEvent from "./response/new-message-event-message";
-import ISetTokenMessage from "./response/set-token-message";
 import IGetTokenMessage from "./request/get-token-message";
 import ICreateAccountMessage from "./request/create-account-message";
-import IGetUserDataMessage from "./request/get-user-data-message";
-import ISetUserDataMessage from "./response/set-user-data-message";
 import IAuthorizeUserRequestMessage from "./request/authorize-user-message";
+import IGetUserDataMessage from "./request/get-user-data-message";
+import INewMessageEvent from "./response/new-message-event-message";
+import ISetTokenMessage from "./response/set-token-message";
+import ISetUserDataMessage from "./response/set-user-data-message";
 import IAuthorizeUserResponseMessage from "./response/authorize-user-message";
+import INewParticipantMessage from "./response/new-participant-message";
+import ILostParticipantMessage from "./response/lost-participant-message";
 import IErrorMessage from "./response/error-message";
-
-type RequestType = "send" | "subscribe" | "unsubscribe all" | "get token" | "create account" | "get user data";
+import RequestType from "./request/request-type";
 
 type RequestMessage<T extends RequestType = RequestType> =
     (
@@ -30,6 +31,8 @@ type ResponseMessage =
     | ISetTokenMessage
     | ISetUserDataMessage
     | IAuthorizeUserResponseMessage
+    | INewParticipantMessage
+    | ILostParticipantMessage
     | IErrorMessage;
 
 type Message = RequestMessage | ResponseMessage;

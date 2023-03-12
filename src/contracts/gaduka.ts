@@ -7,8 +7,8 @@ export default interface IGaduka {
     getUserData(): IUserData | null;
     setCurrentBranch(branch: Branch | null): void
 
-    send(branch: "/anon", nick: string, text: string): void;
-    send(branch: "/auth", text: string): void;
+    send(branch: "/anon" | "/anon/rand", nick: string, text: string): void;
+    send(branch: "/auth" | "/auth/rand", text: string): void;
 
     /**
      * Can be helpful to get chat history beyond 100 last messages

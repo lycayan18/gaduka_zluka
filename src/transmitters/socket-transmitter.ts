@@ -40,7 +40,7 @@ export default class SocketTransmitter extends BaseTransmitter {
         return this._socket.connected;
     }
 
-    sendRequest<S extends RequestType, T extends boolean = boolean, U extends RequestMessage<S> = RequestMessage<S>, ReturnType = T extends true ? Promise<ResponseMessageFromRequestMessage<U>> : void>(message: WithoutId<U>, waitForResponse: T): ReturnType {
+    sendRequest<S extends RequestType, T extends boolean = boolean, U extends RequestMessage<S> = RequestMessage<S>, ReturnType = T extends true ? Promise<ResponseMessageFromRequestMessage<S, U>> : void>(message: WithoutId<U>, waitForResponse: T): ReturnType {
         if (waitForResponse === true) {
             this._socket.send({
                 ...message,
@@ -49,7 +49,7 @@ export default class SocketTransmitter extends BaseTransmitter {
 
             this._currentId++;
 
-            return new Promise<ResponseMessageFromRequestMessage<U>>((res, rej) => {
+            return new Promise<ResponseMessageFromRequestMessage<S, U>>((res, rej) => {
                 this._pendingRequests.push({
                     res,
                     rej,

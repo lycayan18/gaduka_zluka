@@ -10,7 +10,7 @@ import WithoutId from "../contracts/messages/without-id";
 export default abstract class BaseTransmitter extends EventEmitter<keyof ITransmitterEvents, ITransmitterEvents> {
     abstract sendRequest<S extends RequestType, U extends RequestMessage<S> = RequestMessage<S>, T extends true | false = boolean>(message: WithoutId<U>, waitForResponse: T):
         T extends true
-        ? Promise<ResponseMessageFromRequestMessage<U>>
+        ? Promise<ResponseMessageFromRequestMessage<S, U>>
         : void;
 
     abstract sendResponse(message: WithoutId<ResponseMessage>): void;

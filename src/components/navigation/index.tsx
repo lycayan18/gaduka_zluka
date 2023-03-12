@@ -15,9 +15,13 @@ const Navigation: React.FunctionComponent<INavigationProps> = (props) => (
                 </span>
             </div>
         </Link>
-        <div className="navigation disabled">
-            /anon/rand
-        </div>
+        <Link to="/anon/rand">
+            <div className={"navigation" + (props.currentURL.startsWith("/anon/rand") ? " active" : "")}>
+                <span>
+                    /anon/rand
+                </span>
+            </div>
+        </Link>
         <Link to="/auth">
             <div className={"navigation" + (props.currentURL.startsWith("/auth") ? " active" : "")}>
                 <span>

@@ -10,12 +10,13 @@ import ICreateAccountMessage from "./contracts/messages/request/create-account-m
 import IUserData from "./contracts/user-data";
 import IGetUserDataMessage from "./contracts/messages/request/get-user-data-message";
 import BaseTransmitter from "./transmitters/base-transmitter";
-import { IAnonSendChatMessageMessage, IAuthSendChatMessageMessage } from "./contracts/messages/request/send-chat-message-message";
 
 interface IEvents {
     message: [IBaseChatMessage[]];
     ui_message: [string, "info" | "warning" | "error" | "critical error"];
     user_data: [IUserData];
+    new_participant: [string?];
+    lost_participant: [];
 }
 
 export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> implements IGaduka {
@@ -24,6 +25,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
     private _token: string | null = null;
     private _userData: IUserData | null = null;
     private _lastError: Error | null = null;
+    private _userAuthorized: boolean = false;
 
     constructor(transmitter: BaseTransmitter) {
         super();
@@ -32,11 +34,14 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
         this._transmitter.on("message", this._parseServerMessage.bind(this));
         this._transmitter.on("unhandled_error", (message) => this.emit("ui_message", message.result.message, "error"));
-        this._transmitter.on("unhandled_message", (message) => this.emit("ui_message", `От сервера пришло неожиданное сообщение типа ${message.type}`, "warning"));
+        this._transmitter.on("unhandled_message", (message) => {
+            console.log("Unexpected message from server:", message);
+            this.emit("ui_message", `От сервера пришло неожиданное сообщение типа ${message.type}`, "warning")
+        });
         this._transmitter.on("disconnect", () => this.emit("ui_message", "Соединение с сервером разорвано.", "error"));
         this._transmitter.on("error", this._handleError.bind(this));
 
-        // Get token and user data
+        // Get token, authorize user and get user data
         if (localStorage.getItem("token")) {
             this._token = localStorage.getItem("token");
 
@@ -45,6 +50,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
             }
 
             this._sendUserDataRequest();
+            this._authorizeUser();
         }
     }
 
@@ -78,8 +84,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         }
     }
 
-    send(branch: "/anon", nick: string, text: string): void;
-    send(branch: "/auth", text: string): void;
+    send(branch: "/anon" | "/anon/rand", nick: string, text: string): void;
+    send(branch: "/auth" | "/auth/rand", text: string): void;
 
     send(branch: Branch, nickOrText: string, text?: string) {
         if (this._currentBranch === null) {
@@ -87,7 +93,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         }
 
         switch (branch) {
-            case "/anon": {
+            case "/anon":
+            case "/anon/rand": {
                 if (!text) {
                     return;
                 }
@@ -104,7 +111,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                 break;
             }
 
-            case "/auth": {
+            case "/auth":
+            case "/auth/rand": {
                 if (!this.isLoggedIn() || this._token === null) {
                     return;
                 }
@@ -217,8 +225,42 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this.emit("ui_message", "Произошла ошибка подключения.", "error");
     }
 
+    private _authorizeUser() {
+        if (this._token === null) {
+            return;
+        }
+
+        this._transmitter.sendRequest({
+            type: "authorize user",
+            parameters: {
+                token: this._token
+            }
+        }, true)
+            .then(out => {
+                if (out.result === true) {
+                    this._userAuthorized = true;
+                }
+            })
+            .catch(err => {
+                if (err.type === "invalid token") {
+                    localStorage.removeItem("token");
+                    this._token = null;
+                }
+            });
+    }
+
     private _parseServerMessage(message: Message) {
         switch (message.type) {
+            case "new participant": {
+                if (this._currentBranch !== "/anon/rand" && this._currentBranch !== "/auth/rand") {
+                    break;
+                }
+
+                this.emit("new_participant");
+
+                break;
+            }
+
             case "new message": {
                 if (this._currentBranch === null) {
                     break;
@@ -240,6 +282,11 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
                 this.emit("message", messages);
 
+                break;
+            }
+
+            case "lost participant": {
+                this.emit("lost_participant");
                 break;
             }
         }

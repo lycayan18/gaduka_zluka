@@ -51,13 +51,15 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
         });
 
         switch (props.branch) {
-            case "/anon": {
-                props.gaduka.send("/anon", state.nickname, state.messageText);
+            case "/anon":
+            case "/anon/rand": {
+                props.gaduka.send(props.branch, state.nickname, state.messageText);
                 break;
             }
 
-            case "/auth": {
-                props.gaduka.send("/auth", state.messageText);
+            case "/auth":
+            case "/auth/rand": {
+                props.gaduka.send(props.branch, state.messageText);
                 break;
             }
         }
