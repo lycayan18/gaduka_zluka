@@ -151,8 +151,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
             this._transmitter.sendRequest(options, true)
                 .then(response => {
-                    this._token = response.result.token;
-                    localStorage.setItem("token", this._token);
+                    this._setToken(response.result.token);
 
                     this._sendUserDataRequest();
 
@@ -181,11 +180,23 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
             this._transmitter.sendRequest(options, true)
                 .then(response => {
-                    this._token = response.result.token;
+                    this._setToken(response.result.token);
                     res(true);
                 })
                 .catch(rej);
         })
+    }
+
+    private _setToken(token: string) {
+        this._token = token;
+
+        localStorage.setItem("token", this._token);
+    }
+
+    private _removeToken() {
+        this._token = null;
+
+        localStorage.removeItem("token");
     }
 
     private _sendUserDataRequest() {
@@ -208,7 +219,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
             })
             .catch((message: IErrorMessage) => {
                 if (message.result.error_type === "invalid token") {
-                    localStorage.removeItem("token");
+                    this._removeToken();
                 }
             })
     }
@@ -242,8 +253,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
             })
             .catch(err => {
                 if (err.type === "invalid token") {
-                    localStorage.removeItem("token");
-                    this._token = null;
+                    this._removeToken();
                 }
             });
     }
