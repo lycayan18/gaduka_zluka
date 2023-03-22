@@ -19,7 +19,6 @@ interface IAnonSendChatMessageMessage extends IBaseSendChatMessageMessage {
 
 interface IAuthSendChatMessageMessage extends IBaseSendChatMessageMessage {
     parameters: {
-        token: string;
         text: string;
         branch: BranchesStartingWith<"/auth">;
     }

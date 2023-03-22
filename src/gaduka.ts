@@ -120,7 +120,6 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                 this._transmitter.sendRequest({
                     type: "send",
                     parameters: {
-                        token: this._token,
                         text: nickOrText,
                         branch: "/auth"
                     }

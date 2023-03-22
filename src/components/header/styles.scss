@@ -56,6 +56,31 @@
     }
 }
 
+@media screen and (max-width: 720px) {
+    .header {
+        .logo {
+            .logo-icon-container {
+                height: 32px;
+
+                .logo-icon {
+                    height: 100%;
+                    filter: invert(1);
+                }
+            }
+
+            .logo-text {
+                display: none;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .header {
+        padding: 3px 10px;
+    }
+}
+
 @keyframes blink-effect {
     0% {
         color: #fff;
