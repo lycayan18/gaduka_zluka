@@ -7,6 +7,8 @@ const isProduction = process.env.NODE_ENV == "production";
 
 const stylesHandler = "style-loader";
 
+const publicPath = isProduction ? "/static/" : "/";
+
 const config = {
   entry: "./src/index.tsx",
   output: {
@@ -20,7 +22,7 @@ const config = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "index.html",
-      publicPath: "/"
+      publicPath: publicPath
     }),
 
     // Add your plugins here
