@@ -53,3 +53,12 @@ def create_message(nickname: str, text: str, time: str) -> dict:
         "time": time
     }
     return message
+
+
+def create_authorize_user_response(message_id: int, result: bool) -> dict:
+    response = {
+        "type": "authorize user",
+        "id": message_id,
+        "result": result
+    }
+    return response

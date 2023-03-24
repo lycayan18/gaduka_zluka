@@ -22,11 +22,12 @@ class AnonBranch(AbstractBranch):
 
         return response
 
-    def add_message_to_database(self, message):
-        self.database.add_message_to_anon(time=f'{datetime.datetime.now()}', text=message['text'], nickname=message['nickname'])
+    def add_message_to_database(self, **params):
+        self.database.add_message_to_anon(**params)
 
-    def handle_message(self, query: dict, callback: Callable):
-        self.add_message_to_database(query['parameters'])
+    def handle_message(self, query: dict, callback: Callable, **params):
+        self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
+                                     nickname=query['parameters']['nickname'])
 
         for client in self.clients:
             response = create_new_message_response(nickname=query['parameters']['nickname'],

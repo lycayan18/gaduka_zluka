@@ -21,8 +21,8 @@ class AbstractBranch:
     def get_latest_messages() -> dict:
         pass
 
-    def add_message_to_database(self, message):
+    def add_message_to_database(self, **params):
         pass
 
-    def handle_message(self, query: dict, callback: Callable):
+    def handle_message(self, query: dict, callback: Callable, **params):
         pass

@@ -1,10 +1,9 @@
-from flask import render_template, send_from_directory
+from flask import render_template, send_from_directory, request
 from flask_socketio import send
 
 from config import app, socketio, database
 from application.branches.branch_manager import BranchManager
 from database.database_manager import DatabaseManager
-
 
 with app.app_context():
     database.create_all()
@@ -28,6 +27,11 @@ def handler_path(img_path):
 def message_handler(query: dict):
     print(query)
     branch_manager.handle_message(query=query, callback=send)
+
+
+@socketio.on('disconnect')
+def message_disconnect():
+    branch_manager.user_manager.disconnect_user(request.sid)
 
 
 if __name__ == '__main__':

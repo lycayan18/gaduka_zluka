@@ -23,16 +23,16 @@ class AuthBranch(AbstractBranch):
 
         return response
 
-    def add_message_to_database(self, message):
-        self.database.add_message_to_auth(time=f'{datetime.datetime.now()}', token=message['token'],
-                                          text=message['text'])
+    def add_message_to_database(self, **params):
+        self.database.add_message_to_auth(**params)
 
-    def handle_message(self, query: dict, callback: Callable):
-        self.add_message_to_database(query['parameters'])
+    def handle_message(self, query: dict, callback: Callable, **params):
+        token = params.get('token')
+        self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'], token=token)
 
         for client in self.clients:
             response = create_new_message_response(
-                nickname=self.database.get_user_data(token=query['parameters']['token']).nickname,
+                nickname=self.database.get_user_data(token=token).nickname,
                 text=query['parameters']['text'], time=f'{datetime.datetime.now()}')
 
             callback(response, to=client)

@@ -1,3 +1,5 @@
+from typing import Union
+
 from application.utils.responses import *
 from database.database_manager import DatabaseManager
 from encryption.hashing import generate_token
@@ -6,10 +8,24 @@ from encryption.hashing import generate_token
 class UserManager:
     def __init__(self, database: DatabaseManager):
         self.database = database
+        self.authorized_user = {}
+
+    def get_token_by_sid(self, sid: str) -> Union[str, None]:
+        return self.authorized_user.get(sid, None)
+
+    def authorize_user(self, sid: str, token: str) -> bool:
+        if self.database.get_user_data(token=token):
+            self.authorized_user[sid] = token
+            return True
+
+        return False
+
+    def disconnect_user(self, sid: str):
+        self.authorized_user.pop(sid, None)
 
     def get_token(self, token: str, message_id: int) -> dict:
         if not self.database.get_user_data(token=token):
-            error = create_error_response(message_id=message_id, message='Invalid password or login',
+            error = create_error_response(message_id=message_id, message='Неверный логин или пароль',
                                           error_type='invalid credentials')
 
             return error
@@ -26,7 +42,6 @@ class UserManager:
 
         else:
             response = create_set_user_data_response(message_id=message_id, nickname='')
-
         return response
 
     def create_account(self, nickname: str, login: str, password: str, message_id: int) -> dict:
