@@ -62,3 +62,29 @@ def create_authorize_user_response(message_id: int, result: bool) -> dict:
         "result": result
     }
     return response
+
+
+def create_anon_rand_new_participant_response() -> dict:
+    response = {
+        "type": "new participant",
+        "result": {}
+    }
+    return response
+
+
+def create_auth_rand_new_participant_response(nickname: str) -> dict:
+    response = {
+        "type": "new participant",
+        "result": {
+            "nickname": nickname,
+        }
+    }
+    return response
+
+
+def create_lost_participant_response() -> dict:
+    response = {
+        "type": "lost participant",
+        "parameters": {}
+    }
+    return response

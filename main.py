@@ -2,7 +2,7 @@ from flask import render_template, send_from_directory, request
 from flask_socketio import send
 
 from config import app, socketio, database
-from application.branches.branch_manager import BranchManager
+from application.branch_manager import BranchManager
 from database.database_manager import DatabaseManager
 
 with app.app_context():
@@ -18,9 +18,14 @@ def handler_branch(branch=None):
     return render_template('index.html')
 
 
-@app.route('/assets/<path:img_path>')
-def handler_path(img_path):
-    return send_from_directory('static/assets', img_path)
+@app.route('/<path:branch>/static/<path:file_path>')
+def handler_path(branch, file_path):
+    return send_from_directory('static/', file_path)
+
+
+@app.route('/assets/<path:file_path>')
+def handler_assets(file_path):
+    return send_from_directory('static/assets', file_path)
 
 
 @socketio.on('message')
@@ -31,7 +36,7 @@ def message_handler(query: dict):
 
 @socketio.on('disconnect')
 def message_disconnect():
-    branch_manager.user_manager.disconnect_user(request.sid)
+    branch_manager.disconnect_user_from_branch(request.sid, callback=send)
 
 
 if __name__ == '__main__':

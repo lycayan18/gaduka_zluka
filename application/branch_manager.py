@@ -3,6 +3,7 @@ from typing import Callable
 
 from application.branches.anon_branch import AnonBranch
 from application.branches.auth_branch import AuthBranch
+from application.branches.anon_rand_branch import AnonRandBranch
 from application.user_manager import UserManager
 
 from encryption.hashing import generate_token
@@ -17,11 +18,18 @@ class BranchManager:
 
         self.anon_branch = AnonBranch(self.database)
         self.auth_branch = AuthBranch(self.database)
+        self.anon_rand_branch = AnonRandBranch(self.database)
 
         self.branches = {
             '/anon': self.anon_branch,
-            '/auth': self.auth_branch
+            '/auth': self.auth_branch,
+            '/anon/rand': self.anon_rand_branch
         }
+
+    def disconnect_user_from_branch(self, sid: str, callback: Callable):
+        for branch in self.branches.values():
+            branch.disconnect_client(sid, callback=callback)
+        self.user_manager.disconnect_user(sid)
 
     def handle_message(self, query: dict, callback: Callable):
         sid = request.sid
@@ -35,7 +43,7 @@ class BranchManager:
 
         elif query['type'] == 'send':
             token = self.user_manager.get_token_by_sid(sid)
-            self.branches[query['parameters']['branch']].handle_message(query, callback=callback, token=token)
+            self.branches[query['parameters']['branch']].handle_message(query, callback=callback, token=token, sid=sid)
 
         elif query['type'] == 'unsubscribe all':
             for branch in self.branches.values():

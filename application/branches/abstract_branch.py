@@ -8,21 +8,20 @@ class AbstractBranch:
         self.clients = []
         self.database = database
 
-    def connect_client(self, sid: str, callback: Callable):
+    def connect_client(self, sid: str, callback: Callable = None):
         self.clients.append(sid)
         new_data = self.get_latest_messages()
         callback(new_data, to=sid)
 
-    def disconnect_client(self, sid: str):
+    def disconnect_client(self, sid: str, callback: Callable = None):
         if sid in self.clients:
             self.clients.remove(sid)
 
-    @staticmethod
-    def get_latest_messages() -> dict:
+    def add_message_to_database(self, **params):  # method will be redefined by the heirs
         pass
 
-    def add_message_to_database(self, **params):
+    def handle_message(self, query: dict, callback: Callable, **params):  # method will be redefined by the heirs
         pass
 
-    def handle_message(self, query: dict, callback: Callable, **params):
+    def get_latest_messages(self) -> dict:  # method will be redefined by the heirs
         pass
