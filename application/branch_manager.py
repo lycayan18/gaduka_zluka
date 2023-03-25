@@ -37,7 +37,7 @@ class BranchManager:
 
         if query['type'] == 'subscribe':
             for branch in self.branches.values():
-                branch.disconnect_client(sid)
+                branch.disconnect_client(sid, callback=callback)
 
             self.branches[query['parameters']['branch']].connect_client(sid, callback=callback)
 
@@ -47,7 +47,7 @@ class BranchManager:
 
         elif query['type'] == 'unsubscribe all':
             for branch in self.branches.values():
-                branch.disconnect_client(sid)
+                branch.disconnect_client(sid, callback=callback)
 
         elif query['type'] == 'get token':
             token = generate_token(login=query['parameters']['login'], password=query['parameters']['password'])
