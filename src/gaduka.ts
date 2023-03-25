@@ -104,7 +104,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                     parameters: {
                         nickname: nickOrText,
                         text,
-                        branch: "/anon"
+                        branch
                     }
                 }, false);
 
@@ -121,7 +121,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                     type: "send",
                     parameters: {
                         text: nickOrText,
-                        branch: "/auth"
+                        branch
                     }
                 }, false);
 
