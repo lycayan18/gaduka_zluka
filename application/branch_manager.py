@@ -4,6 +4,7 @@ from typing import Callable
 from application.branches.anon_branch import AnonBranch
 from application.branches.auth_branch import AuthBranch
 from application.branches.anon_rand_branch import AnonRandBranch
+from application.branches.auth_rand_branch import AuthRandBranch
 from application.user_manager import UserManager
 
 from encryption.hashing import generate_token
@@ -19,11 +20,13 @@ class BranchManager:
         self.anon_branch = AnonBranch(self.database)
         self.auth_branch = AuthBranch(self.database)
         self.anon_rand_branch = AnonRandBranch(self.database)
+        self.auth_rand_branch = AuthRandBranch(self.database, self.user_manager)
 
         self.branches = {
             '/anon': self.anon_branch,
             '/auth': self.auth_branch,
-            '/anon/rand': self.anon_rand_branch
+            '/anon/rand': self.anon_rand_branch,
+            '/auth/rand': self.auth_rand_branch
         }
 
     def disconnect_user_from_branch(self, sid: str, callback: Callable):
@@ -66,3 +69,6 @@ class BranchManager:
         elif query['type'] == 'authorize user':
             response = create_authorize_user_response(message_id=query['id'], result=self.user_manager.authorize_user(sid, token=query_parameters['token']))
             callback(response, to=sid)
+
+        elif query['type'] == 'unauthorize user':
+            self.disconnect_user_from_branch(sid=sid, callback=callback)

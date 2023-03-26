@@ -4,7 +4,7 @@ def create_error_response(message_id: int, message: str, error_type: str) -> dic
         "id": message_id,
         "result": {
             "message": message,
-            "error-type": error_type
+            "error_type": error_type
         }
     }
     return error
