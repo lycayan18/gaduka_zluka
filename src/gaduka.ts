@@ -176,7 +176,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
         this._transmitter.sendRequest({
             type: "unauthorize user",
-            parameters: undefined
+            parameters: {}
         }, false);
     }
 
