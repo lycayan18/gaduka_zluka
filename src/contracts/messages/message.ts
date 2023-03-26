@@ -9,7 +9,7 @@ import INewMessageEvent from "./response/new-message-event-message";
 import ISetTokenMessage from "./response/set-token-message";
 import ISetUserDataMessage from "./response/set-user-data-message";
 import IAuthorizeUserResponseMessage from "./response/authorize-user-message";
-import INewParticipantMessage from "./response/new-participant-message";
+import { INewAnonParticipantMessage, INewAuthParticipantMessage } from "./response/new-participant-message";
 import ILostParticipantMessage from "./response/lost-participant-message";
 import IErrorMessage from "./response/error-message";
 import RequestType from "./request/request-type";
@@ -31,7 +31,8 @@ type ResponseMessage =
     | ISetTokenMessage
     | ISetUserDataMessage
     | IAuthorizeUserResponseMessage
-    | INewParticipantMessage
+    | INewAnonParticipantMessage
+    | INewAuthParticipantMessage
     | ILostParticipantMessage
     | IErrorMessage;
 

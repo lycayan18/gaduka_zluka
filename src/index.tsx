@@ -8,7 +8,7 @@ import App from "./app";
 import MainPage from "./components/main-page";
 import ErrorElement from "./components/error-element";
 import AnonChat from "./components/chat/anon";
-import AnonRandChat from "./components/chat/anon-rand";
+import RandChat from "./components/chat/rand";
 import AuthChat from "./components/chat/auth";
 import LoginPage from "./components/login-register-page/login";
 import RegisterPage from "./components/login-register-page/register";
@@ -52,7 +52,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "anon/rand",
-                element: <AnonRandChat gaduka={gaduka} />
+                element: <RandChat gaduka={gaduka} branch="/anon/rand" key={0} />
+            },
+            {
+                path: "auth/rand",
+                element: <RandChat gaduka={gaduka} branch="/auth/rand" key={1} />
             }
         ]
     }

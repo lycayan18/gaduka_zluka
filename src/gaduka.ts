@@ -265,7 +265,11 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                     break;
                 }
 
-                this.emit("new_participant");
+                if (typeof message.result === "object" && "nickname" in message.result) {
+                    this.emit("new_participant", message.result.nickname);
+                } else {
+                    this.emit("new_participant");
+                }
 
                 break;
             }

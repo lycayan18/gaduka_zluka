@@ -1,6 +1,13 @@
 import IBaseResponseMessage from "../base-response-message";
 
-export default interface INewParticipantMessage extends IBaseResponseMessage {
+export interface INewAnonParticipantMessage extends IBaseResponseMessage {
     type: "new participant";
     result: void;
+}
+
+export interface INewAuthParticipantMessage extends IBaseResponseMessage {
+    type: "new participant";
+    result: {
+        nickname: string;
+    };
 }

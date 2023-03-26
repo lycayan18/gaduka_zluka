@@ -6,32 +6,44 @@ interface INavigationProps {
     currentURL: string;
 }
 
+function getClassname(link: string, branch: string) {
+    if (link === branch) {
+        return " active";
+    }
+
+    return link.startsWith(branch) ? " subbranch" : "";
+}
+
 const Navigation: React.FunctionComponent<INavigationProps> = (props) => (
     <div className="navigation-box">
         <Link to="/anon">
-            <div className={"navigation" + (props.currentURL.startsWith("/anon") ? " active" : "")}>
+            <div className={"navigation" + getClassname(props.currentURL, "/anon")}>
                 <span>
                     /anon
                 </span>
             </div>
         </Link>
         <Link to="/anon/rand">
-            <div className={"navigation" + (props.currentURL.startsWith("/anon/rand") ? " active" : "")}>
+            <div className={"navigation" + getClassname(props.currentURL, "/anon/rand")}>
                 <span>
                     /anon/rand
                 </span>
             </div>
         </Link>
         <Link to="/auth">
-            <div className={"navigation" + (props.currentURL.startsWith("/auth") ? " active" : "")}>
+            <div className={"navigation" + getClassname(props.currentURL, "/auth")}>
                 <span>
                     /auth
                 </span>
             </div>
         </Link>
-        <div className="navigation disabled">
-            /auth/rand
-        </div>
+        <Link to="/auth/rand">
+            <div className={"navigation" + getClassname(props.currentURL, "/auth/rand")}>
+                <span>
+                    /auth/rand
+                </span>
+            </div>
+        </Link>
     </div>
 )
 

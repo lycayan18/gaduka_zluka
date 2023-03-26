@@ -18,6 +18,10 @@
         .participant-status {
             color: #888;
             padding: 15px 5px;
+
+            &.with-nickname {
+                color: #555;
+            }
         }
 
         .chat-history {

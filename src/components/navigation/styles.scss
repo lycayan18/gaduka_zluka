@@ -20,6 +20,20 @@
             color: white;
         }
 
+        &.subbranch {
+            background-color: #666;
+            border-bottom-color: #666;
+            color: white;
+
+            ::before {
+                content: "\25BC";
+                position: absolute;
+                margin-left: -20px;
+                margin-top: 4px;
+                font-size: 12px;
+            }
+        }
+
         &.disabled {
             color: #ccc;
             cursor: default;
