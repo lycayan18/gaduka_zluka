@@ -12,20 +12,27 @@ interface IRandChatProps {
 interface IParticipantState {
     available: boolean;
     nickname?: string;
+    isAuthorized: boolean;
 }
 
 const RandChat: React.FunctionComponent<IRandChatProps> = (props) => {
-    const [participantState, setParticipantState] = useState<IParticipantState>({ available: false });
     const isAuthorized = props.gaduka.isLoggedIn() || props.branch === "/anon/rand";
+    const [participantState, setParticipantState] = useState<IParticipantState>({ available: false, isAuthorized });
     const isDisabled = !participantState.available || !isAuthorized;
 
     useEffect(() => {
-        const lostParticipantCallback = () => setParticipantState({ available: false });
+        const onLogInCallback = () => setParticipantState({ available: false, isAuthorized: true });
+
+        if (!isAuthorized) {
+            props.gaduka.on("user_data", onLogInCallback);
+        }
+
+        const lostParticipantCallback = () => setParticipantState({ available: false, isAuthorized: participantState.isAuthorized });
         const newParticipantCallback = (nickname?: string) => {
             if (nickname) {
-                setParticipantState({ available: true, nickname });
+                setParticipantState({ available: true, nickname, isAuthorized: participantState.isAuthorized });
             } else {
-                setParticipantState({ available: true });
+                setParticipantState({ available: true, isAuthorized: participantState.isAuthorized });
             }
         };
 
@@ -35,6 +42,7 @@ const RandChat: React.FunctionComponent<IRandChatProps> = (props) => {
         return () => {
             props.gaduka.off("new_participant", newParticipantCallback);
             props.gaduka.off("lost_participant", lostParticipantCallback);
+            props.gaduka.off("user_data", onLogInCallback);
         }
     });
 
