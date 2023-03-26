@@ -15,6 +15,7 @@ interface IEvents {
     message: [IBaseChatMessage[]];
     ui_message: [string, "info" | "warning" | "error" | "critical error"];
     user_data: [IUserData];
+    unauthorize: [];
     new_participant: [string?];
     lost_participant: [];
 }
@@ -165,6 +166,18 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                     }
                 });
         });
+    }
+
+    unauthorize(): void {
+        this.emit("unauthorize");
+        this.emit("lost_participant");
+
+        this._removeToken();
+
+        this._transmitter.sendRequest({
+            type: "unauthorize user",
+            parameters: undefined
+        }, false);
     }
 
     createAccount(nickname: string, login: string, password: string): Promise<boolean> {

@@ -18,5 +18,7 @@ export default interface IGaduka {
 
     login(login: string, password: string): Promise<true | false>;
 
+    unauthorize(): void;
+
     createAccount(nickname: string, login: string, password: string): Promise<boolean>;
 }

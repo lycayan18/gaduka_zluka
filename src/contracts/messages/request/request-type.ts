@@ -5,6 +5,7 @@ type RequestType =
     | "get token"
     | "create account"
     | "get user data"
-    | "authorize user";
+    | "authorize user"
+    | "unauthorize user";
 
 export default RequestType;

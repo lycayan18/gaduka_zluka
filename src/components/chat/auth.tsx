@@ -19,15 +19,19 @@ const AuthChat: React.FunctionComponent<IChatProps> = (props: IChatProps) => {
     });
 
     useEffect(() => {
-        const handleLogIn = (data: IUserData) => {
+        const handleLogIn = (data?: IUserData) => {
             setState({
-                userData: data
+                userData: data || null
             })
         }
 
         props.gaduka.on("user_data", handleLogIn);
+        props.gaduka.on("unauthorize", handleLogIn);
 
-        return () => props.gaduka.off("user_data", handleLogIn);
+        return () => {
+            props.gaduka.off("user_data", handleLogIn);
+            props.gaduka.off("unauthorize", handleLogIn);
+        };
     });
 
     return (

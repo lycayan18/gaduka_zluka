@@ -11,6 +11,12 @@ interface IHeaderProps {
 const Header: React.FunctionComponent<IHeaderProps> = (props: IHeaderProps) => {
     const [userData, setUserData] = useState<IUserData | null>(props.gaduka.getUserData());
 
+    const unauthorizeCallback = () => {
+        props.gaduka.unauthorize();
+
+        setUserData(null);
+    }
+
     useEffect(() => {
         props.gaduka.on("user_data", setUserData);
 
@@ -33,8 +39,19 @@ const Header: React.FunctionComponent<IHeaderProps> = (props: IHeaderProps) => {
                 }
             </div>
             <div className="links">
-                <Link to="/login">Вход</Link>
-                <Link to="/register">Регистрация</Link>
+                {
+                    props.gaduka.isLoggedIn() ?
+                        (
+                            <a href="#" onClick={unauthorizeCallback}>Выход</a>
+                        )
+                        :
+                        (
+                            <>
+                                <Link to="/login">Вход</Link>
+                                <Link to="/register">Регистрация</Link>
+                            </>
+                        )
+                }
             </div>
         </div>
     )
