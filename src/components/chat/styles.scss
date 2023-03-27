@@ -58,11 +58,7 @@
 
                 &.admin {
                     .author {
-                        color: #f35;
-                    }
-
-                    .text {
-                        color: #000;
+                        color: #9600cd;
                     }
                 }
 
@@ -77,6 +73,32 @@
                     font-family: Arial;
                     font-size: 17px;
                     margin-left: 10px;
+                }
+
+                .ban-button {
+                    font-size: 12px;
+                    padding: 0;
+                    line-height: 22px;
+                    border: 1px solid red;
+
+                    width: 22px;
+                    height: 22px;
+                    min-width: 22px;
+                    min-height: 22px;
+
+                    color: red;
+                    background: white;
+
+                    &:hover {
+                        color: white;
+                        background: red;
+                    }
+                }
+
+                .ip {
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #ccc;
                 }
             }
         }

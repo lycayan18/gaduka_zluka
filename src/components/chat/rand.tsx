@@ -59,7 +59,7 @@ const RandChat: React.FunctionComponent<IRandChatProps> = (props) => {
                             : "Вы не вошли в аккаунт"
                     }
                 </p>
-                <MessagesHistory gaduka={props.gaduka} />
+                <MessagesHistory gaduka={props.gaduka} branch={props.branch} />
                 <CreateMessageBox branch={props.branch} gaduka={props.gaduka} disabled={isDisabled} />
             </div>
         </div>

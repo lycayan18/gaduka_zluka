@@ -3,9 +3,14 @@ import Branch from "./branch";
 import IUserData from "./user-data";
 
 export default interface IGaduka {
+    setAdminNicknames(nicknames: string[]): void;
+    getAdminNicknames(): string[];
+
     isLoggedIn(): boolean;
     getUserData(): IUserData | null;
     setCurrentBranch(branch: Branch | null): void
+
+    sendBanRequest(ip: string): void;
 
     send(branch: "/anon" | "/anon/rand", nick: string, text: string): void;
     send(branch: "/auth" | "/auth/rand", text: string): void;

@@ -6,6 +6,9 @@ type RequestType =
     | "create account"
     | "get user data"
     | "authorize user"
-    | "unauthorize user";
+    | "unauthorize user"
+    | "subscribe admin"
+    | "ban user"
+    | "unban";
 
 export default RequestType;

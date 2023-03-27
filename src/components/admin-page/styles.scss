@@ -1,0 +1,14 @@
+.admin-page-content {
+    padding: 50px 0px;
+
+    .chats {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        gap: 20px;
+
+        .chat-content {
+            width: 100%;
+        }
+    }
+}

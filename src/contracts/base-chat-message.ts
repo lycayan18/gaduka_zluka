@@ -5,4 +5,5 @@ export default interface IBaseChatMessage {
     author: string;
     date: Date;
     text: string;
+    ip: string;
 }

@@ -30,6 +30,11 @@ body {
     display: flex;
 }
 
+.error-message {
+    font-size: 18px;
+    color: #f04;
+}
+
 @media screen and (min-width: 1200px) {
     .wrapper {
         width: 100%;
