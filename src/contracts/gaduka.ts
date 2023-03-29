@@ -10,7 +10,10 @@ export default interface IGaduka {
     getUserData(): IUserData | null;
     setCurrentBranch(branch: Branch | null): void
 
+    getBannedIps(): Promise<string[]>;
+
     sendBanRequest(ip: string): void;
+    sendUnbanRequest(ip: string): void;
 
     send(branch: "/anon" | "/anon/rand", nick: string, text: string): void;
     send(branch: "/auth" | "/auth/rand", text: string): void;

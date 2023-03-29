@@ -7,7 +7,6 @@ import MessagesHistory from "./messages-history";
 
 interface IChatProps {
     gaduka: Gaduka;
-    index?: number;
     showIps?: boolean;
 }
 

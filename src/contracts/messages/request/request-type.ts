@@ -9,6 +9,7 @@ type RequestType =
     | "unauthorize user"
     | "subscribe admin"
     | "ban user"
+    | "get banned ips"
     | "unban";
 
 export default RequestType;

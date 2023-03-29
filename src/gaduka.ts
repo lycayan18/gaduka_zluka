@@ -76,6 +76,18 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         return this._userData;
     }
 
+    getBannedIps() {
+        return new Promise<string[]>(res => {
+            this._transmitter.sendRequest({
+                type: "get banned ips",
+                parameters: {}
+            }, true)
+                .then(result => {
+                    res(result.result.ips);
+                })
+        })
+    }
+
     setCurrentBranch(branch: Branch | "admin" | null) {
         if (this._currentBranch === branch) {
             return;
@@ -159,7 +171,18 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this._transmitter.sendRequest({
             type: "ban user",
             parameters: {
-                ip
+                ip,
+                password: localStorage.getItem(atob("bG9jYWxlUGFzc3dvcmQ=")) || ""
+            }
+        }, false);
+    }
+
+    sendUnbanRequest(ip: string) {
+        this._transmitter.sendRequest({
+            type: "unban",
+            parameters: {
+                ip,
+                password: localStorage.getItem(atob("bG9jYWxlUGFzc3dvcmQ=")) || ""
             }
         }, false);
     }

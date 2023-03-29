@@ -2,6 +2,7 @@ import React from "react";
 import Gaduka from "../../gaduka";
 import AnonChat from "../chat/anon";
 import AuthChat from "../chat/auth";
+import BanUnbanUserBox from "./ban-unban-user";
 import "./styles.scss";
 
 interface IAdminPageProps {
@@ -15,8 +16,11 @@ const AdminPage: React.FunctionComponent<IAdminPageProps> = (props) => {
         <div className="admin-page-content">
             <h1>Админка</h1>
             <div className="chats">
-                <AnonChat gaduka={props.gaduka} index={1} showIps={true}></AnonChat>
-                <AuthChat gaduka={props.gaduka} index={1} showIps={true}></AuthChat>
+                <AnonChat gaduka={props.gaduka} showIps={true}></AnonChat>
+                <AuthChat gaduka={props.gaduka} showIps={true}></AuthChat>
+            </div>
+            <div className="admin-panel">
+                <BanUnbanUserBox gaduka={props.gaduka} />
             </div>
         </div>
     )

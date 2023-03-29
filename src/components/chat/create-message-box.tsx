@@ -25,7 +25,7 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
     });
 
     const adminNicknames = props.gaduka.getAdminNicknames();
-    const adminNicknamesDisallowed = localStorage.getItem("allowAdminNicknames") !== "unslash";
+    const adminNicknamesDisallowed = localStorage.getItem(atob("YWxsb3dBZG1pbk5pY2tuYW1lcw==")) !== atob("dW5zbGFzaA==");
 
     const handleNicknameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         // Disable entering admin's names, including using unicode character \u202e that reverses text

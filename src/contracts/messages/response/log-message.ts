@@ -1,4 +1,4 @@
-import IBaseResponseMessage from "../base-request-message";
+import IBaseResponseMessage from "../base-response-message";
 
 export default interface ILogMessage extends IBaseResponseMessage {
     type: "log message";

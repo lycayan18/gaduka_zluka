@@ -4,5 +4,6 @@ export default interface IUnbanUserMessage extends IBaseRequestMessage {
     type: "unban";
     parameters: {
         ip: string;
+        password: string;
     }
 }

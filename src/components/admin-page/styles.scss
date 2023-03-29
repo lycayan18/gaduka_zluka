@@ -11,4 +11,19 @@
             width: 100%;
         }
     }
+
+    .admin-panel {
+        .function-box {
+            padding: 10px 20px;
+
+            .box-title {
+                padding: 20px 0;
+            }
+
+            .search-box {
+                display: flex;
+                gap: 12px;
+            }
+        }
+    }
 }

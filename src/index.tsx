@@ -55,11 +55,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "anon",
-                element: <AnonChat index={0} gaduka={gaduka} />
+                element: <AnonChat gaduka={gaduka} />
             },
             {
                 path: "auth",
-                element: <AuthChat index={0} gaduka={gaduka} />
+                element: <AuthChat gaduka={gaduka} />
             },
             {
                 path: "anon/rand",
