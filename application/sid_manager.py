@@ -26,3 +26,6 @@ class SidManager:
 
     def ban_user(self, ip: str):
         self.database.add_ip_to_blacklist(ip=ip)
+
+    def unban_user(self, ip: str):
+        self.database.remove_from_blacklist(ip=ip)

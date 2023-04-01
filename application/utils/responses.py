@@ -97,9 +97,10 @@ def create_lost_participant_response() -> dict:
     return response
 
 
-def create_set_banned_ips_response(ips: List[str]) -> dict:
+def create_set_banned_ips_response(ips: List[str], message_id: int) -> dict:
     response = {
         'type': 'set banned ips',
+        'id': message_id,
         'result': {
             'ips': ips
         }

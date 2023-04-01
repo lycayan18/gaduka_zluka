@@ -70,7 +70,12 @@ class MessageManager:
                     self.sid_manager.ban_user(ip=query_parameters['ip'])
 
         elif query['type'] == 'get banned ips':
-            callback(create_set_banned_ips_response(self.sid_manager.get_banned_ips()))
+            callback(create_set_banned_ips_response(ips=self.sid_manager.get_banned_ips(), message_id=query['id']))
+
+        elif query['type'] == 'unban':
+            if query_parameters['password'] == '':
+                if self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
+                    self.sid_manager.unban_user(ip=query_parameters['ip'])
 
 
 

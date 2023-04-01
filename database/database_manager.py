@@ -26,6 +26,11 @@ class DatabaseManager:
         self.database.session.add(ip)
         self.database.session.commit()
 
+    def remove_from_blacklist(self, ip: str):
+        ip = BlacklistModel.query.filter_by(ip=ip).first()
+        self.database.session.delete(ip)
+        self.database.session.commit()
+
     @staticmethod
     def is_user_banned(ip: str) -> bool:
         if BlacklistModel.query.filter_by(ip=ip).first():
