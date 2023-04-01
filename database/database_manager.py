@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from database.models import UsersModel, AuthBranchModel, AnonBranchModel
+from database.models import UsersModel, AuthBranchModel, AnonBranchModel, BlacklistModel
 
 
 class DatabaseManager:
@@ -21,17 +21,29 @@ class DatabaseManager:
         self.database.session.add(message)
         self.database.session.commit()
 
+    def add_ip_to_blacklist(self, ip):
+        ip = BlacklistModel(ip=ip)
+        self.database.session.add(ip)
+        self.database.session.commit()
+
+    @staticmethod
+    def is_user_banned(ip: str) -> bool:
+        if BlacklistModel.query.filter_by(ip=ip).first():
+            return True
+        return False
+
+    @staticmethod
+    def get_banned_ips():
+        return BlacklistModel.query.all()
+
     @staticmethod
     def get_user_data(**filter_params):
-        user = UsersModel.query.filter_by(**filter_params).first()
-        return user
+        return UsersModel.query.filter_by(**filter_params).first()
 
     @staticmethod
     def get_latest_message_from_auth():
-        last_messages = AuthBranchModel.query.all()
-        return last_messages
+        return AuthBranchModel.query.all()
 
     @staticmethod
     def get_latest_message_from_anon():
-        last_messages = AnonBranchModel.query.all()
-        return last_messages
+        return AnonBranchModel.query.all()

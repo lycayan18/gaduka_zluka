@@ -1,12 +1,12 @@
 from typing import Callable
 import datetime
 
-from application.branches.abstract_branch import AbstractBranch
+from application.branches.branch import Branch
 from database.database_manager import DatabaseManager
 from application.utils.responses import *
 
 
-class RandBranch(AbstractBranch):
+class RandBranch(Branch):
     def __init__(self, database: DatabaseManager):
         super(RandBranch, self).__init__(database)
         self.waiting_list = []

@@ -20,7 +20,7 @@ class UserManager:
 
         return False
 
-    def disconnect_user(self, sid: str):
+    def unauthorize_user(self, sid: str):
         self.authorized_user.pop(sid, None)
 
     def get_token(self, token: str, message_id: int) -> dict:

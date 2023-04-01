@@ -5,17 +5,18 @@ from application.branches.anon_branch import AnonBranch
 from application.branches.auth_branch import AuthBranch
 from application.branches.anon_rand_branch import AnonRandBranch
 from application.branches.auth_rand_branch import AuthRandBranch
+from application.message_manager import MessageManager
+from application.sid_manager import SidManager
 from application.user_manager import UserManager
 
-from encryption.hashing import generate_token
 from database.database_manager import *
-from application.utils.responses import *
 
 
 class BranchManager:
-    def __init__(self, database: DatabaseManager):
+    def __init__(self, database: DatabaseManager, user_manager: UserManager, sid_manager: SidManager):
         self.database = database
-        self.user_manager = UserManager(database=database)
+        self.user_manager = user_manager
+        self.sid_manager = sid_manager
 
         self.anon_branch = AnonBranch(self.database)
         self.auth_branch = AuthBranch(self.database)
@@ -29,46 +30,11 @@ class BranchManager:
             '/auth/rand': self.auth_rand_branch
         }
 
+        self.message_manager = MessageManager(branches=self.branches, user_manager=self.user_manager, sid_manager=self.sid_manager)
+
     def disconnect_user_from_branch(self, sid: str, callback: Callable):
         for branch in self.branches.values():
             branch.disconnect_client(sid, callback=callback)
-        self.user_manager.disconnect_user(sid)
 
-    def handle_message(self, query: dict, callback: Callable):
-        sid = request.sid
-        query_parameters = query['parameters']
-
-        if query['type'] == 'subscribe':
-            for branch in self.branches.values():
-                branch.disconnect_client(sid, callback=callback)
-
-            self.branches[query['parameters']['branch']].connect_client(sid, callback=callback)
-
-        elif query['type'] == 'send':
-            token = self.user_manager.get_token_by_sid(sid)
-            self.branches[query['parameters']['branch']].handle_message(query, callback=callback, token=token, sid=sid)
-
-        elif query['type'] == 'unsubscribe all':
-            for branch in self.branches.values():
-                branch.disconnect_client(sid, callback=callback)
-
-        elif query['type'] == 'get token':
-            token = generate_token(login=query['parameters']['login'], password=query['parameters']['password'])
-            response = self.user_manager.get_token(token=token, message_id=query['id'])
-            callback(response, to=sid)
-
-        elif query['type'] == 'create account':
-            response = self.user_manager.create_account(nickname=query_parameters['nickname'],
-                                                        login=query_parameters['login'],
-                                                        password=query_parameters['password'], message_id=query['id'])
-            callback(response, to=sid)
-
-        elif query['type'] == 'get user data':
-            callback(self.user_manager.get_user_data(token=query_parameters['token'], message_id=query['id']), to=sid)
-
-        elif query['type'] == 'authorize user':
-            response = create_authorize_user_response(message_id=query['id'], result=self.user_manager.authorize_user(sid, token=query_parameters['token']))
-            callback(response, to=sid)
-
-        elif query['type'] == 'unauthorize user':
-            self.disconnect_user_from_branch(sid=sid, callback=callback)
+    def handle_message(self, ip: str,  sid: str, query: dict, callback: Callable):
+        self.message_manager.handle_message(ip=ip, sid=sid, query=query, callback=callback)

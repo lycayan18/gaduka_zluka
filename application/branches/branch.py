@@ -3,7 +3,7 @@ from typing import Callable
 from database.database_manager import DatabaseManager
 
 
-class AbstractBranch:
+class Branch:
     def __init__(self, database: DatabaseManager):
         self.clients = []
         self.database = database

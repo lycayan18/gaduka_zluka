@@ -1,3 +1,6 @@
+from typing import List
+
+
 def create_error_response(message_id: int, message: str, error_type: str) -> dict:
     error = {
         "type": "error",
@@ -34,23 +37,27 @@ def create_set_user_data_response(message_id: int, nickname: str) -> dict:
     return response
 
 
-def create_new_message_response(nickname: str, text: str, time: str) -> dict:
+def create_new_message_response(nickname: str, text: str, time: str, branch: str, ip: str) -> dict:
     response = {
         "type": "new message",
         "result": [{
             "nickname": nickname,
             "text": text,
-            "time": time
+            "time": time,
+            'branch': branch,
+            'ip': ip
         }]
     }
     return response
 
 
-def create_message(nickname: str, text: str, time: str) -> dict:
+def create_message(nickname: str, text: str, time: str, branch: str, ip: str) -> dict:
     message = {
         "nickname": nickname,
         "text": text,
-        "time": time
+        "time": time,
+        'branch': branch,
+        'ip': ip
     }
     return message
 
@@ -86,5 +93,15 @@ def create_lost_participant_response() -> dict:
     response = {
         "type": "lost participant",
         "parameters": {}
+    }
+    return response
+
+
+def create_set_banned_ips_response(ips: List[str]) -> dict:
+    response = {
+        'type': 'set banned ips',
+        'result': {
+            'ips': ips
+        }
     }
     return response
