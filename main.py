@@ -36,7 +36,6 @@ def handler_assets(file_path):
 @socketio.on('message')
 def message_handler(query: dict):
     print(query)
-    print(request.remote_addr)
     branch_manager.handle_message(ip=request.remote_addr, sid=request.sid, query=query, callback=send)
 
 

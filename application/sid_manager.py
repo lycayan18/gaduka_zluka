@@ -11,6 +11,11 @@ class SidManager:
     def get_ip_by_sid(self, sid: str) -> Union[str, None]:
         return self.users.get(sid, None)
 
+    def get_sid_by_ip(self, ip: str):
+        for key, value in self.users.items():
+            if value == ip:
+                return key
+
     def connect_user(self, sid: str, ip: str):
         self.users[sid] = ip
 

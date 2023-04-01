@@ -106,3 +106,11 @@ def create_set_banned_ips_response(ips: List[str], message_id: int) -> dict:
         }
     }
     return response
+
+
+def create_unban_response() -> dict:
+    response = {
+        "type": "unban event",
+        "result": {}
+    }
+    return response

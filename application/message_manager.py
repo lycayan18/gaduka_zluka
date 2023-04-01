@@ -2,7 +2,7 @@ from typing import Callable
 
 from application.sid_manager import SidManager
 from application.user_manager import UserManager
-from application.utils.responses import create_authorize_user_response, create_error_response, create_set_banned_ips_response
+from application.utils.responses import *
 from application.branches.branch import Branch
 from encryption.hashing import generate_token
 
@@ -69,6 +69,9 @@ class MessageManager:
                 if not self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
                     self.sid_manager.ban_user(ip=query_parameters['ip'])
 
+                    callback(create_error_response(message_id=0, message='You was banned', error_type='banned'),
+                             to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
+
         elif query['type'] == 'get banned ips':
             callback(create_set_banned_ips_response(ips=self.sid_manager.get_banned_ips(), message_id=query['id']))
 
@@ -76,6 +79,8 @@ class MessageManager:
             if query_parameters['password'] == '':
                 if self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
                     self.sid_manager.unban_user(ip=query_parameters['ip'])
+
+                    callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
 
 
 
