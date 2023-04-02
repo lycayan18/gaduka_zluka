@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Gaduka from "../../../gaduka";
 import "../styles.scss";
 
@@ -38,16 +38,17 @@ interface IBanUnbanUserBoxState {
 }
 
 const BanUnbanUserBox: React.FunctionComponent<IBanUnbanUserBoxProps> = ({ gaduka }) => {
-    const [{ searchingIP, bannedIps }, setState] = useState<IBanUnbanUserBoxState>({ searchingIP: "", bannedIps: [] });
+    const [{ searchingIP, bannedIps }, setState] = useState<IBanUnbanUserBoxState>({ searchingIP: "", bannedIps: gaduka.getBannedIps() });
 
-    const handleIPInputBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (isValidIp(searchingIP)) {
-            gaduka.getBannedIps()
-                .then(ips => setState({ searchingIP: e.target.value, bannedIps: ips }));
-        } else {
-            setState({ searchingIP: e.target.value, bannedIps })
-        }
-    }
+    useEffect(() => {
+        const handleBannedIpsListChanged = (list: string[]) => setState({ searchingIP, bannedIps: list });
+
+        gaduka.on("banned_ips_list_changed", handleBannedIpsListChanged);
+
+        return () => gaduka.off("banned_ips_list_changed", handleBannedIpsListChanged);
+    })
+
+    const handleIPInputBox = (e: React.ChangeEvent<HTMLInputElement>) => setState({ searchingIP: e.target.value, bannedIps });
 
     const handleBanUnbanButtonClicked = () => {
         if (!isValidIp(searchingIP)) {
@@ -61,9 +62,6 @@ const BanUnbanUserBox: React.FunctionComponent<IBanUnbanUserBoxProps> = ({ gaduk
             // ban user
             gaduka.sendBanRequest(searchingIP)
         }
-
-        gaduka.getBannedIps()
-            .then(ips => setState({ searchingIP, bannedIps: ips }));
     }
 
     return (
@@ -81,6 +79,16 @@ const BanUnbanUserBox: React.FunctionComponent<IBanUnbanUserBoxProps> = ({ gaduk
                             : "..."
                     }
                 </button>
+            </div>
+            <div className="list-box">
+                <span>Список заблокированных IP-адресов:</span>
+                <ul className="list">
+                    {
+                        bannedIps.map((ip) => (
+                            <li key={ip} className="banned-ip" title="Разблокировать" onClick={() => gaduka.sendUnbanRequest(ip)}>{ip}</li>
+                        ))
+                    }
+                </ul>
             </div>
         </div>
     )

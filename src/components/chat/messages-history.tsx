@@ -45,7 +45,6 @@ const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) 
                         date={message.date}
                         text={message.text}
                         key={index}
-                        gaduka={props.gaduka}
                         ip={props.showIps ? message.ip : undefined}
                         status={adminNicknames.indexOf(message.author.toLowerCase()) !== -1 ? "admin" : ""}
                     />

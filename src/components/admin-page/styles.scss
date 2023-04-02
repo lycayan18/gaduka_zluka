@@ -17,12 +17,47 @@
             padding: 10px 20px;
 
             .box-title {
-                padding: 20px 0;
+                padding: 5px 0;
             }
 
             .search-box {
                 display: flex;
                 gap: 12px;
+                padding: 5px 0;
+            }
+
+            .list-box {
+                padding: 5px 0;
+
+                .list {
+                    margin-top: 5px;
+                    padding: 5px 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 10px;
+                    max-width: 300px;
+                    list-style-type: none;
+
+                    min-height: 300px;
+                    max-height: 300px;
+
+                    overflow-y: scroll;
+
+                    .banned-ip {
+                        font-family: consolas;
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #555;
+
+                        padding: 3px 5px;
+                        border-radius: 5px;
+
+                        cursor: pointer;
+                    }
+
+                    .banned-ip:hover {
+                        background: #f8f8f8;
+                    }
+                }
             }
         }
     }

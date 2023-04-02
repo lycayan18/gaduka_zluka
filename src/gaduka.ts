@@ -10,6 +10,7 @@ import ICreateAccountMessage from "./contracts/messages/request/create-account-m
 import IUserData from "./contracts/user-data";
 import IGetUserDataMessage from "./contracts/messages/request/get-user-data-message";
 import BaseTransmitter from "./transmitters/base-transmitter";
+import BannedIpsManager from "./managers/banned-ips-manager";
 
 interface IEvents {
     message: [IBaseChatMessage[]];
@@ -17,6 +18,8 @@ interface IEvents {
     user_data: [IUserData];
     unauthorize: [];
     banned: [];
+    banned_ips_list_changed: [string[]];
+    unhandled_message: [Message];
     unbanned: [];
     new_participant: [string?];
     lost_participant: [];
@@ -31,6 +34,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
     private _userAuthorized: boolean = false;
     private _isBanned: boolean = false;
     private _adminNicknames: string[] = [];
+    private _bannedIpsManager: BannedIpsManager;
 
     constructor(transmitter: BaseTransmitter) {
         super();
@@ -42,6 +46,9 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this._transmitter.on("unhandled_message", this._handleUnhandledMessage.bind(this));
         this._transmitter.on("disconnect", () => this.emit("ui_message", "Соединение с сервером разорвано.", "error"));
         this._transmitter.on("error", this._handleError.bind(this));
+
+        // Initialize managers
+        this._bannedIpsManager = new BannedIpsManager(this, this._transmitter);
 
         // Get token, authorize user and get user data
         if (localStorage.getItem("token")) {
@@ -77,15 +84,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
     }
 
     getBannedIps() {
-        return new Promise<string[]>(res => {
-            this._transmitter.sendRequest({
-                type: "get banned ips",
-                parameters: {}
-            }, true)
-                .then(result => {
-                    res(result.result.ips);
-                })
-        })
+        return this._bannedIpsManager.getBannedIps();
     }
 
     setCurrentBranch(branch: Branch | "admin" | null) {
@@ -96,25 +95,31 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this._currentBranch = branch;
 
         if (branch === "admin") {
-            this._transmitter.sendRequest<"subscribe admin">({
+            this._transmitter.sendRequest({
                 type: "subscribe admin",
                 parameters: {
                     branches: ["/anon", "/auth"]
                 }
             }, false);
 
+            this._bannedIpsManager.subscribeForUpdates();
+
             return;
         }
 
+        if (this._bannedIpsManager.isSubscribed()) {
+            this._bannedIpsManager.unsubscribeFromUpdates();
+        }
+
         if (branch !== null) {
-            this._transmitter.sendRequest<"subscribe">({
+            this._transmitter.sendRequest({
                 type: "subscribe",
                 parameters: {
                     branch: branch
                 }
             }, false);
         } else {
-            this._transmitter.sendRequest<"unsubscribe all">({
+            this._transmitter.sendRequest({
                 type: "unsubscribe all",
                 parameters: {}
             }, false);
@@ -350,7 +355,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
     private _parseServerMessage(message: Message) {
         switch (message.type) {
-            case "unban event": {
+            case "unbanned": {
                 this._setBannedStatus(false);
                 break;
             }
@@ -432,6 +437,11 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
             case "lost participant": {
                 this.emit("lost_participant");
+                break;
+            }
+
+            default: {
+                this.emit("unhandled_message", message);
                 break;
             }
         }

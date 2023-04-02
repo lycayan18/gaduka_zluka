@@ -10,6 +10,8 @@ type RequestType =
     | "subscribe admin"
     | "ban user"
     | "get banned ips"
+    | "subscribe ban updates"
+    | "unsubscribe ban updates"
     | "unban";
 
 export default RequestType;
