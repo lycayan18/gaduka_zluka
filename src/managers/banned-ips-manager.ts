@@ -14,8 +14,6 @@ export default class BannedIpsManager {
         this._transmitter = transmitter;
 
         this._gaduka.on("unhandled_message", this._handleMessage.bind(this));
-
-        this._requestBannedIpsList();
     }
 
     isSubscribed() {
@@ -52,13 +50,17 @@ export default class BannedIpsManager {
         return this._bannedIps;
     }
 
-    private _requestBannedIpsList() {
+    requestBannedIpsList() {
         this._transmitter.sendRequest({
             type: "get banned ips",
             parameters: {}
         }, true)
             .then(({ result }) => {
+                // clear banned ips array length
+                this._bannedIps.length = 0;
+
                 this._bannedIps.push(...result.ips);
+
                 this._fireChangedIpsListEvent();
             });
     }

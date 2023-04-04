@@ -21,6 +21,7 @@ import ILostParticipantMessage from "./response/lost-participant-message";
 import IUnbanedEventMessage from "./response/unbanned-event-message";
 import ISetBannedIps from "./response/set-banned-ips";
 import IBanUnbanEventMessage from "./response/ban-unban-event";
+import ISuccessMessage from "./response/success-message";
 import IErrorMessage from "./response/error-message";
 import RequestType from "./request/request-type";
 
@@ -54,6 +55,7 @@ type ResponseMessage =
     | ILogMessage
     | ISetBannedIps
     | IBanUnbanEventMessage
+    | ISuccessMessage
     | IErrorMessage;
 
 type Message = RequestMessage | ResponseMessage;

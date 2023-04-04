@@ -30,6 +30,21 @@ body {
     display: flex;
 }
 
+.info-content {
+    padding: 200px 0;
+    text-align: center;
+
+    .title {
+        margin: 40px 0;
+        font-size: 52px;
+        font-weight: bold;
+    }
+
+    .todo {
+        font-size: 26px;
+    }
+}
+
 .error-message {
     font-size: 18px;
     color: #f04;

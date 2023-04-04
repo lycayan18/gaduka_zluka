@@ -20,6 +20,7 @@ interface IEvents {
     banned: [];
     banned_ips_list_changed: [string[]];
     unhandled_message: [Message];
+    admin_access_status_change: [boolean];
     unbanned: [];
     new_participant: [string?];
     lost_participant: [];
@@ -51,12 +52,10 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this._bannedIpsManager = new BannedIpsManager(this, this._transmitter);
 
         // Get token, authorize user and get user data
-        if (localStorage.getItem("token")) {
-            this._token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
-            if (this._token === null) {
-                return;
-            }
+        if (token !== null) {
+            this._token = token;
 
             this._sendUserDataRequest();
             this._authorizeUser();
@@ -100,7 +99,18 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                 parameters: {
                     branches: ["/anon", "/auth"]
                 }
-            }, false);
+            }, true)
+                .then((res) => {
+                    if (res.type === "success") {
+                        this._bannedIpsManager.requestBannedIpsList();
+                        this.emit("admin_access_status_change", true);
+                    }
+                })
+                .catch((err: IErrorMessage) => {
+                    if (err.result.error_type === "permission denied") {
+                        this.emit("admin_access_status_change", false);
+                    }
+                })
 
             this._bannedIpsManager.subscribeForUpdates();
 
@@ -175,20 +185,14 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
     sendBanRequest(ip: string) {
         this._transmitter.sendRequest({
             type: "ban user",
-            parameters: {
-                ip,
-                password: localStorage.getItem(atob("bG9jYWxlUGFzc3dvcmQ=")) || ""
-            }
+            parameters: { ip }
         }, false);
     }
 
     sendUnbanRequest(ip: string) {
         this._transmitter.sendRequest({
             type: "unban",
-            parameters: {
-                ip,
-                password: localStorage.getItem(atob("bG9jYWxlUGFzc3dvcmQ=")) || ""
-            }
+            parameters: { ip }
         }, false);
     }
 
