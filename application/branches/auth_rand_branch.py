@@ -2,7 +2,7 @@ from typing import Callable
 import datetime
 
 from application.branches.rand_branch import RandBranch
-from application.user_manager import UserManager
+from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import *
 

@@ -1,10 +1,11 @@
 from flask import render_template, send_from_directory, request
 from flask_socketio import send
+from os import environ
 
-from application.sid_manager import SidManager
-from application.user_manager import UserManager
+from application.managers.sid_manager import SidManager
+from application.managers.user_manager import UserManager
 from config import app, socketio, database
-from application.branch_manager import BranchManager
+from application.managers.branch_manager import BranchManager
 from database.database_manager import DatabaseManager
 
 with app.app_context():
@@ -52,4 +53,4 @@ def connect_handler():
 
 
 if __name__ == '__main__':
-    socketio.run(app=app, host='192.168.0.109', port=8080, debug=True)
+    socketio.run(app=app, host=environ['HOST'], port=8080, debug=True)

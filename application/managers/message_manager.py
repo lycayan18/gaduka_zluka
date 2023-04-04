@@ -1,17 +1,19 @@
 from typing import Callable
 
-from application.sid_manager import SidManager
-from application.user_manager import UserManager
+from application.managers.sid_manager import SidManager
+from application.managers.user_manager import UserManager
+from application.managers.event_manager import EventManager
 from application.utils.responses import *
 from application.branches.branch import Branch
 from encryption.hashing import generate_token
 
 
 class MessageManager:
-    def __init__(self, branches: dict[str, Branch], user_manager: UserManager, sid_manager: SidManager):
+    def __init__(self, branches: dict[str, Branch], user_manager: UserManager, sid_manager: SidManager, event_manager: EventManager):
         self.branches = branches
         self.user_manager = user_manager
         self.sid_manager = sid_manager
+        self.event_manager = event_manager
 
     def handle_message(self, ip: str, sid: str, query: dict, callback: Callable):
         query_parameters = query['parameters']
@@ -72,6 +74,9 @@ class MessageManager:
                     callback(create_error_response(message_id=0, message='You was banned', error_type='banned'),
                              to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
 
+                    for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
+                        callback(create_ban_event_response(ip=query_parameters['ip']), to=sid)
+
         elif query['type'] == 'get banned ips':
             callback(create_set_banned_ips_response(ips=self.sid_manager.get_banned_ips(), message_id=query['id']))
 
@@ -81,6 +86,15 @@ class MessageManager:
                     self.sid_manager.unban_user(ip=query_parameters['ip'])
 
                     callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
+
+                    for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
+                        callback(create_unban_event_response(ip=query_parameters['ip']), to=sid)
+
+        elif query['type'] == 'subscribe ban updates':
+            self.event_manager.subscribe(event='ban updates', sid=sid)
+
+        elif query['type'] == 'unsubscribe ban updates':
+            self.event_manager.unsubscribe(event='ban updates', sid=sid)
 
 
 
