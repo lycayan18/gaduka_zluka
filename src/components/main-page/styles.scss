@@ -21,4 +21,40 @@
             margin: 3px 0;
         }
     }
+
+    .authors {
+        font-size: 18px;
+
+        width: 100%;
+        padding: 10px 20px;
+
+        border-top: 1px solid #eee;
+
+        a {
+            text-decoration: none;
+        }
+
+        .author {
+            padding: 5px 10px;
+
+            .account-links {
+                li {
+                    display: flex;
+                    font-size: 16px;
+                    align-items: center;
+                    gap: 5px;
+                }
+
+                .account-link-icon {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+            .author-nickname {
+                line-height: 160%;
+                font-weight: bold;
+            }
+        }
+    }
 }
