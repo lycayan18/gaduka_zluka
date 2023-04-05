@@ -18,6 +18,7 @@ interface IEvents {
     user_data: [IUserData];
     unauthorize: [];
     banned: [];
+    message_delete: [number, Branch];
     banned_ips_list_changed: [string[]];
     unhandled_message: [Message];
     admin_access_status_change: [boolean];
@@ -75,6 +76,13 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
     getBannedIps() {
         return this._bannedIpsManager.getBannedIps();
+    }
+
+    deleteMessage(id: number, branch: Branch) {
+        this._transmitter.sendRequest({
+            type: "delete message",
+            parameters: { id, branch }
+        }, false);
     }
 
     setCurrentBranch(branch: Branch | "admin" | null) {
@@ -422,12 +430,18 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                         text: chatMessage.text,
                         branch: branch,
                         status: chatMessage.status || "user",
-                        ip: chatMessage.ip
+                        ip: chatMessage.ip,
+                        id: chatMessage.id
                     });
                 }
 
                 this.emit("message", messages);
 
+                break;
+            }
+
+            case "delete message event": {
+                this.emit("message_delete", message.result.id, message.result.branch);
                 break;
             }
 

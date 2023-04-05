@@ -11,6 +11,7 @@ import IUnbanUserMessage from "./request/unban-user-message";
 import ISubscribeAdminMessage from "./request/subcribe-admin-message";
 import IGetBannedIps from "./request/get-banned-ips";
 import ISubscribeUnsubscribeBanUpdatesMessage from "./request/subscribe-unsubscribe-ban-updates-message";
+import IDeleteMessage from "./request/delete-message";
 import INewMessageEvent from "./response/new-message-event-message";
 import ISetTokenMessage from "./response/set-token-message";
 import ISetUserDataMessage from "./response/set-user-data-message";
@@ -22,6 +23,7 @@ import IUnbanedEventMessage from "./response/unbanned-event-message";
 import ISetBannedIps from "./response/set-banned-ips";
 import IBanUnbanEventMessage from "./response/ban-unban-event";
 import ISuccessMessage from "./response/success-message";
+import IDeleteMessageEvent from "./response/delete-message-event";
 import IErrorMessage from "./response/error-message";
 import RequestType from "./request/request-type";
 
@@ -41,6 +43,7 @@ type RequestMessage<T extends RequestType = RequestType> =
         | IGetBannedIps
         | IUnbanUserMessage
         | ISubscribeUnsubscribeBanUpdatesMessage
+        | IDeleteMessage
     ) & { type: T }; // Use this method instead of just union of conditional types for proper typings
 
 type ResponseMessage =
@@ -56,6 +59,7 @@ type ResponseMessage =
     | ISetBannedIps
     | IBanUnbanEventMessage
     | ISuccessMessage
+    | IDeleteMessageEvent
     | IErrorMessage;
 
 type Message = RequestMessage | ResponseMessage;

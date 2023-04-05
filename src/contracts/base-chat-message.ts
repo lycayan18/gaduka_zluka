@@ -8,4 +8,5 @@ export default interface IBaseChatMessage {
     text: string;
     status: UserStatus;
     ip: string;
+    id: number;
 }

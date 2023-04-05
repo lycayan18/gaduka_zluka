@@ -66,8 +66,8 @@ const AdminPage: React.FunctionComponent<IAdminPageProps> = ({ gaduka }) => {
         <div className="admin-page-content">
             <h1>Админка</h1>
             <div className="chats">
-                <AnonChat gaduka={gaduka} showIps={true}></AnonChat>
-                <AuthChat gaduka={gaduka} showIps={true}></AuthChat>
+                <AnonChat gaduka={gaduka} showAdminTools={true}></AnonChat>
+                <AuthChat gaduka={gaduka} showAdminTools={true}></AuthChat>
             </div>
             <div className="admin-panel">
                 <BanUnbanUserBox gaduka={gaduka} />

@@ -7,7 +7,7 @@ import MessagesHistory from "./messages-history";
 
 interface IChatProps {
     gaduka: Gaduka;
-    showIps?: boolean;
+    showAdminTools?: boolean;
 }
 
 interface IChatState {
@@ -39,7 +39,7 @@ const AuthChat: React.FunctionComponent<IChatProps> = (props: IChatProps) => {
         <div className="chat-content">
             <p className="chat-name">/auth</p>
             <div className="chat-box">
-                <MessagesHistory gaduka={props.gaduka} branch="/auth" showIps={props.showIps || false} />
+                <MessagesHistory gaduka={props.gaduka} branch="/auth" showAdminTools={props.showAdminTools || false} />
                 <CreateMessageBox branch="/auth" gaduka={props.gaduka} disabled={!props.gaduka.isLoggedIn()} />
             </div>
         </div>

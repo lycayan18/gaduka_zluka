@@ -7,6 +7,8 @@ export default interface IGaduka {
     getUserData(): IUserData | null;
     setCurrentBranch(branch: Branch | null): void
 
+    deleteMessage(id: number, branch: Branch): void;
+
     getBannedIps(): string[];
 
     sendBanRequest(ip: string): void;

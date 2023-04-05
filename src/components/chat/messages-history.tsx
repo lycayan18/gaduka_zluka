@@ -8,7 +8,7 @@ import Branch from "../../contracts/branch";
 interface IMessagesHistoryProps {
     gaduka: Gaduka;
     branch: Branch;
-    showIps?: boolean;
+    showAdminTools?: boolean;
 }
 
 const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) => {
@@ -28,22 +28,37 @@ const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) 
             setHistory([...branchMessages.reverse(), ...history]);
         }
 
-        props.gaduka.on("message", handleMessages);
+        const handleMessageDelete = (id: number, branch: Branch) => {
+            if (props.branch !== branch) {
+                return;
+            }
 
-        return () => props.gaduka.off("message", handleMessages);
+            setHistory(history.filter(message => message.id !== id));
+        }
+
+        props.gaduka.on("message", handleMessages);
+        props.gaduka.on("message_delete", handleMessageDelete);
+
+        return () => {
+            props.gaduka.off("message", handleMessages)
+            props.gaduka.off("message_delete", handleMessageDelete);
+        };
     });
 
     return (
         <div className="chat-history">
             {
-                // TODO: With deleting messages functionality added, let the key be message id instead of array index
-                history.map((message, index) => (
+                history.map((message) => (
                     <Message
                         from={message.author}
                         date={message.date}
                         text={message.text}
-                        key={index}
-                        ip={props.showIps ? message.ip : undefined}
+                        key={message.id}
+                        id={message.id}
+                        gaduka={props.gaduka}
+                        branch={props.branch}
+                        ip={props.showAdminTools ? message.ip : undefined}
+                        showDeleteButton={props.showAdminTools ? props.showAdminTools : false}
                         status={message.status}
                     />
                 ))
