@@ -20,13 +20,16 @@ const AdminPage: React.FunctionComponent<IAdminPageProps> = ({ gaduka }) => {
     useEffect(() => {
         const permissionChangeCallback = (isGranted: boolean) => setState({ isLoggedIn, permissionStatus: isGranted ? "granted" : "denied" });
         const onUserDataCallback = () => setState({ isLoggedIn: true, permissionStatus });
+        const onUnauthorizedCallback = () => setState({ isLoggedIn: false, permissionStatus: "waiting" });
 
         gaduka.on("user_data", onUserDataCallback);
         gaduka.on("admin_access_status_change", permissionChangeCallback);
+        gaduka.on("unauthorize", onUnauthorizedCallback);
 
         return () => {
             gaduka.off("user_data", onUserDataCallback);
             gaduka.off("admin_access_status_change", permissionChangeCallback);
+            gaduka.off("unauthorize", onUnauthorizedCallback);
         }
     });
 
