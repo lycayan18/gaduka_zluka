@@ -24,4 +24,8 @@ class AnonRandBranch(RandBranch):
     def try_connect_users(self, callback: Callable):
         if len(self.waiting_list) >= 2:
             self.connect_users(sid_1=self.waiting_list[0], sid_2=self.waiting_list[1], callback=callback)
+
             callback(create_anon_rand_new_participant_response(), to=[self.waiting_list[0], self.waiting_list[1]])
+
+            self.waiting_list.remove(self.waiting_list[0])
+            self.waiting_list.remove(self.waiting_list[0])

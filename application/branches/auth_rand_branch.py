@@ -31,3 +31,6 @@ class AuthRandBranch(RandBranch):
 
             callback(create_auth_rand_new_participant_response(nickname=nickname_2), to=self.waiting_list[0])
             callback(create_auth_rand_new_participant_response(nickname=nickname_1), to=self.waiting_list[1])
+
+            self.waiting_list.remove(self.waiting_list[0])
+            self.waiting_list.remove(self.waiting_list[0])
