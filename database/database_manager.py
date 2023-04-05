@@ -31,6 +31,17 @@ class DatabaseManager:
         self.database.session.delete(ip)
         self.database.session.commit()
 
+    def delete_message_from_anon(self, message_id: int):
+        message = AnonBranchModel.query.filter_by(id=message_id).first()
+        print(message_id, message.id)
+        self.database.session.delete(message)
+        self.database.session.commit()
+
+    def delete_message_from_auth(self, message_id: int):
+        message = AuthBranchModel.query.filter_by(id=message_id).first()
+        self.database.session.delete(message)
+        self.database.session.commit()
+
     @staticmethod
     def is_user_banned(ip: str) -> bool:
         if BlacklistModel.query.filter_by(ip=ip).first():
@@ -52,3 +63,11 @@ class DatabaseManager:
     @staticmethod
     def get_latest_message_from_anon():
         return AnonBranchModel.query.all()
+
+    @staticmethod
+    def get_latest_id_from_anon() -> int:
+        return AnonBranchModel.query.all()[-1].id
+
+    @staticmethod
+    def get_latest_id_from_auth() -> int:
+        return AuthBranchModel.query.all()[-1].id

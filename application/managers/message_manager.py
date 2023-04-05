@@ -17,90 +17,97 @@ class MessageManager:
 
     def handle_message(self, ip: str, sid: str, query: dict, callback: Callable):
         query_parameters = query['parameters']
+        match query['type']:
+            case 'subscribe':
+                for branch in self.branches.values():
+                    branch.disconnect_client(sid, callback=callback)
 
-        if query['type'] == 'subscribe':
-            for branch in self.branches.values():
-                branch.disconnect_client(sid, callback=callback)
+                self.branches[query['parameters']['branch']].connect_client(sid, callback=callback)
 
-            self.branches[query['parameters']['branch']].connect_client(sid, callback=callback)
+            case 'send':
+                if not self.sid_manager.is_ip_banned(ip=ip):
+                    token = self.user_manager.get_token_by_sid(sid)
+                    self.branches[query_parameters['branch']].handle_message(query, callback=callback, token=token,
+                                                                                sid=sid, ip=ip)
+                else:
+                    callback(create_error_response(message_id=0, message='You was banned', error_type='banned'), to=sid)
 
-        elif query['type'] == 'send':
-            if not self.sid_manager.is_ip_banned(ip=ip):
-                token = self.user_manager.get_token_by_sid(sid)
-                self.branches[query['parameters']['branch']].handle_message(query, callback=callback, token=token, sid=sid, ip=ip)
-            else:
-                callback(create_error_response(message_id=0, message='You was banned', error_type='banned'), to=sid)
+            case 'unsubscribe all':
+                for branch in self.branches.values():
+                    branch.disconnect_client(sid, callback=callback)
 
-        elif query['type'] == 'unsubscribe all':
-            for branch in self.branches.values():
-                branch.disconnect_client(sid, callback=callback)
+            case 'get token':
+                token = generate_token(login=query['parameters']['login'], password=query['parameters']['password'])
+                response = self.user_manager.get_token(token=token, message_id=query['id'])
+                callback(response, to=sid)
 
-        elif query['type'] == 'get token':
-            token = generate_token(login=query['parameters']['login'], password=query['parameters']['password'])
-            response = self.user_manager.get_token(token=token, message_id=query['id'])
-            callback(response, to=sid)
+            case 'create account':
+                response = self.user_manager.create_account(nickname=query_parameters['nickname'],
+                                                            login=query_parameters['login'],
+                                                            password=query_parameters['password'],
+                                                            message_id=query['id'])
+                callback(response, to=sid)
 
-        elif query['type'] == 'create account':
-            response = self.user_manager.create_account(nickname=query_parameters['nickname'],
-                                                        login=query_parameters['login'],
-                                                        password=query_parameters['password'], message_id=query['id'])
-            callback(response, to=sid)
+            case 'get user data':
+                callback(self.user_manager.get_user_data(token=query_parameters['token'], message_id=query['id']),
+                         to=sid)
 
-        elif query['type'] == 'get user data':
-            callback(self.user_manager.get_user_data(token=query_parameters['token'], message_id=query['id']), to=sid)
+            case 'authorize user':
+                response = create_authorize_user_response(message_id=query['id'],
+                                                          result=self.user_manager.authorize_user(sid, token=
+                                                          query_parameters['token']))
+                callback(response, to=sid)
 
-        elif query['type'] == 'authorize user':
-            response = create_authorize_user_response(message_id=query['id'],
-                                                      result=self.user_manager.authorize_user(sid, token=query_parameters['token']))
-            callback(response, to=sid)
+            case 'unauthorize user':
+                for branch in self.branches.values():
+                    branch.disconnect_client(sid, callback=callback)
+                self.user_manager.unauthorize_user(sid)
 
-        elif query['type'] == 'unauthorize user':
-            for branch in self.branches.values():
-                branch.disconnect_client(sid, callback=callback)
-            self.user_manager.unauthorize_user(sid)
+            case 'subscribe admin':
+                for branch in self.branches.values():
+                    branch.disconnect_client(sid, callback=callback)
 
-        elif query['type'] == 'subscribe admin':
-            for branch in self.branches.values():
-                branch.disconnect_client(sid, callback=callback)
+                if self.user_manager.is_user_authorize(sid=sid):
+                    self.user_manager.add_to_admins(sid=sid)
+                    callback(create_success_response(message_id=query['id']), to=sid)
 
-            if self.user_manager.is_user_authorize(sid=sid):
-                self.user_manager.add_to_admins(sid=sid)
-                callback(create_success_response(message_id=query['id']), to=sid)
+                    for branch in query['parameters']['branches']:
+                        self.branches[branch].connect_client(sid, callback=callback)
+                else:
+                    callback(create_error_response(message_id=query['id'], message='permission denied',
+                                                   error_type='permission denied'))
 
-                for branch in query['parameters']['branches']:
-                    self.branches[branch].connect_client(sid, callback=callback)
-            else:
-                callback(create_error_response(message_id=query['id'], message='permission denied', error_type='permission denied'))
+            case 'ban user':
+                if query_parameters['password'] == '':
+                    if not self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
+                        self.sid_manager.ban_user(ip=query_parameters['ip'])
 
-        elif query['type'] == 'ban user':
-            if query_parameters['password'] == '':
-                if not self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
-                    self.sid_manager.ban_user(ip=query_parameters['ip'])
+                        callback(create_error_response(message_id=0, message='You was banned', error_type='banned'),
+                                 to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
 
-                    callback(create_error_response(message_id=0, message='You was banned', error_type='banned'),
-                             to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
+                        for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
+                            callback(create_ban_event_response(ip=query_parameters['ip']), to=sid)
 
-                    for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
-                        callback(create_ban_event_response(ip=query_parameters['ip']), to=sid)
+            case 'get banned ips':
+                callback(create_set_banned_ips_response(ips=self.sid_manager.get_banned_ips(), message_id=query['id']))
 
-        elif query['type'] == 'get banned ips':
-            callback(create_set_banned_ips_response(ips=self.sid_manager.get_banned_ips(), message_id=query['id']))
+            case 'unban':
+                if query_parameters['password'] == '':
+                    if self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
+                        self.sid_manager.unban_user(ip=query_parameters['ip'])
 
-        elif query['type'] == 'unban':
-            if query_parameters['password'] == '':
-                if self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
-                    self.sid_manager.unban_user(ip=query_parameters['ip'])
+                        callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
 
-                    callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
+                        for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
+                            callback(create_unban_event_response(ip=query_parameters['ip']), to=sid)
 
-                    for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
-                        callback(create_unban_event_response(ip=query_parameters['ip']), to=sid)
+            case 'subscribe ban updates':
+                self.event_manager.subscribe(event='ban updates', sid=sid)
 
-        elif query['type'] == 'subscribe ban updates':
-            self.event_manager.subscribe(event='ban updates', sid=sid)
+            case 'unsubscribe ban updates':
+                self.event_manager.unsubscribe(event='ban updates', sid=sid)
 
-        elif query['type'] == 'unsubscribe ban updates':
-            self.event_manager.unsubscribe(event='ban updates', sid=sid)
-
-
+            case 'delete message':
+                # adding 1 because primary_key cannot start with 0
+                self.branches[query_parameters['branch']].delete_message(message_id=query_parameters['id'], callback=callback, sid=sid)
 

@@ -13,12 +13,12 @@ class AuthRandBranch(RandBranch):
 
     def handle_message(self, query: dict, callback: Callable, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
-        status = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
+        status = 'admin' if query['parameters']['nickname'] in ['drakutont','dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
-        response = create_new_message_response(
-            nickname=self.database.get_user_data(token=params['token']).nickname,
-            text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
-            branch='/auth/rand', ip=params['ip'], status=status)
+        response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch
+                                               nickname=self.database.get_user_data(token=params['token']).nickname,
+                                               text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
+                                               branch='/auth/rand', ip=params['ip'], status=status)
 
         callback(response, to=[sid_1, sid_2])
 
@@ -26,8 +26,10 @@ class AuthRandBranch(RandBranch):
         if len(self.waiting_list) >= 2:
             self.connect_users(sid_1=self.waiting_list[0], sid_2=self.waiting_list[1], callback=callback)
 
-            nickname_1 = self.database.get_user_data(token=self.user_manager.get_token_by_sid(self.waiting_list[0])).nickname
-            nickname_2 = self.database.get_user_data(token=self.user_manager.get_token_by_sid(self.waiting_list[1])).nickname
+            nickname_1 = self.database.get_user_data(
+                token=self.user_manager.get_token_by_sid(self.waiting_list[0])).nickname
+            nickname_2 = self.database.get_user_data(
+                token=self.user_manager.get_token_by_sid(self.waiting_list[1])).nickname
 
             callback(create_auth_rand_new_participant_response(nickname=nickname_2), to=self.waiting_list[0])
             callback(create_auth_rand_new_participant_response(nickname=nickname_1), to=self.waiting_list[1])

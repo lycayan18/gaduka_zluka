@@ -37,10 +37,12 @@ def create_set_user_data_response(message_id: int, nickname: str) -> dict:
     return response
 
 
-def create_new_message_response(nickname: str, text: str, time: str, branch: str, ip: str, status: str) -> dict:
+def create_new_message_response(message_id: int, nickname: str, text: str, time: str, branch: str, ip: str,
+                                status: str) -> dict:
     response = {
         "type": "new message",
         "result": [{
+            'id': message_id,
             "nickname": nickname,
             "text": text,
             "time": time,
@@ -52,8 +54,9 @@ def create_new_message_response(nickname: str, text: str, time: str, branch: str
     return response
 
 
-def create_message(nickname: str, text: str, time: str, branch: str, ip: str, status: str) -> dict:
+def create_message(message_id: int, nickname: str, text: str, time: str, branch: str, ip: str, status: str) -> dict:
     message = {
+        'id': message_id,
         "nickname": nickname,
         "text": text,
         "time": time,
@@ -143,5 +146,16 @@ def create_success_response(message_id: int) -> dict:
         'type': 'success',
         'id': message_id,
         'result': {}
+    }
+    return response
+
+
+def create_delete_message_event_response(message_id: int, branch: str) -> dict:
+    response = {
+        "type": "delete message event",
+        "result": {
+            "id": message_id,
+            "branch": branch
+        }
     }
     return response

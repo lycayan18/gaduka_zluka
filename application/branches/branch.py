@@ -19,11 +19,14 @@ class Branch:
         if sid in self.clients:
             self.clients.remove(sid)
 
+    def delete_message(self, message_id: int, callback: Callable, **params):  # method will be redefined by the heirs
+        raise NotImplementedError()
+
     def add_message_to_database(self, **params):  # method will be redefined by the heirs
-        pass
+        raise NotImplementedError()
 
     def handle_message(self, query: dict, callback: Callable, **params):  # method will be redefined by the heirs
-        pass
+        raise NotImplementedError()
 
     def get_latest_messages(self) -> dict:  # method will be redefined by the heirs
-        pass
+        raise NotImplementedError()

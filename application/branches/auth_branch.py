@@ -18,7 +18,7 @@ class AuthBranch(Branch):
 
         last_messages = self.database.get_latest_message_from_auth()
         for item in last_messages:
-            message = create_message(nickname=self.database.get_user_data(token=item.token).nickname, text=item.text,
+            message = create_message(message_id=item.id, nickname=self.database.get_user_data(token=item.token).nickname, text=item.text,
                                      time=item.time, branch='/auth', ip=item.ip, status=item.status)
             response['result'].append(message)
 
@@ -27,16 +27,24 @@ class AuthBranch(Branch):
     def add_message_to_database(self, **params):
         self.database.add_message_to_auth(**params)
 
+    def delete_message(self, message_id: int, callback: Callable, **params):
+        if self.user_manager.is_user_admin(params['sid']):
+            self.database.delete_message_from_auth(message_id=message_id)
+            callback(create_delete_message_event_response(message_id=message_id, branch='/auth'), to=params['sid'])
+
     def handle_message(self, query: dict, callback: Callable, **params):
         token = params.get('token')
         ip = params.get('ip')
         status = 'admin' if self.database.get_user_data(token=token).nickname in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
-        self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'], token=token, ip=ip, status=status)
+        self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
+                                     token=token, ip=ip, status=status)
 
         for client in self.clients:
-            response = create_new_message_response(
-                nickname=self.database.get_user_data(token=token).nickname,
-                text=query['parameters']['text'], time=f'{datetime.datetime.now()}', branch='/auth', ip=ip, status=status)
+            response = create_new_message_response(message_id=self.database.get_latest_id_from_auth(),
+                                                   nickname=self.database.get_user_data(token=token).nickname,
+                                                   text=query['parameters']['text'],
+                                                   time=f'{datetime.datetime.now()}', branch='/auth', ip=ip,
+                                                   status=status)
 
             callback(response, to=client)
