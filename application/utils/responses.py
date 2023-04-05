@@ -37,7 +37,7 @@ def create_set_user_data_response(message_id: int, nickname: str) -> dict:
     return response
 
 
-def create_new_message_response(nickname: str, text: str, time: str, branch: str, ip: str) -> dict:
+def create_new_message_response(nickname: str, text: str, time: str, branch: str, ip: str, status: str) -> dict:
     response = {
         "type": "new message",
         "result": [{
@@ -45,19 +45,21 @@ def create_new_message_response(nickname: str, text: str, time: str, branch: str
             "text": text,
             "time": time,
             'branch': branch,
-            'ip': ip
+            'ip': ip,
+            'status': status
         }]
     }
     return response
 
 
-def create_message(nickname: str, text: str, time: str, branch: str, ip: str) -> dict:
+def create_message(nickname: str, text: str, time: str, branch: str, ip: str, status: str) -> dict:
     message = {
         "nickname": nickname,
         "text": text,
         "time": time,
         'branch': branch,
-        'ip': ip
+        'ip': ip,
+        'status': status
     }
     return message
 

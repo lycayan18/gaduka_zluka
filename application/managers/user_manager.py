@@ -9,6 +9,17 @@ class UserManager:
     def __init__(self, database: DatabaseManager):
         self.database = database
         self.authorized_user = {}
+        self.admins = []
+
+    def add_to_admins(self, sid: str):
+        self.admins.append(sid)
+
+    def remove_from_admins(self, sid: str):
+        if sid in self.admins:
+            self.admins.remove(sid)
+
+    def is_user_admin(self, sid: str) -> bool:
+        return sid in self.admins
 
     def get_token_by_sid(self, sid: str) -> Union[str, None]:
         return self.authorized_user.get(sid, None)

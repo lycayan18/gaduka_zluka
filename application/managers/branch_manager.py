@@ -20,8 +20,9 @@ class BranchManager:
         self.event_manager = EventManager()
 
         self.anon_branch = AnonBranch(self.database)
-        self.auth_branch = AuthBranch(self.database)
         self.anon_rand_branch = AnonRandBranch(self.database)
+
+        self.auth_branch = AuthBranch(self.database, self.user_manager)
         self.auth_rand_branch = AuthRandBranch(self.database, self.user_manager)
 
         self.branches = {
@@ -39,6 +40,7 @@ class BranchManager:
             branch.disconnect_client(sid, callback=callback)
 
         self.event_manager.remove_sid_from_all_events(sid=sid)
+        self.user_manager.remove_from_admins(sid=sid)
 
     def handle_message(self, ip: str,  sid: str, query: dict, callback: Callable):
         self.message_manager.handle_message(ip=ip, sid=sid, query=query, callback=callback)

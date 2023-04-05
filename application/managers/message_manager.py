@@ -66,6 +66,8 @@ class MessageManager:
             for branch in query['parameters']['branches']:
                 self.branches[branch].connect_client(sid, callback=callback)
 
+            self.user_manager.add_to_admins(sid=sid)
+
         elif query['type'] == 'ban user':
             if query_parameters['password'] == '':
                 if not self.sid_manager.is_ip_banned(ip=query_parameters['ip']):

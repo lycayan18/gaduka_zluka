@@ -12,8 +12,11 @@ class AnonRandBranch(RandBranch):
 
     def handle_message(self, query: dict, callback: Callable, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
+        status = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] else 'user'
+
         response = create_new_message_response(nickname=query['parameters']['nickname'],
-                                               text=query['parameters']['text'], time=f'{datetime.datetime.now()}')
+                                               text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
+                                               branch='/anon/rand', ip=params['ip'], status=status)
 
         callback(response, to=[sid_1, sid_2])
 

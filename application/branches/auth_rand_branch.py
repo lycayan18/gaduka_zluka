@@ -14,16 +14,19 @@ class AuthRandBranch(RandBranch):
 
     def handle_message(self, query: dict, callback: Callable, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
+        status = 'admin' if self.user_manager.is_user_admin(params['sid']) else 'user'
+
         response = create_new_message_response(
             nickname=self.database.get_user_data(token=params['token']).nickname,
-            text=query['parameters']['text'], time=f'{datetime.datetime.now()}')
+            text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
+            branch='/auth/rand', ip=params['ip'], status=status)
 
         callback(response, to=[sid_1, sid_2])
 
     def try_connect_users(self, callback: Callable):
         if len(self.waiting_list) >= 2:
             self.connect_users(sid_1=self.waiting_list[0], sid_2=self.waiting_list[1], callback=callback)
-            print(self.user_manager.get_token_by_sid(self.waiting_list[0]))
+
             nickname_1 = self.database.get_user_data(token=self.user_manager.get_token_by_sid(self.waiting_list[0])).nickname
             nickname_2 = self.database.get_user_data(token=self.user_manager.get_token_by_sid(self.waiting_list[1])).nickname
 
