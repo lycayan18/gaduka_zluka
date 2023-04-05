@@ -34,7 +34,6 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
     private _lastError: Error | null = null;
     private _userAuthorized: boolean = false;
     private _isBanned: boolean = false;
-    private _adminNicknames: string[] = [];
     private _bannedIpsManager: BannedIpsManager;
 
     constructor(transmitter: BaseTransmitter) {
@@ -60,14 +59,6 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
             this._sendUserDataRequest();
             this._authorizeUser();
         }
-    }
-
-    setAdminNicknames(nicknames: string[]) {
-        this._adminNicknames = nicknames;
-    }
-
-    getAdminNicknames() {
-        return this._adminNicknames;
     }
 
     isBanned() {

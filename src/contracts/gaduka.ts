@@ -3,9 +3,6 @@ import Branch from "./branch";
 import IUserData from "./user-data";
 
 export default interface IGaduka {
-    setAdminNicknames(nicknames: string[]): void;
-    getAdminNicknames(): string[];
-
     isLoggedIn(): boolean;
     getUserData(): IUserData | null;
     setCurrentBranch(branch: Branch | null): void

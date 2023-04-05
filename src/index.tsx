@@ -21,8 +21,6 @@ const address = localStorage.getItem("address");
 
 const gaduka = new Gaduka(address !== null ? new SocketTransmitter(address) : new SocketTransmitter());
 
-gaduka.setAdminNicknames(["dungybug", "drakutont"]);
-
 // Generate admin page url so that noone could read it from sources
 const adminPageUrl = '/' + (parseInt(Math.SQRT1_2.toString().slice(2)).toString(32) + Math.PI.toString(32).slice(2));
 

@@ -14,8 +14,6 @@ interface IMessagesHistoryProps {
 const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) => {
     const [history, setHistory] = useState<IBaseChatMessage[]>(props.gaduka.getChatHistory());
 
-    const adminNicknames = props.gaduka.getAdminNicknames();
-
     useEffect(() => {
         const handleMessages = (messages: IBaseChatMessage[]) => {
             // Filter messages not from this branch
