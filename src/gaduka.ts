@@ -36,6 +36,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
     private _userAuthorized: boolean = false;
     private _isBanned: boolean = false;
     private _bannedIpsManager: BannedIpsManager;
+    private _messagesHistory: IBaseChatMessage[] = [];
 
     constructor(transmitter: BaseTransmitter) {
         super();
@@ -89,6 +90,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         if (this._currentBranch === branch) {
             return;
         }
+
+        this._messagesHistory = [];
 
         this._currentBranch = branch;
 
@@ -201,7 +204,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
      */
     getChatHistory(): IBaseChatMessage[] {
         // TODO: Chat history saving in local storage
-        return [];
+        // Construct a new array to avoid getting link to an array ( and unexpected updates of list )
+        return [...this._messagesHistory];
     }
 
     login(login: string, password: string): Promise<true | false> {
@@ -434,6 +438,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                         id: chatMessage.id
                     });
                 }
+
+                this._messagesHistory.push(...messages);
 
                 this.emit("message", messages);
 
