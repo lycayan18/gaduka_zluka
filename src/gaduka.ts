@@ -430,6 +430,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                         date: new Date(chatMessage.time),
                         text: chatMessage.text,
                         branch: branch,
+                        status: chatMessage.status || "user",
                         ip: chatMessage.ip
                     });
                 }

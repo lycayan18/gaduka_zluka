@@ -62,6 +62,12 @@
                     }
                 }
 
+                &.user {
+                    .author {
+                        color: #333;
+                    }
+                }
+
                 .send-date {
                     font-size: 14px;
                     color: #888;

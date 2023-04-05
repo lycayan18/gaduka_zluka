@@ -1,12 +1,13 @@
 import React from "react";
 import "./styles.scss";
+import UserStatus from "../../contracts/user-status";
 
 interface IMessageProps {
     from: string;
     text: string;
     date: Date;
     ip?: string | undefined;
-    status?: string;
+    status?: UserStatus;
 }
 
 const Message: React.FunctionComponent<IMessageProps> = (props) => (
