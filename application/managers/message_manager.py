@@ -63,10 +63,14 @@ class MessageManager:
             for branch in self.branches.values():
                 branch.disconnect_client(sid, callback=callback)
 
-            for branch in query['parameters']['branches']:
-                self.branches[branch].connect_client(sid, callback=callback)
+            if self.user_manager.is_user_authorize(sid=sid):
+                self.user_manager.add_to_admins(sid=sid)
+                callback(create_success_response(message_id=query['id']), to=sid)
 
-            self.user_manager.add_to_admins(sid=sid)
+                for branch in query['parameters']['branches']:
+                    self.branches[branch].connect_client(sid, callback=callback)
+            else:
+                callback(create_error_response(message_id=query['id'], message='permission denied', error_type='permission denied'))
 
         elif query['type'] == 'ban user':
             if query_parameters['password'] == '':

@@ -19,8 +19,8 @@ class BranchManager:
         self.sid_manager = sid_manager
         self.event_manager = EventManager()
 
-        self.anon_branch = AnonBranch(self.database)
-        self.anon_rand_branch = AnonRandBranch(self.database)
+        self.anon_branch = AnonBranch(self.database, self.user_manager)
+        self.anon_rand_branch = AnonRandBranch(self.database, self.user_manager)
 
         self.auth_branch = AuthBranch(self.database, self.user_manager)
         self.auth_rand_branch = AuthRandBranch(self.database, self.user_manager)

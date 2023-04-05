@@ -9,12 +9,11 @@ from application.utils.responses import *
 
 class AuthRandBranch(RandBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
-        super(AuthRandBranch, self).__init__(database)
-        self.user_manager = user_manager
+        super(AuthRandBranch, self).__init__(database, user_manager)
 
     def handle_message(self, query: dict, callback: Callable, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
-        status = 'admin' if self.user_manager.is_user_admin(params['sid']) else 'user'
+        status = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
         response = create_new_message_response(
             nickname=self.database.get_user_data(token=params['token']).nickname,

@@ -1,12 +1,14 @@
 from typing import Callable
 
+from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 
 
 class Branch:
-    def __init__(self, database: DatabaseManager):
+    def __init__(self, database: DatabaseManager, user_manager: UserManager):
         self.clients = []
         self.database = database
+        self.user_manager = user_manager
 
     def connect_client(self, sid: str, callback: Callable = None):
         self.clients.append(sid)

@@ -2,13 +2,14 @@ from typing import Callable
 import datetime
 
 from application.branches.branch import Branch
+from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import *
 
 
 class RandBranch(Branch):
-    def __init__(self, database: DatabaseManager):
-        super(RandBranch, self).__init__(database)
+    def __init__(self, database: DatabaseManager, user_manager: UserManager):
+        super(RandBranch, self).__init__(database, user_manager)
         self.waiting_list = []
         self.connected_users = {}
 

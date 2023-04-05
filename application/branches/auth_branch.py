@@ -9,8 +9,7 @@ from application.utils.responses import *
 
 class AuthBranch(Branch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
-        super(AuthBranch, self).__init__(database)
-        self.user_manager = user_manager
+        super(AuthBranch, self).__init__(database, user_manager)
 
     def get_latest_messages(self) -> dict:
         response = {
@@ -31,7 +30,7 @@ class AuthBranch(Branch):
     def handle_message(self, query: dict, callback: Callable, **params):
         token = params.get('token')
         ip = params.get('ip')
-        status = 'admin' if self.user_manager.is_user_admin(params['sid']) else 'user'
+        status = 'admin' if self.database.get_user_data(token=token).nickname in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'], token=token, ip=ip, status=status)
 

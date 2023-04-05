@@ -136,3 +136,12 @@ def create_unban_event_response(ip: str) -> dict:
         }
     }
     return response
+
+
+def create_success_response(message_id: int) -> dict:
+    response = {
+        'type': 'success',
+        'id': message_id,
+        'result': {}
+    }
+    return response

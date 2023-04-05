@@ -12,7 +12,8 @@ class UserManager:
         self.admins = []
 
     def add_to_admins(self, sid: str):
-        self.admins.append(sid)
+        if sid in self.authorized_user.keys():
+            self.admins.append(sid)
 
     def remove_from_admins(self, sid: str):
         if sid in self.admins:
@@ -20,6 +21,9 @@ class UserManager:
 
     def is_user_admin(self, sid: str) -> bool:
         return sid in self.admins
+
+    def is_user_authorize(self, sid) -> bool:
+        return sid in self.authorized_user.keys()
 
     def get_token_by_sid(self, sid: str) -> Union[str, None]:
         return self.authorized_user.get(sid, None)
