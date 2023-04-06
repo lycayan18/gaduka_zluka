@@ -40,7 +40,7 @@ export default class SocketTransmitter extends BaseTransmitter {
         return this._socket.connected;
     }
 
-    sendRequest<S extends RequestType, T extends boolean = boolean, U extends RequestMessage<S> = RequestMessage<S>, ReturnType = T extends true ? Promise<ResponseMessageFromRequestMessage<S, U>> : void>(message: WithoutId<U>, waitForResponse: T): ReturnType {
+    sendRequest<S extends RequestType, T extends boolean = boolean, U extends RequestMessage<S> = RequestMessage<S>, ReturnType = T extends true ? Promise<ResponseMessageFromRequestMessage<S, U>> : void>(message: WithoutId<U> & { type: S }, waitForResponse: T): ReturnType {
         if (waitForResponse === true) {
             this._socket.send({
                 ...message,

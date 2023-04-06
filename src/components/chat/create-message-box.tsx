@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import Gaduka from "../../gaduka";
 import Branch from "../../contracts/branch";
 import "./styles.scss";
@@ -12,12 +12,16 @@ interface ICreateMessageBoxProps {
 interface ICreateMessageBoxState {
     nickname: string;
     messageText: string;
+    disabled: boolean;
+    isBanned: boolean;
 }
 
 export default function CreateMessageBox(props: ICreateMessageBoxProps) {
     const [state, setState] = useState<ICreateMessageBoxState>({
         nickname: "Anonymous",
-        messageText: ""
+        messageText: "",
+        disabled: props.disabled || props.gaduka.isBanned(),
+        isBanned: props.gaduka.isBanned()
     });
 
     const handleNicknameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,18 +41,13 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        if (props.disabled === true) {
+        if (props.disabled || state.isBanned) {
             return;
         }
 
         if (state.nickname === "" || state.messageText === "") {
             return;
         }
-
-        setState({
-            nickname: state.nickname,
-            messageText: ''
-        });
 
         switch (props.branch) {
             case "/anon":
@@ -63,6 +62,34 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
                 break;
             }
         }
+
+        setState({
+            nickname: state.nickname,
+            messageText: '',
+            disabled: state.disabled,
+            isBanned: state.isBanned
+        });
+    }
+
+    useEffect(() => {
+        const handleBannedCallback = () => setState({ ...state, disabled: true, isBanned: true });
+        const handleUnbannedCallback = () => setState({ ...state, disabled: props.disabled || false, isBanned: false });
+
+        props.gaduka.on("banned", handleBannedCallback);
+        props.gaduka.on("unbanned", handleUnbannedCallback);
+
+        return () => {
+            props.gaduka.off("banned", handleBannedCallback);
+            props.gaduka.off("unbanned", handleUnbannedCallback);
+        }
+    });
+
+    if (state.isBanned) {
+        return (
+            <form className="create-message-box">
+                <span className="error-message">Вы не имеете прав писать сообщения</span>
+            </form>
+        )
     }
 
     return (

@@ -8,7 +8,7 @@ import WithoutId from "../contracts/messages/without-id";
  * BaseTransmitter class holds for sending messages between server and client.
  */
 export default abstract class BaseTransmitter extends EventEmitter<keyof ITransmitterEvents, ITransmitterEvents> {
-    abstract sendRequest<S extends RequestType, U extends RequestMessage<S> = RequestMessage<S>, T extends true | false = boolean>(message: WithoutId<U>, waitForResponse: T):
+    abstract sendRequest<S extends RequestType, U extends RequestMessage<S> = RequestMessage<S>, T extends true | false = boolean>(message: WithoutId<U> & { type: S }, waitForResponse: T):
         T extends true
         ? Promise<ResponseMessageFromRequestMessage<S, U>>
         : void;

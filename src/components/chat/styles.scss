@@ -58,11 +58,13 @@
 
                 &.admin {
                     .author {
-                        color: #f35;
+                        color: #9600cd;
                     }
+                }
 
-                    .text {
-                        color: #000;
+                &.user {
+                    .author {
+                        color: #333;
                     }
                 }
 
@@ -77,6 +79,44 @@
                     font-family: Arial;
                     font-size: 17px;
                     margin-left: 10px;
+                }
+
+                .delete-button {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    font-size: 12px;
+                    padding: 0;
+                    line-height: 22px;
+                    border: 1px solid red;
+
+                    width: 22px;
+                    height: 22px;
+                    min-width: 22px;
+                    min-height: 22px;
+
+                    color: red;
+                    background: white;
+
+                    svg {
+                        fill: red;
+                    }
+
+                    &:hover {
+                        color: white;
+                        background: red;
+
+                        svg {
+                            fill: white;
+                        }
+                    }
+                }
+
+                .ip {
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #ccc;
                 }
             }
         }

@@ -12,13 +12,17 @@ import RandChat from "./components/chat/rand";
 import AuthChat from "./components/chat/auth";
 import LoginPage from "./components/login-register-page/login";
 import RegisterPage from "./components/login-register-page/register";
+import AdminPage from "./components/admin-page";
 import Gaduka from "./gaduka";
-import SocketTransmitter from "./transmitters/socket-transmitter"
+import SocketTransmitter from "./transmitters/socket-transmitter";
 
 // FIXME: Remove this
 const address = localStorage.getItem("address");
 
 const gaduka = new Gaduka(address !== null ? new SocketTransmitter(address) : new SocketTransmitter());
+
+// Generate admin page url so that noone could read it from sources
+const adminPageUrl = '/' + (parseInt(Math.SQRT1_2.toString().slice(2)).toString(32) + Math.PI.toString(32).slice(2));
 
 const root = createRoot(document.getElementById("root") as HTMLDivElement);
 
@@ -41,6 +45,11 @@ const router = createBrowserRouter([
             {
                 path: "",
                 element: <MainPage />
+            },
+            {
+                path: adminPageUrl,
+                element: <AdminPage gaduka={gaduka} />,
+                errorElement: <ErrorElement />
             },
             {
                 path: "anon",

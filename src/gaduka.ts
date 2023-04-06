@@ -1,7 +1,7 @@
 import EventEmitter from "./utils/event-emitter";
 import IBaseChatMessage from "./contracts/base-chat-message";
 import Branch from "./contracts/branch";
-import { Message } from "./contracts/messages/message";
+import { Message, ResponseMessage } from "./contracts/messages/message";
 import WithoutId from "./contracts/messages/without-id";
 import IErrorMessage from "./contracts/messages/response/error-message";
 import IGaduka from "./contracts/gaduka";
@@ -10,23 +10,33 @@ import ICreateAccountMessage from "./contracts/messages/request/create-account-m
 import IUserData from "./contracts/user-data";
 import IGetUserDataMessage from "./contracts/messages/request/get-user-data-message";
 import BaseTransmitter from "./transmitters/base-transmitter";
+import BannedIpsManager from "./managers/banned-ips-manager";
 
 interface IEvents {
     message: [IBaseChatMessage[]];
     ui_message: [string, "info" | "warning" | "error" | "critical error"];
     user_data: [IUserData];
     unauthorize: [];
+    banned: [];
+    message_delete: [number, Branch];
+    banned_ips_list_changed: [string[]];
+    unhandled_message: [Message];
+    admin_access_status_change: [boolean];
+    unbanned: [];
     new_participant: [string?];
     lost_participant: [];
 }
 
 export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> implements IGaduka {
     private readonly _transmitter: BaseTransmitter;
-    private _currentBranch: Branch | null = null;
+    private _currentBranch: Branch | null | "admin" = null;
     private _token: string | null = null;
     private _userData: IUserData | null = null;
     private _lastError: Error | null = null;
     private _userAuthorized: boolean = false;
+    private _isBanned: boolean = false;
+    private _bannedIpsManager: BannedIpsManager;
+    private _messagesHistory: IBaseChatMessage[] = [];
 
     constructor(transmitter: BaseTransmitter) {
         super();
@@ -34,25 +44,27 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this._transmitter = transmitter;
 
         this._transmitter.on("message", this._parseServerMessage.bind(this));
-        this._transmitter.on("unhandled_error", (message) => this.emit("ui_message", message.result.message, "error"));
-        this._transmitter.on("unhandled_message", (message) => {
-            console.log("Unexpected message from server:", message);
-            this.emit("ui_message", `От сервера пришло неожиданное сообщение типа ${message.type}`, "warning")
-        });
+        this._transmitter.on("unhandled_error", this._handleUnhandledError.bind(this));
+        this._transmitter.on("unhandled_message", this._handleUnhandledMessage.bind(this));
         this._transmitter.on("disconnect", () => this.emit("ui_message", "Соединение с сервером разорвано.", "error"));
         this._transmitter.on("error", this._handleError.bind(this));
 
-        // Get token, authorize user and get user data
-        if (localStorage.getItem("token")) {
-            this._token = localStorage.getItem("token");
+        // Initialize managers
+        this._bannedIpsManager = new BannedIpsManager(this, this._transmitter);
 
-            if (this._token === null) {
-                return;
-            }
+        // Get token, authorize user and get user data
+        const token = localStorage.getItem("token");
+
+        if (token !== null) {
+            this._token = token;
 
             this._sendUserDataRequest();
             this._authorizeUser();
         }
+    }
+
+    isBanned() {
+        return this._isBanned;
     }
 
     isLoggedIn() {
@@ -63,12 +75,53 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         return this._userData;
     }
 
-    setCurrentBranch(branch: Branch | null) {
+    getBannedIps() {
+        return this._bannedIpsManager.getBannedIps();
+    }
+
+    deleteMessage(id: number, branch: Branch) {
+        this._transmitter.sendRequest({
+            type: "delete message",
+            parameters: { id, branch }
+        }, false);
+    }
+
+    setCurrentBranch(branch: Branch | "admin" | null) {
         if (this._currentBranch === branch) {
             return;
         }
 
+        this._messagesHistory = [];
+
         this._currentBranch = branch;
+
+        if (branch === "admin") {
+            this._transmitter.sendRequest({
+                type: "subscribe admin",
+                parameters: {
+                    branches: ["/anon", "/auth"]
+                }
+            }, true)
+                .then((res) => {
+                    if (res.type === "success") {
+                        this._bannedIpsManager.requestBannedIpsList();
+                        this.emit("admin_access_status_change", true);
+                    }
+                })
+                .catch((err: IErrorMessage) => {
+                    if (err.result.error_type === "permission denied") {
+                        this.emit("admin_access_status_change", false);
+                    }
+                })
+
+            this._bannedIpsManager.subscribeForUpdates();
+
+            return;
+        }
+
+        if (this._bannedIpsManager.isSubscribed()) {
+            this._bannedIpsManager.unsubscribeFromUpdates();
+        }
 
         if (branch !== null) {
             this._transmitter.sendRequest({
@@ -131,13 +184,28 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         }
     }
 
+    sendBanRequest(ip: string) {
+        this._transmitter.sendRequest({
+            type: "ban user",
+            parameters: { ip }
+        }, false);
+    }
+
+    sendUnbanRequest(ip: string) {
+        this._transmitter.sendRequest({
+            type: "unban",
+            parameters: { ip }
+        }, false);
+    }
+
     /**
      * Can be helpful to get chat history beyond 100 last messages
      * @returns array of messages
      */
     getChatHistory(): IBaseChatMessage[] {
         // TODO: Chat history saving in local storage
-        return [];
+        // Construct a new array to avoid getting link to an array ( and unexpected updates of list )
+        return [...this._messagesHistory];
     }
 
     login(login: string, password: string): Promise<true | false> {
@@ -200,6 +268,29 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         })
     }
 
+    private _setBannedStatus(isBanned: boolean) {
+        if (this._isBanned === isBanned) {
+            return;
+        }
+
+        this._isBanned = isBanned;
+        this.emit(isBanned ? "banned" : "unbanned");
+    }
+
+    private _handleUnhandledMessage(message: ResponseMessage) {
+        console.log("Unexpected message from server:", message);
+        this.emit("ui_message", `От сервера пришло неожиданное сообщение типа ${message.type}`, "warning");
+    }
+
+    private _handleUnhandledError(message: IErrorMessage) {
+        if (message.result.error_type === "banned") {
+            this._setBannedStatus(true);
+            return;
+        }
+
+        this.emit("ui_message", message.result.message, "error");
+    }
+
     private _setToken(token: string) {
         this._token = token;
 
@@ -260,9 +351,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
             }
         }, true)
             .then(out => {
-                if (out.result === true) {
-                    this._userAuthorized = true;
-                }
+                this._userAuthorized = out.result === true;
             })
             .catch(err => {
                 if (err.type === "invalid token") {
@@ -273,6 +362,41 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
     private _parseServerMessage(message: Message) {
         switch (message.type) {
+            case "unbanned": {
+                this._setBannedStatus(false);
+                break;
+            }
+
+            case "log message": {
+                if (localStorage.getItem("showServerMessages") !== "true") {
+                    break;
+                }
+
+                switch (message.result.type) {
+                    case "debug": {
+                        console.debug("--- Server Message:", message.result.message);
+                        break;
+                    }
+
+                    case "info": {
+                        console.info("--- Server Message:", message.result.message);
+                        break;
+                    }
+
+                    case "error": {
+                        console.error("--- Server Message:", message.result.message);
+                        break;
+                    }
+
+                    case "warning": {
+                        console.warn("--- Server Message:", message.result.message);
+                        break;
+                    }
+                }
+
+                break;
+            }
+
             case "new participant": {
                 if (this._currentBranch !== "/anon/rand" && this._currentBranch !== "/auth/rand") {
                     break;
@@ -298,21 +422,42 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                 const messages: IBaseChatMessage[] = [];
 
                 for (const chatMessage of message.result) {
+                    const branch = chatMessage.branch || (this._currentBranch !== "admin" ? this._currentBranch : null);
+
+                    if (branch === null) {
+                        continue;
+                    }
+
                     messages.push({
-                        author: chatMessage.nickname,
+                        author: chatMessage.nickname || "",
                         date: new Date(chatMessage.time),
                         text: chatMessage.text,
-                        branch: this._currentBranch
+                        branch: branch,
+                        status: chatMessage.status || "user",
+                        ip: chatMessage.ip,
+                        id: chatMessage.id
                     });
                 }
+
+                this._messagesHistory.push(...messages);
 
                 this.emit("message", messages);
 
                 break;
             }
 
+            case "delete message event": {
+                this.emit("message_delete", message.result.id, message.result.branch);
+                break;
+            }
+
             case "lost participant": {
                 this.emit("lost_participant");
+                break;
+            }
+
+            default: {
+                this.emit("unhandled_message", message);
                 break;
             }
         }
