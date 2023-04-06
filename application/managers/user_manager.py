@@ -77,7 +77,7 @@ class UserManager:
         else:
             response = create_set_token_response(message_id=message_id, token=token)
 
-            if nickname.lower() in ['drakutont', 'dangybug']:
+            if nickname.lower() in ['drakutont', 'dungybug']:
                 self.database.add_user(token=token, nickname=nickname, status='admin')
             else:
                 self.database.add_user(token=token, nickname=nickname, status='user')
