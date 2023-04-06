@@ -1,5 +1,5 @@
 from typing import TypedDict, Literal
-from messages.branch import Branch
+from application.request_typing.branch import BranchType
 
 
 class NewMessageEventResult(TypedDict):
@@ -8,7 +8,7 @@ class NewMessageEventResult(TypedDict):
     time: int
     id: int
     status: Literal["admin"] | Literal["user"]
-    branch: Branch
+    branch: BranchType
     ip: str
 
 

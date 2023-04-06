@@ -9,6 +9,8 @@ from application.managers.event_manager import EventManager
 from application.managers.message_manager import MessageManager
 from application.managers.sid_manager import SidManager
 from application.managers.user_manager import UserManager
+from application.request_typing.branch import BranchType
+from application.branches.branch import Branch
 
 from database.database_manager import *
 
@@ -26,7 +28,7 @@ class BranchManager:
         self.auth_branch = AuthBranch(self.database, self.user_manager)
         self.auth_rand_branch = AuthRandBranch(self.database, self.user_manager)
 
-        self.branches = {
+        self.branches: dict[BranchType, Branch] = {
             '/anon': self.anon_branch,
             '/auth': self.auth_branch,
             '/anon/rand': self.anon_rand_branch,

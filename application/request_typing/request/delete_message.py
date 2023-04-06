@@ -1,10 +1,10 @@
 from typing import TypedDict, Literal
-from application.request_typing.branch import Branch
+from application.request_typing.branch import BranchType
 
 
 class DeleteMessageParameters(TypedDict):
     id: int
-    branch: Branch
+    branch: BranchType
 
 
 class DeleteMessage(TypedDict):

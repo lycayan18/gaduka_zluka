@@ -1,6 +1,6 @@
 from typing import Callable
 
-from application.request_typing.request.send_chat_message import BaseSendChatMessage
+from application.request_typing.request.send_chat_message import AuthSendChatMessage, AnonSendChatMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 
@@ -26,7 +26,7 @@ class Branch:
     def add_message_to_database(self, **params):  # method will be redefined by the heirs
         raise NotImplementedError()
 
-    def handle_message(self, query: BaseSendChatMessage, callback: Callable, **params):  # method will be redefined by the heirs
+    def handle_message(self, query: AuthSendChatMessage | AnonSendChatMessage, callback: Callable, **params):  # method will be redefined by the heirs
         raise NotImplementedError()
 
     def get_latest_messages(self) -> dict:  # method will be redefined by the heirs

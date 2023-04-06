@@ -38,10 +38,10 @@ class UserManager:
     def unauthorize_user(self, sid: str):
         self.authorized_user.pop(sid, None)
 
-    def get_user_status(self, token: str) -> str:
+    def get_user_status(self, token: str) -> Literal['user'] | Literal['admin']:
         return self.database.get_user_status(token=token)
 
-    def get_token(self, token: str, message_id: int) -> SetTokenMessage | ErrorMessage:
+    def get_token(self, token: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:
         if not self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='Неверный логин или пароль',
                                           error_type='invalid credentials')
@@ -62,7 +62,7 @@ class UserManager:
             response = create_set_user_data_response(message_id=message_id, nickname='')
         return response
 
-    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> SetTokenMessage | ErrorMessage:
+    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:
         token = generate_token(login, password)
         if self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='login already used',

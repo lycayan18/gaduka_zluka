@@ -2,6 +2,7 @@ from typing import Callable
 import datetime
 
 from application.request_typing.request.send_chat_message import AuthSendChatMessage
+from application.request_typing.response_message import ResponseMessage
 from application.branches.rand_branch import RandBranch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
@@ -12,10 +13,15 @@ class AuthRandBranch(RandBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AuthRandBranch, self).__init__(database, user_manager)
 
-    def handle_message(self, query: AuthSendChatMessage, callback: Callable, **params):
+    def handle_message(self, query: AuthSendChatMessage, callback: Callable[[ResponseMessage], None], **params) -> None:
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
 
         token = params.get('token')
+
+        # Extra type checks for mypy
+        if token is None or not isinstance(token, str):
+            return
+
         status = self.user_manager.get_user_status(token=token)
 
         response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch
@@ -25,7 +31,7 @@ class AuthRandBranch(RandBranch):
 
         callback(response, to=[sid_1, sid_2])
 
-    def try_connect_users(self, callback: Callable):
+    def try_connect_users(self, callback: Callable[[ResponseMessage], None]) -> None:
         if len(self.waiting_list) >= 2:
             try:
                 self.connect_users(sid_1=self.waiting_list[0], sid_2=self.waiting_list[1], callback=callback)

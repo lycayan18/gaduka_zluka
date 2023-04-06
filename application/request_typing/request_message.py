@@ -12,19 +12,20 @@ from application.request_typing.request.subscribe_unsubscribe_ban_updates import
 from application.request_typing.request.unauthorize_user_message import UnauthorizeUserMessage
 from application.request_typing.request.unban_user_message import UnbanUserMessage
 from application.request_typing.request.unsubscribe_all_message import UnsubscribeAllMessage
+from typing import TypeVar
 
-RequestMessage = AuthorizeUserMessage \
-                | CreateAccountMessage \
-                | BanUserMessage \
-                | GetBannedIpsMessage \
-                | GetTokenMessage \
-                | DeleteMessage \
-                | GetUserDataMessage \
-                | AnonSendChatMessage \
-                | AuthSendChatMessage \
-                | SubscribeAdminMessage \
-                | SubscribeMessage \
-                | SubscribeUnsubscribeBanUpdatesMessage \
-                | UnauthorizeUserMessage \
-                | UnbanUserMessage \
-                | UnsubscribeAllMessage
+RequestMessage = TypeVar("RequestMessage", AuthorizeUserMessage,
+                         CreateAccountMessage,
+                         BanUserMessage,
+                         GetBannedIpsMessage,
+                         GetTokenMessage,
+                         DeleteMessage,
+                         GetUserDataMessage,
+                         AnonSendChatMessage,
+                         AuthSendChatMessage,
+                         SubscribeAdminMessage,
+                         SubscribeMessage,
+                         SubscribeUnsubscribeBanUpdatesMessage,
+                         UnauthorizeUserMessage,
+                         UnbanUserMessage,
+                         UnsubscribeAllMessage)

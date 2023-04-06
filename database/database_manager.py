@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from database.models import UsersModel, AuthBranchModel, AnonBranchModel, BlacklistModel
+from typing import Literal
 
 
 class DatabaseManager:
@@ -54,7 +55,7 @@ class DatabaseManager:
         self.database.session.commit()
 
     @staticmethod
-    def get_user_status(token: str) -> str:
+    def get_user_status(token: str) -> Literal['user'] | Literal['admin']:
         return UsersModel.query.filter_by(token=token).first().status
 
     @staticmethod

@@ -1,7 +1,7 @@
 from typing import List, Literal
 
-from application.request_typing.branch import Branch
-from application.request_typing.response.error_message import ErrorMessage
+from application.request_typing.branch import BranchType
+from application.request_typing.response.error_message import ErrorMessageWithId
 from application.request_typing.response.set_token_message import SetTokenMessage
 from application.request_typing.response.set_user_data_message import SetUserDataMessage
 from application.request_typing.response.new_message import NewMessage, NewMessageResult
@@ -15,10 +15,11 @@ from application.request_typing.response.unban_message import UnbanMessage
 from application.request_typing.response.ban_event_message import BanEventMessage
 from application.request_typing.response.success_message import SuccessMessage
 from application.request_typing.response.delete_message_event import DeleteMessageEvent
+from application.request_typing.response.error_message import ErrorType
 
 
-def create_error_response(message_id: int, message: str, error_type: str) -> ErrorMessage:
-    error = {
+def create_error_response(message_id: int, message: str, error_type: ErrorType) -> ErrorMessageWithId:
+    error: ErrorMessageWithId = {
         "type": "error",
         "id": message_id,
         "result": {
@@ -26,11 +27,12 @@ def create_error_response(message_id: int, message: str, error_type: str) -> Err
             "error_type": error_type
         }
     }
+
     return error
 
 
 def create_set_token_response(message_id: int, token: str) -> SetTokenMessage:
-    response = {
+    response: SetTokenMessage = {
         'type': 'set token',
         'id': message_id,
         'result': {
@@ -42,7 +44,7 @@ def create_set_token_response(message_id: int, token: str) -> SetTokenMessage:
 
 
 def create_set_user_data_response(message_id: int, nickname: str) -> SetUserDataMessage:
-    response = {
+    response: SetUserDataMessage = {
         'type': 'set user data',
         'id': message_id,
         'result': {
@@ -53,9 +55,9 @@ def create_set_user_data_response(message_id: int, nickname: str) -> SetUserData
     return response
 
 
-def create_new_message_response(message_id: int, nickname: str, text: str, time: str, branch: Branch, ip: str,
+def create_new_message_response(message_id: int, nickname: str, text: str, time: str, branch: BranchType, ip: str,
                                 status: Literal['user'] | Literal['admin']) -> NewMessage:
-    response = {
+    response: NewMessage = {
         "type": "new message",
         "result": [{
             'id': message_id,
@@ -70,8 +72,8 @@ def create_new_message_response(message_id: int, nickname: str, text: str, time:
     return response
 
 
-def create_message(message_id: int, nickname: str, text: str, time: str, branch: Branch, ip: str, status: Literal['user'] | Literal['admin']) -> NewMessageResult:
-    message = {
+def create_message(message_id: int, nickname: str, text: str, time: str, branch: BranchType, ip: str, status: Literal['user'] | Literal['admin']) -> NewMessageResult:
+    message: NewMessageResult = {
         'id': message_id,
         "nickname": nickname,
         "text": text,
@@ -84,7 +86,7 @@ def create_message(message_id: int, nickname: str, text: str, time: str, branch:
 
 
 def create_authorize_user_response(message_id: int, result: bool) -> AuthorizeUserMessage:
-    response = {
+    response: AuthorizeUserMessage = {
         "type": "authorize user",
         "id": message_id,
         "result": result
@@ -93,7 +95,7 @@ def create_authorize_user_response(message_id: int, result: bool) -> AuthorizeUs
 
 
 def create_anon_rand_new_participant_response() -> AnonRandNewParticipantMessage:
-    response = {
+    response: AnonRandNewParticipantMessage = {
         "type": "new participant",
         "result": {}
     }
@@ -101,7 +103,7 @@ def create_anon_rand_new_participant_response() -> AnonRandNewParticipantMessage
 
 
 def create_auth_rand_new_participant_response(nickname: str) -> AuthRandNewParticipantMessage:
-    response = {
+    response: AuthRandNewParticipantMessage = {
         "type": "new participant",
         "result": {
             "nickname": nickname
@@ -111,7 +113,7 @@ def create_auth_rand_new_participant_response(nickname: str) -> AuthRandNewParti
 
 
 def create_lost_participant_response() -> LostParticipantMessage:
-    response = {
+    response: LostParticipantMessage = {
         "type": "lost participant",
         "result": {}
     }
@@ -119,7 +121,7 @@ def create_lost_participant_response() -> LostParticipantMessage:
 
 
 def create_set_banned_ips_response(ips: List[str], message_id: int) -> SetBannedIpsMessage:
-    response = {
+    response: SetBannedIpsMessage = {
         'type': 'set banned ips',
         'id': message_id,
         'result': {
@@ -130,7 +132,7 @@ def create_set_banned_ips_response(ips: List[str], message_id: int) -> SetBanned
 
 
 def create_unban_response() -> UnbanMessage:
-    response = {
+    response: UnbanMessage = {
         "type": "unbanned",
         "result": {}
     }
@@ -138,7 +140,7 @@ def create_unban_response() -> UnbanMessage:
 
 
 def create_ban_event_response(ip: str) -> BanEventMessage:
-    response = {
+    response: BanEventMessage = {
         "type": "ban event",
         "result": {
             "ip": ip
@@ -148,7 +150,7 @@ def create_ban_event_response(ip: str) -> BanEventMessage:
 
 
 def create_unban_event_response(ip: str) -> UnbanEventMessage:
-    response = {
+    response: UnbanEventMessage = {
         "type": "unban event",
         "result": {
             "ip": ip
@@ -158,15 +160,15 @@ def create_unban_event_response(ip: str) -> UnbanEventMessage:
 
 
 def create_success_response() -> SuccessMessage:
-    response = {
+    response: SuccessMessage = {
         'type': 'success',
         'result': {}
     }
     return response
 
 
-def create_delete_message_event_response(message_id: int, branch: str) -> DeleteMessageEvent:
-    response = {
+def create_delete_message_event_response(message_id: int, branch: BranchType) -> DeleteMessageEvent:
+    response: DeleteMessageEvent = {
         "type": "delete message event",
         "result": {
             "id": message_id,

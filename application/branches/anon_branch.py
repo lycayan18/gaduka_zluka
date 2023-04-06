@@ -3,6 +3,7 @@ import datetime
 
 from application.branches.branch import Branch
 from application.request_typing.request.send_chat_message import AnonSendChatMessage
+from application.request_typing.response.new_message import NewMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_message, create_delete_message_event_response, create_new_message_response
@@ -13,7 +14,7 @@ class AnonBranch(Branch):
         super(AnonBranch, self).__init__(database, user_manager)
 
     def get_latest_messages(self) -> dict:
-        response = {
+        response: NewMessage = {
             "type": "new message",
             "result": []}
 
@@ -35,6 +36,11 @@ class AnonBranch(Branch):
 
     def handle_message(self, query: AnonSendChatMessage, callback: Callable, **params):
         ip = params.get('ip')
+
+        # Extra type checks for mypy
+        if ip is None or not isinstance(ip, str):
+            return
+
         status = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],

@@ -1,9 +1,9 @@
 from typing import TypedDict, Literal
-from application.request_typing.branch import Branch
+from application.request_typing.branch import BranchType
 
 
 class SubscribeAdminMessageParameters(TypedDict):
-    branches: list[Branch]
+    branches: list[BranchType]
 
 
 class SubscribeAdminMessage(TypedDict):
