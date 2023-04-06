@@ -30,7 +30,7 @@ class AnonBranch(Branch):
     def delete_message(self, message_id: int, callback: Callable, **params):
         if self.user_manager.is_user_admin(params['sid']):
             self.database.delete_message_from_anon(message_id=message_id)
-            callback(create_delete_message_event_response(message_id=message_id, branch='/anon'), to=params['sid'])
+            callback(create_delete_message_event_response(message_id=message_id, branch='/anon'), to=self.clients)
 
     def handle_message(self, query: dict, callback: Callable, **params):
         ip = params.get('ip')
@@ -39,9 +39,8 @@ class AnonBranch(Branch):
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
                                      nickname=query['parameters']['nickname'], ip=ip, status=status)
 
-        for client in self.clients:
-            response = create_new_message_response(message_id=self.database.get_latest_id_from_anon(), nickname=query['parameters']['nickname'],
-                                                   text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
-                                                   branch='/anon', ip=ip, status=status)
+        response = create_new_message_response(message_id=self.database.get_latest_id_from_anon(), nickname=query['parameters']['nickname'],
+                                               text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
+                                               branch='/anon', ip=ip, status=status)
 
-            callback(response, to=client)
+        callback(response, to=self.clients)

@@ -30,7 +30,7 @@ class AuthBranch(Branch):
     def delete_message(self, message_id: int, callback: Callable, **params):
         if self.user_manager.is_user_admin(params['sid']):
             self.database.delete_message_from_auth(message_id=message_id)
-            callback(create_delete_message_event_response(message_id=message_id, branch='/auth'), to=params['sid'])
+            callback(create_delete_message_event_response(message_id=message_id, branch='/auth'), to=self.clients)
 
     def handle_message(self, query: dict, callback: Callable, **params):
         token = params.get('token')
@@ -40,11 +40,10 @@ class AuthBranch(Branch):
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
                                      token=token, ip=ip, status=status)
 
-        for client in self.clients:
-            response = create_new_message_response(message_id=self.database.get_latest_id_from_auth(),
-                                                   nickname=self.database.get_user_data(token=token).nickname,
-                                                   text=query['parameters']['text'],
-                                                   time=f'{datetime.datetime.now()}', branch='/auth', ip=ip,
-                                                   status=status)
+        response = create_new_message_response(message_id=self.database.get_latest_id_from_auth(),
+                                               nickname=self.database.get_user_data(token=token).nickname,
+                                               text=query['parameters']['text'],
+                                               time=f'{datetime.datetime.now()}', branch='/auth', ip=ip,
+                                               status=status)
 
-            callback(response, to=client)
+        callback(response, to=self.clients)

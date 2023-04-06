@@ -33,7 +33,6 @@ class DatabaseManager:
 
     def delete_message_from_anon(self, message_id: int):
         message = AnonBranchModel.query.filter_by(id=message_id).first()
-        print(message_id, message.id)
         self.database.session.delete(message)
         self.database.session.commit()
 
