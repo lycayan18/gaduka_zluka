@@ -66,7 +66,7 @@ class MessageManager:
                 for branch in self.branches.values():
                     branch.disconnect_client(sid, callback=callback)
 
-                if self.user_manager.is_user_authorize(sid=sid):
+                if self.user_manager.is_user_authorize(sid=sid) and self.user_manager.get_user_status(token=self.user_manager.get_token_by_sid(sid=sid)) == 'admin':
                     self.user_manager.add_to_admins(sid=sid)
                     callback(create_success_response(message_id=query['id']), to=sid)
 
@@ -77,28 +77,28 @@ class MessageManager:
                                                    error_type='permission denied'))
 
             case 'ban user':
-                if query_parameters['password'] == '':
+                if self.user_manager.is_user_admin(sid=sid):
                     if not self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
                         self.sid_manager.ban_user(ip=query_parameters['ip'])
 
-                        callback(create_error_response(message_id=0, message='You was banned', error_type='banned'),
-                                 to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
+                        callback(create_ban_event_response(ip=query_parameters['ip']), to=self.event_manager.get_subscribed_sids_list('ban updates'))
 
-                        for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
-                            callback(create_ban_event_response(ip=query_parameters['ip']), to=sid)
+                        if self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']):
+                            callback(create_error_response(message_id=0, message='You was banned', error_type='banned'),
+                                     to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
 
             case 'get banned ips':
                 callback(create_set_banned_ips_response(ips=self.sid_manager.get_banned_ips(), message_id=query['id']))
 
             case 'unban':
-                if query_parameters['password'] == '':
+                if self.user_manager.is_user_admin(sid=sid):
                     if self.sid_manager.is_ip_banned(ip=query_parameters['ip']):
                         self.sid_manager.unban_user(ip=query_parameters['ip'])
 
-                        callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
+                        callback(create_unban_event_response(ip=query_parameters['ip']), to=self.event_manager.get_subscribed_sids_list('ban updates'))
 
-                        for sid in self.event_manager.get_subscribed_sids_list('ban updates'):
-                            callback(create_unban_event_response(ip=query_parameters['ip']), to=sid)
+                        if self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']):
+                            callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(ip=query_parameters['ip']))
 
             case 'subscribe ban updates':
                 self.event_manager.subscribe(event='ban updates', sid=sid)
@@ -107,6 +107,6 @@ class MessageManager:
                 self.event_manager.unsubscribe(event='ban updates', sid=sid)
 
             case 'delete message':
-                # adding 1 because primary_key cannot start with 0
-                self.branches[query_parameters['branch']].delete_message(message_id=query_parameters['id'], callback=callback, sid=sid)
+                if self.user_manager.is_user_admin(sid=sid):
+                    self.branches[query_parameters['branch']].delete_message(message_id=query_parameters['id'], callback=callback, sid=sid)
 

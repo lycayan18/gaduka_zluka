@@ -13,7 +13,9 @@ class AuthRandBranch(RandBranch):
 
     def handle_message(self, query: dict, callback: Callable, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
-        status = 'admin' if query['parameters']['nickname'] in ['drakutont','dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
+
+        token = params.get('token')
+        status = self.user_manager.get_user_status(token=token)
 
         response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch
                                                nickname=self.database.get_user_data(token=params['token']).nickname,
@@ -36,3 +38,4 @@ class AuthRandBranch(RandBranch):
 
             self.waiting_list.remove(self.waiting_list[0])
             self.waiting_list.remove(self.waiting_list[0])
+

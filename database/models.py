@@ -32,6 +32,7 @@ class UsersModel(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     nickname = database.Column(database.String(255))
     token = database.Column(database.String(255))
+    status = database.Column(database.String(255))
 
     def __repr__(self):
         return '<Users %r>'

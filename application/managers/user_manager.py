@@ -38,6 +38,9 @@ class UserManager:
     def unauthorize_user(self, sid: str):
         self.authorized_user.pop(sid, None)
 
+    def get_user_status(self, token: str) -> str:
+        return self.database.get_user_status(token=token)
+
     def get_token(self, token: str, message_id: int) -> dict:
         if not self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='Неверный логин или пароль',
@@ -74,6 +77,9 @@ class UserManager:
         else:
             response = create_set_token_response(message_id=message_id, token=token)
 
-            self.database.add_user(token=token, nickname=nickname)
+            if nickname.lower() in ['drakutont', 'dangybug']:
+                self.database.add_user(token=token, nickname=nickname, status='admin')
+            else:
+                self.database.add_user(token=token, nickname=nickname, status='user')
 
             return response

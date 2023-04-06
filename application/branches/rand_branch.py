@@ -22,6 +22,10 @@ class RandBranch(Branch):
     def disconnect_client(self, sid: str, callback: Callable = None):
         super(RandBranch, self).disconnect_client(sid)
         self.remove_from_waiting_list(sid)
+
+        if self.get_interlocutor(sid=sid):
+            self.add_to_waiting_list(self.get_interlocutor(sid=sid))
+
         self.disconnect_users(sid, callback)
 
         self.try_connect_users(callback)
@@ -32,6 +36,14 @@ class RandBranch(Branch):
     def remove_from_waiting_list(self, sid: str):
         if sid in self.waiting_list:
             self.waiting_list.remove(sid)
+
+    def get_interlocutor(self, sid: str) -> str:
+        for key, value in self.connected_users.items():
+            if key == sid:
+                return value
+
+            if value == sid:
+                return key
 
     def get_two_users_sid(self, sid: str):
         for key, value in self.connected_users.items():

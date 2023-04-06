@@ -42,6 +42,10 @@ class DatabaseManager:
         self.database.session.commit()
 
     @staticmethod
+    def get_user_status(token: str) -> str:
+        return UsersModel.query.filter_by(token=token).first().status
+
+    @staticmethod
     def is_user_banned(ip: str) -> bool:
         if BlacklistModel.query.filter_by(ip=ip).first():
             return True
