@@ -35,7 +35,10 @@ class AuthBranch(Branch):
     def handle_message(self, query: dict, callback: Callable, **params):
         token = params.get('token')
         ip = params.get('ip')
-        status = 'admin' if self.database.get_user_data(token=token).nickname in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
+        try:
+            status = 'admin' if self.database.get_user_data(token=token).nickname in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
+        except AttributeError:
+            status = 'user'
 
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
                                      token=token, ip=ip, status=status)

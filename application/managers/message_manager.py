@@ -59,8 +59,7 @@ class MessageManager:
                 callback(response, to=sid)
 
             case 'unauthorize user':
-                for branch in self.branches.values():
-                    branch.disconnect_client(sid, callback=callback)
+                self.branches['/auth/rand'].disconnect_client(sid=sid, callback=callback)
                 self.user_manager.unauthorize_user(sid)
 
             case 'subscribe admin':
