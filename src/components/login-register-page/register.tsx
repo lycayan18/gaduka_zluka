@@ -10,7 +10,7 @@ interface IRegisterPageProps {
 }
 
 const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (props: IRegisterPageProps) => {
-    const [displayErrorMessage, setDisplayErrorMessage] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const navigate = useNavigate();
 
     props.gaduka.setCurrentBranch(null);
@@ -45,11 +45,26 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (props: IRegis
                 if (status) {
                     navigate("/");
                 } else {
-                    setDisplayErrorMessage(true);
+                    setErrorMessage("Не удалось создать аккаунт");
                 }
             })
             .catch((message: IErrorMessage) => {
-                gaduka.emit("ui_message", message.result.message, "error");
+                switch (message.result.error_type) {
+                    case "nickname already used": {
+                        setErrorMessage("Данный никнейм занят");
+                        break;
+                    }
+
+                    case "login already used": {
+                        setErrorMessage("Данный логин уже занят");
+                        break;
+                    }
+
+                    default: {
+                        gaduka.emit("ui_message", message.result.message, "error");
+                        break;
+                    }
+                }
             })
     }
 
@@ -59,7 +74,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (props: IRegis
             <form className="login-register-form" onSubmit={handleSubmit}>
                 <h1>Регистрация</h1>
                 <p className="error-message">
-                    {displayErrorMessage ? "Не удалось создать аккаунт" : ""}
+                    {errorMessage !== null ? errorMessage : ""}
                 </p>
                 <table className="credentials-table">
                     <tbody>

@@ -5,6 +5,8 @@ type ErrorType =
     | "invalid token"
     | "internal error"
     | "permission denied"
+    | "nickname already used"
+    | "login already used"
     | "banned";
 
 export default interface IErrorMessage extends IBaseResponseMessage {
