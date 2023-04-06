@@ -1,10 +1,11 @@
 from typing import Callable
 import datetime
 
+from application.request_typing.request.send_chat_message import BaseSendChatMessage
 from application.branches.branch import Branch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
-from application.utils.responses import *
+from application.utils.responses import create_lost_participant_response
 
 
 class RandBranch(Branch):
@@ -61,4 +62,7 @@ class RandBranch(Branch):
                 break
 
     def try_connect_users(self, callback: Callable):  # method will be redefined by the heirs
-        pass
+        raise NotImplementedError
+
+    def handle_message(self, query: BaseSendChatMessage, callback: Callable, **params):  # method will be redefined by the heirs
+        raise NotImplementedError

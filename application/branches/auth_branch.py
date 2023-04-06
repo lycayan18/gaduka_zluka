@@ -1,10 +1,12 @@
 from typing import Callable
 import datetime
 
+from application.request_typing.request.send_chat_message import AuthSendChatMessage
 from application.branches.branch import Branch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
-from application.utils.responses import *
+from application.utils.responses import create_new_message_response, create_message, \
+    create_delete_message_event_response
 
 
 class AuthBranch(Branch):
@@ -32,7 +34,7 @@ class AuthBranch(Branch):
             self.database.delete_message_from_auth(message_id=message_id)
             callback(create_delete_message_event_response(message_id=message_id, branch='/auth'), to=self.clients)
 
-    def handle_message(self, query: dict, callback: Callable, **params):
+    def handle_message(self, query: AuthSendChatMessage, callback: Callable, **params):
         token = params.get('token')
         ip = params.get('ip')
         status = self.user_manager.get_user_status(token=token)

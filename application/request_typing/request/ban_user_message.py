@@ -3,7 +3,6 @@ from typing import TypedDict, Literal
 
 class BanUserMessageParameters(TypedDict):
     ip: str
-    password: str
 
 
 class BanUserMessage(TypedDict):

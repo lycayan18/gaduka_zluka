@@ -6,6 +6,7 @@ from application.managers.event_manager import EventManager
 from application.utils.responses import *
 from application.branches.branch import Branch
 from encryption.hashing import generate_token
+from application.request_typing.request_message import RequestMessage
 
 
 class MessageManager:
@@ -15,7 +16,7 @@ class MessageManager:
         self.sid_manager = sid_manager
         self.event_manager = event_manager
 
-    def handle_message(self, ip: str, sid: str, query: dict, callback: Callable):
+    def handle_message(self, ip: str, sid: str, query: RequestMessage, callback: Callable):
         query_parameters = query['parameters']
         match query['type']:
             case 'subscribe':
@@ -55,8 +56,7 @@ class MessageManager:
 
             case 'authorize user':
                 response = create_authorize_user_response(message_id=query['id'],
-                                                          result=self.user_manager.authorize_user(sid, token=
-                                                          query_parameters['token']))
+                                                          result=self.user_manager.authorize_user(sid, token=query_parameters['token']))
                 callback(response, to=sid)
 
             case 'unauthorize user':
@@ -69,7 +69,7 @@ class MessageManager:
 
                 if self.user_manager.is_user_authorize(sid=sid) and self.user_manager.get_user_status(token=self.user_manager.get_token_by_sid(sid=sid)) == 'admin':
                     self.user_manager.add_to_admins(sid=sid)
-                    callback(create_success_response(message_id=query['id']), to=sid)
+                    callback(create_success_response(), to=sid)
 
                     for branch in query['parameters']['branches']:
                         self.branches[branch].connect_client(sid, callback=callback)

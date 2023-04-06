@@ -1,6 +1,7 @@
 from typing import Callable
 import datetime
 
+from application.request_typing.request.send_chat_message import AuthSendChatMessage
 from application.branches.rand_branch import RandBranch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
@@ -11,7 +12,7 @@ class AuthRandBranch(RandBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AuthRandBranch, self).__init__(database, user_manager)
 
-    def handle_message(self, query: dict, callback: Callable, **params):
+    def handle_message(self, query: AuthSendChatMessage, callback: Callable, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
 
         token = params.get('token')

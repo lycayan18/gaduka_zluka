@@ -1,6 +1,7 @@
 from typing import Callable
 import datetime
 
+from application.request_typing.request.send_chat_message import AnonSendChatMessage
 from application.branches.rand_branch import RandBranch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
@@ -11,7 +12,7 @@ class AnonRandBranch(RandBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AnonRandBranch, self).__init__(database, user_manager)
 
-    def handle_message(self, query: dict, callback: Callable, **params):
+    def handle_message(self, query: AnonSendChatMessage, callback: Callable, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
         status = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 

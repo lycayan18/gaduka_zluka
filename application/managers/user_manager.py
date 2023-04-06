@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 from application.utils.responses import *
 from database.database_manager import DatabaseManager
@@ -8,8 +8,8 @@ from encryption.hashing import generate_token
 class UserManager:
     def __init__(self, database: DatabaseManager):
         self.database = database
-        self.authorized_user = {}
-        self.admins = []
+        self.authorized_user: dict[str, str] = {}
+        self.admins: List[str] = []
 
     def add_to_admins(self, sid: str):
         if sid in self.authorized_user.keys():
@@ -41,7 +41,7 @@ class UserManager:
     def get_user_status(self, token: str) -> str:
         return self.database.get_user_status(token=token)
 
-    def get_token(self, token: str, message_id: int) -> dict:
+    def get_token(self, token: str, message_id: int) -> SetTokenMessage | ErrorMessage:
         if not self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='Неверный логин или пароль',
                                           error_type='invalid credentials')
@@ -53,7 +53,7 @@ class UserManager:
 
             return response
 
-    def get_user_data(self, token: str, message_id: int) -> dict:
+    def get_user_data(self, token: str, message_id: int) -> SetUserDataMessage:
         user = self.database.get_user_data(token=token)
         if user:
             response = create_set_user_data_response(message_id=message_id, nickname=user.nickname)
@@ -62,7 +62,7 @@ class UserManager:
             response = create_set_user_data_response(message_id=message_id, nickname='')
         return response
 
-    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> dict:
+    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> SetTokenMessage | ErrorMessage:
         token = generate_token(login, password)
         if self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='login already used',

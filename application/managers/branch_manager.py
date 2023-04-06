@@ -1,5 +1,6 @@
 from typing import Callable
 
+from application.request_typing.request_message import RequestMessage
 from application.branches.anon_branch import AnonBranch
 from application.branches.auth_branch import AuthBranch
 from application.branches.anon_rand_branch import AnonRandBranch
@@ -42,5 +43,5 @@ class BranchManager:
         self.event_manager.remove_sid_from_all_events(sid=sid)
         self.user_manager.remove_from_admins(sid=sid)
 
-    def handle_message(self, ip: str,  sid: str, query: dict, callback: Callable):
+    def handle_message(self, ip: str,  sid: str, query: RequestMessage, callback: Callable):
         self.message_manager.handle_message(ip=ip, sid=sid, query=query, callback=callback)
