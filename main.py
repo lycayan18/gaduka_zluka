@@ -11,7 +11,7 @@ from database.database_manager import DatabaseManager
 with app.app_context():
     database.create_all()
 
-database_manager = DatabaseManager(database=database)
+database_manager = DatabaseManager(database=database, maximum_number=10000)
 
 user_manager = UserManager(database=database_manager)
 sid_manager = SidManager(database=database_manager)

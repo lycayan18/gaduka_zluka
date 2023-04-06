@@ -3,8 +3,18 @@ from database.models import UsersModel, AuthBranchModel, AnonBranchModel, Blackl
 
 
 class DatabaseManager:
-    def __init__(self, database: SQLAlchemy):
+    def __init__(self, database: SQLAlchemy, maximum_number: int):
         self.database = database
+        self.maximum_number = maximum_number
+
+    def checking_restriction(self):
+        if len(AnonBranchModel.query.all()) > self.maximum_number:
+            self.database.session.delete(AnonBranchModel.query.all()[0])
+            self.database.session.commit()
+
+        if len(AuthBranchModel.query.all()) > self.maximum_number:
+            self.database.session.delete(AuthBranchModel.query.all()[0])
+            self.database.session.commit()
 
     def add_user(self, **params):
         user = UsersModel(**params)
@@ -15,11 +25,13 @@ class DatabaseManager:
         message = AnonBranchModel(**params)
         self.database.session.add(message)
         self.database.session.commit()
+        self.checking_restriction()
 
     def add_message_to_auth(self, **params):
         message = AuthBranchModel(**params)
         self.database.session.add(message)
         self.database.session.commit()
+        self.checking_restriction()
 
     def add_ip_to_blacklist(self, ip):
         ip = BlacklistModel(ip=ip)
