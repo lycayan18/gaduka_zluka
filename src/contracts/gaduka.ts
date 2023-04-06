@@ -5,7 +5,8 @@ import IUserData from "./user-data";
 export default interface IGaduka {
     isLoggedIn(): boolean;
     getUserData(): IUserData | null;
-    setCurrentBranch(branch: Branch | null): void
+    setCurrentBranch(branch: Branch | "admin" | null): void
+    getCurrentBranch(): Branch | "admin" | null;
 
     deleteMessage(id: number, branch: Branch): void;
 
@@ -21,7 +22,7 @@ export default interface IGaduka {
      * Can be helpful to get chat history beyond 100 last messages
      * @returns array of messages
      */
-    getChatHistory(): IBaseChatMessage[];
+    getChatHistory(branch: Branch): IBaseChatMessage[];
 
     login(login: string, password: string): Promise<true | false>;
 

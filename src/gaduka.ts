@@ -11,6 +11,7 @@ import IUserData from "./contracts/user-data";
 import IGetUserDataMessage from "./contracts/messages/request/get-user-data-message";
 import BaseTransmitter from "./transmitters/base-transmitter";
 import BannedIpsManager from "./managers/banned-ips-manager";
+import MessagesManager from "./managers/messages-manager";
 
 interface IEvents {
     message: [IBaseChatMessage[]];
@@ -29,14 +30,14 @@ interface IEvents {
 
 export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> implements IGaduka {
     private readonly _transmitter: BaseTransmitter;
+    private readonly _bannedIpsManager: BannedIpsManager;
+    private readonly _messagesManager: MessagesManager;
     private _currentBranch: Branch | null | "admin" = null;
     private _token: string | null = null;
     private _userData: IUserData | null = null;
     private _lastError: Error | null = null;
     private _userAuthorized: boolean = false;
     private _isBanned: boolean = false;
-    private _bannedIpsManager: BannedIpsManager;
-    private _messagesHistory: IBaseChatMessage[] = [];
 
     constructor(transmitter: BaseTransmitter) {
         super();
@@ -51,6 +52,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
         // Initialize managers
         this._bannedIpsManager = new BannedIpsManager(this, this._transmitter);
+        this._messagesManager = new MessagesManager(this, this._transmitter);
 
         // Get token, authorize user and get user data
         const token = localStorage.getItem("token");
@@ -86,14 +88,18 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         }, false);
     }
 
+    getCurrentBranch() {
+        return this._currentBranch;
+    }
+
     setCurrentBranch(branch: Branch | "admin" | null) {
         if (this._currentBranch === branch) {
             return;
         }
 
-        this._messagesHistory = [];
-
         this._currentBranch = branch;
+
+        this._messagesManager.handleBranchChange();
 
         if (branch === "admin") {
             this._transmitter.sendRequest({
@@ -149,35 +155,18 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         switch (branch) {
             case "/anon":
             case "/anon/rand": {
-                if (!text) {
-                    return;
-                }
-
-                this._transmitter.sendRequest({
-                    type: "send",
-                    parameters: {
-                        nickname: nickOrText,
-                        text,
-                        branch
-                    }
-                }, false);
+                this._messagesManager.sendMessage(branch, nickOrText, text);
 
                 break;
             }
 
             case "/auth":
             case "/auth/rand": {
-                if (!this.isLoggedIn() || this._token === null) {
+                if (this._token === null) {
                     return;
                 }
 
-                this._transmitter.sendRequest({
-                    type: "send",
-                    parameters: {
-                        text: nickOrText,
-                        branch
-                    }
-                }, false);
+                this._messagesManager.sendMessage(branch, nickOrText);
 
                 break;
             }
@@ -202,10 +191,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
      * Can be helpful to get chat history beyond 100 last messages
      * @returns array of messages
      */
-    getChatHistory(): IBaseChatMessage[] {
-        // TODO: Chat history saving in local storage
-        // Construct a new array to avoid getting link to an array ( and unexpected updates of list )
-        return [...this._messagesHistory];
+    getChatHistory(branch: Branch): IBaseChatMessage[] {
+        return this._messagesManager.getMessagesHistory(branch);
     }
 
     login(login: string, password: string): Promise<true | false> {
@@ -407,41 +394,6 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                 } else {
                     this.emit("new_participant");
                 }
-
-                break;
-            }
-
-            case "new message": {
-                if (this._currentBranch === null) {
-                    break;
-                }
-
-                // To prevent rendering DOM 100500 times in a frame we send array of messages with one
-                // event instead of emitting new event for every message
-
-                const messages: IBaseChatMessage[] = [];
-
-                for (const chatMessage of message.result) {
-                    const branch = chatMessage.branch || (this._currentBranch !== "admin" ? this._currentBranch : null);
-
-                    if (branch === null) {
-                        continue;
-                    }
-
-                    messages.push({
-                        author: chatMessage.nickname || "",
-                        date: new Date(chatMessage.time),
-                        text: chatMessage.text,
-                        branch: branch,
-                        status: chatMessage.status || "user",
-                        ip: chatMessage.ip,
-                        id: chatMessage.id
-                    });
-                }
-
-                this._messagesHistory.push(...messages);
-
-                this.emit("message", messages);
 
                 break;
             }

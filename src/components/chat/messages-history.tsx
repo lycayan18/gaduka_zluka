@@ -12,7 +12,7 @@ interface IMessagesHistoryProps {
 }
 
 const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) => {
-    const [history, setHistory] = useState<IBaseChatMessage[]>(props.gaduka.getChatHistory());
+    const [history, setHistory] = useState<IBaseChatMessage[]>(props.gaduka.getChatHistory(props.branch).reverse());
 
     useEffect(() => {
         const handleMessages = (messages: IBaseChatMessage[]) => {
