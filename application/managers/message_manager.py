@@ -23,12 +23,13 @@ class MessageManager:
                     branch.disconnect_client(sid, callback=callback)
 
                 self.branches[query['parameters']['branch']].connect_client(sid, callback=callback)
+                if self.sid_manager.is_ip_banned(ip=ip):
+                    callback(create_error_response(message_id=0, message='You was banned', error_type='banned'), to=sid)
 
             case 'send':
                 if not self.sid_manager.is_ip_banned(ip=ip):
                     token = self.user_manager.get_token_by_sid(sid)
-                    self.branches[query_parameters['branch']].handle_message(query, callback=callback, token=token,
-                                                                                sid=sid, ip=ip)
+                    self.branches[query_parameters['branch']].handle_message(query, callback=callback, token=token, sid=sid, ip=ip)
                 else:
                     callback(create_error_response(message_id=0, message='You was banned', error_type='banned'), to=sid)
 
