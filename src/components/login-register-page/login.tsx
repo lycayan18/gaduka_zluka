@@ -62,33 +62,29 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props: ILoginPagePr
                     <tbody>
                         <tr>
                             <td>
-                                <label htmlFor="login">Логин</label>
-                            </td>
-                            <td>
-                                <input id="login" type="text" name="login" required />
+                                <p><label htmlFor="login">Логин:</label></p>
+                                <input id="login" type="text" name="login" placeholder="Введите логин" required />
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <label htmlFor="password">Пароль</label>
+                                <p><label htmlFor="password">Пароль:</label></p>
+                                <input id="password" type="password" name="password" placeholder="Введите пароль" required />
                             </td>
+                        </tr>
+                        <tr>
                             <td>
-                                <input id="password" type="password" name="password" required />
+                                <div className="space"></div>
                             </td>
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <button className="btn-submit" type="submit">ВОЙТИ</button>
+                                <button className="btn-submit" type="submit">Войти</button>
                             </td>
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <span className="small-text">или</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>
-                                <Link to="/register">зарегестрироваться</Link>
+                                <span className="small-text">Ещё нет аккаунта? <Link to="/register">Зарегестрируйтесь</Link></span>
                             </td>
                         </tr>
                     </tbody>

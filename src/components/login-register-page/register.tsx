@@ -4,6 +4,7 @@ import Header from "../header";
 import Gaduka from "../../gaduka";
 import IErrorMessage from "../../contracts/messages/response/error-message";
 import "./styles.scss";
+import MessageDisplayer from "../message-displayer";
 
 interface IRegisterPageProps {
     gaduka: Gaduka;
@@ -80,46 +81,41 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (props: IRegis
                     <tbody>
                         <tr>
                             <td>
-                                <label htmlFor="login">Никнейм</label>
-                            </td>
-                            <td>
-                                <input id="nickname" type="text" name="nickname" required />
+                                <p><label htmlFor="login">Никнейм:</label></p>
+                                <input id="nickname" type="text" name="nickname" placeholder="Введите никнейм" required />
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <label htmlFor="login">Логин</label>
-                            </td>
-                            <td>
-                                <input id="login" type="text" name="login" required />
+                                <p><label htmlFor="login">Логин:</label></p>
+                                <input id="login" type="text" name="login" placeholder="Введите логин" required />
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <label htmlFor="password">Пароль</label>
-                            </td>
-                            <td>
-                                <input id="password" type="password" name="password" required />
+                                <p><label htmlFor="password">Пароль:</label></p>
+                                <input id="password" type="password" name="password" placeholder="Введите пароль" required />
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan={2}>
-                                <button className="btn-submit" type="submit">СОЗДАТЬ</button>
+                            <td>
+                                <div className="space"></div>
                             </td>
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <span className="small-text">или</span>
+                                <button className="btn-submit" type="submit">Зарегестрироваться</button>
                             </td>
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <Link to="/login">войти</Link>
+                                <span className="small-text">Уже есть аккаунт? <Link to="/login">Войдите</Link></span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </form>
+            <MessageDisplayer gaduka={props.gaduka} />
         </div>
     )
 }

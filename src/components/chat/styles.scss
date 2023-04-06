@@ -39,10 +39,7 @@
             overflow-y: scroll;
 
             .message-box {
-                display: flex;
-                align-items: end;
                 width: 100%;
-                gap: 8px;
 
                 margin-top: 3px;
                 margin-bottom: 3px;
@@ -52,19 +49,30 @@
                 box-sizing: border-box;
                 border-radius: 3px;
 
-                .author {
-                    font-weight: bold;
+                .message-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .author {
+                        white-space: pre;
+                        font-weight: bold;
+                    }
                 }
 
                 &.admin {
-                    .author {
-                        color: #9600cd;
+                    .message-info {
+                        .author {
+                            color: #9600cd;
+                        }
                     }
                 }
 
                 &.user {
-                    .author {
-                        color: #333;
+                    .message-info {
+                        .author {
+                            color: #333;
+                        }
                     }
                 }
 
@@ -78,7 +86,7 @@
                     word-break: break-word;
                     font-family: Arial;
                     font-size: 17px;
-                    margin-left: 10px;
+                    margin-top: 2px;
                 }
 
                 .delete-button {
@@ -114,6 +122,9 @@
                 }
 
                 .ip {
+                    width: 100%;
+                    text-align: end;
+                    font-family: monospace;
                     font-size: 12px;
                     font-weight: bold;
                     color: #ccc;
@@ -205,20 +216,24 @@
 @media screen and (max-width: 639px) {
     .chat-content {
         .chat-box {
-            .message-box {
-                font-size: 15px;
-                gap: 4px !important;
+            .chat-history {
+                padding: 10px 10px;
 
-                .author {
-                    font-size: 14px;
-                }
+                .message-box {
+                    font-size: 15px;
+                    gap: 4px !important;
 
-                .send-date {
-                    font-size: 10px !important;
-                }
+                    .author {
+                        font-size: 18px;
+                    }
 
-                .text {
-                    font-size: 14px !important;
+                    .send-date {
+                        font-size: 12px !important;
+                    }
+
+                    .text {
+                        font-size: 18px !important;
+                    }
                 }
             }
         }

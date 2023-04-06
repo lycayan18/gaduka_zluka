@@ -14,28 +14,57 @@
         flex-direction: column;
         align-items: center;
         gap: 10px;
-        max-width: 600px;
+        max-width: 400px;
         min-width: fit-content;
         margin: auto;
         margin-top: 40px;
         position: relative;
         z-index: 2;
         font-size: 22px;
-        padding: 20px 80px;
+        padding: 30px 50px;
         border-radius: 20px;
         background: white;
-        box-sizing: border-box;
+        box-sizing: content-box;
 
         h1 {
             font-size: 35px;
         }
 
         .credentials-table {
+            width: 100%;
+            box-sizing: border-box;
+
             & td {
-                padding: 10px 5px;
+                padding: 5px 5px;
 
                 &:first-child {
-                    text-align: right;
+                    text-align: left;
+                }
+
+                label {
+                    color: #444;
+                    font-size: 16px;
+                    line-height: 160%;
+                    margin-left: 5px;
+                }
+
+                p {
+                    margin-bottom: 5px;
+                }
+
+                input {
+                    width: 100%;
+                    font-size: 16px;
+                    height: 36px;
+                    box-sizing: border-box;
+                }
+
+                input:focus {
+                    border-color: #333;
+                }
+
+                input::placeholder {
+                    font-size: 15px;
                 }
             }
 
@@ -46,15 +75,64 @@
                     display: inline-block;
                 }
             }
+
+            .space {
+                padding: 10px 0;
+            }
+        }
+
+        .small-text {
+            color: #555;
+            font-size: 15px;
         }
 
         button[type=submit] {
+            width: 100%;
             padding: 10px 25px;
-            font-size: 20px;
+            font-size: 18px;
         }
     }
+}
 
-    input {
-        font-size: 18px;
+@media screen and (max-width: 640px) {
+    .login-register-page-wrapper {
+        .login-register-form {
+            margin-left: 20px;
+            margin-right: 20px;
+            max-width: 100%;
+
+            h1 {
+                font-size: 40px;
+            }
+
+            .credentials-table {
+                & td {
+                    label {
+                        font-size: 20px;
+                    }
+
+                    input {
+                        font-size: 18px;
+                        height: 44px;
+                    }
+
+                    input::placeholder {
+                        font-size: 17px;
+                    }
+                }
+
+                .space {
+                    padding: 15px 0;
+                }
+            }
+
+            .small-text {
+                font-size: 18px;
+            }
+
+            button[type=submit] {
+                font-size: 23px;
+            }
+        }
     }
 }
