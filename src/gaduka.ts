@@ -225,7 +225,12 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
 
     unauthorize(): void {
         this.emit("unauthorize");
-        this.emit("lost_participant");
+
+        if (this._currentBranch === "/auth/rand") {
+            this.emit("lost_participant");
+        }
+
+        this._userData = null;
 
         this._removeToken();
 
