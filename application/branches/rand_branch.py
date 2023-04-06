@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, TypeVar
 import datetime
 
 from application.request_typing.request.send_chat_message import AnonSendChatMessage, AuthSendChatMessage
@@ -8,7 +8,7 @@ from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_lost_participant_response
 from typing import Optional
-
+from abc import abstractmethod
 
 class RandBranch(Branch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
@@ -82,5 +82,6 @@ class RandBranch(Branch):
     def try_connect_users(self, callback: Optional[FlaskSendCallback]):  # method will be redefined by the heirs
         raise NotImplementedError
 
-    def handle_message(self, query: AnonSendChatMessage | AuthSendChatMessage, callback: Optional[FlaskSendCallback], **params):  # method will be redefined by the heirs
+    @abstractmethod
+    def handle_message(self, query: TypeVar("QueryType", AuthSendChatMessage, AnonSendChatMessage), callback: Optional[FlaskSendCallback], **params):  # method will be redefined by the heirs
         raise NotImplementedError

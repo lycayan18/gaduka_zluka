@@ -3,6 +3,8 @@ from typing import Callable
 from application.request_typing.request.send_chat_message import AuthSendChatMessage, AnonSendChatMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
+from abc import abstractmethod
+from typing import TypeVar
 
 
 class Branch:
@@ -26,7 +28,8 @@ class Branch:
     def add_message_to_database(self, **params):  # method will be redefined by the heirs
         raise NotImplementedError()
 
-    def handle_message(self, query: AuthSendChatMessage | AnonSendChatMessage, callback: Callable, **params):  # method will be redefined by the heirs
+    @abstractmethod
+    def handle_message(self, query: TypeVar("QueryType", AuthSendChatMessage, AnonSendChatMessage), callback: Callable, **params):  # method will be redefined by the heirs
         raise NotImplementedError()
 
     def get_latest_messages(self) -> dict:  # method will be redefined by the heirs

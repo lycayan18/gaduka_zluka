@@ -6,6 +6,7 @@ from application.request_typing.response_message import ResponseMessage
 from application.branches.rand_branch import RandBranch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
+from application.request_typing.flask_send_callback import FlaskSendCallback
 from application.utils.responses import *
 
 
@@ -13,7 +14,7 @@ class AuthRandBranch(RandBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AuthRandBranch, self).__init__(database, user_manager)
 
-    def handle_message(self, query: AuthSendChatMessage, callback: Callable[[ResponseMessage], None], **params) -> None:
+    def handle_message(self, query: AuthSendChatMessage, callback: FlaskSendCallback, **params) -> None:
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
 
         token = params.get('token')
@@ -31,7 +32,7 @@ class AuthRandBranch(RandBranch):
 
         callback(response, to=[sid_1, sid_2])
 
-    def try_connect_users(self, callback: Callable[[ResponseMessage], None]) -> None:
+    def try_connect_users(self, callback: FlaskSendCallback) -> None:
         if len(self.waiting_list) >= 2:
             try:
                 self.connect_users(sid_1=self.waiting_list[0], sid_2=self.waiting_list[1], callback=callback)

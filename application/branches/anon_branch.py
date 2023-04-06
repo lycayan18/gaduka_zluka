@@ -7,13 +7,14 @@ from application.request_typing.response.new_message import NewMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_message, create_delete_message_event_response, create_new_message_response
+from typing import Literal
 
 
 class AnonBranch(Branch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AnonBranch, self).__init__(database, user_manager)
 
-    def get_latest_messages(self) -> dict:
+    def get_latest_messages(self) -> NewMessage:
         response: NewMessage = {
             "type": "new message",
             "result": []}
@@ -41,7 +42,7 @@ class AnonBranch(Branch):
         if ip is None or not isinstance(ip, str):
             return
 
-        status = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
+        status: Literal['admin', 'user'] = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
                                      nickname=query['parameters']['nickname'], ip=ip, status=status)

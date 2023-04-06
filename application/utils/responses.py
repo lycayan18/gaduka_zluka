@@ -56,7 +56,7 @@ def create_set_user_data_response(message_id: int, nickname: str) -> SetUserData
 
 
 def create_new_message_response(message_id: int, nickname: str, text: str, time: str, branch: BranchType, ip: str,
-                                status: Literal['user'] | Literal['admin']) -> NewMessage:
+                                status: Literal['user', 'admin']) -> NewMessage:
     response: NewMessage = {
         "type": "new message",
         "result": [{
@@ -72,7 +72,7 @@ def create_new_message_response(message_id: int, nickname: str, text: str, time:
     return response
 
 
-def create_message(message_id: int, nickname: str, text: str, time: str, branch: BranchType, ip: str, status: Literal['user'] | Literal['admin']) -> NewMessageResult:
+def create_message(message_id: int, nickname: str, text: str, time: str, branch: BranchType, ip: str, status: Literal['user', 'admin']) -> NewMessageResult:
     message: NewMessageResult = {
         'id': message_id,
         "nickname": nickname,

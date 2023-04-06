@@ -4,6 +4,8 @@ from application.request_typing.response.unban_message import UnbanMessage
 from application.request_typing.response.delete_message_event import DeleteMessageEvent
 from application.request_typing.response.error_message import ErrorMessage, ErrorMessageWithId
 from application.request_typing.response.log_message import LogMessage
+from application.request_typing.response.anon_rand_new_participant_message import AnonRandNewParticipantMessage
+from application.request_typing.response.auth_rand_new_participant_message import AuthRandNewParticipantMessage
 from application.request_typing.response.lost_participant_message import LostParticipantMessage
 from application.request_typing.response.new_message_event import NewMessageEvent
 from application.request_typing.response.new_participant_message import NewParticipantMessage
@@ -25,6 +27,9 @@ ResponseMessage = TypeVar("ResponseMessage",
                           LostParticipantMessage,
                           NewMessageEvent,
                           NewParticipantMessage,
+                          AnonRandNewParticipantMessage,
+                          AuthRandNewParticipantMessage,
+                          AuthorizeUserMessage,
                           SetBannedIpsMessage,
                           SetTokenMessage,
                           SetUserDataMessage,
