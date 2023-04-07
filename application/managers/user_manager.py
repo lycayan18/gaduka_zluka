@@ -1,4 +1,5 @@
-from typing import Union
+from typing import Literal, Optional
+from application.contracts.user_status import UserStatus
 
 from application.utils.responses import *
 from database.database_manager import DatabaseManager
@@ -8,24 +9,24 @@ from encryption.hashing import generate_token
 class UserManager:
     def __init__(self, database: DatabaseManager):
         self.database = database
-        self.authorized_user = {}
-        self.admins = []
+        self.authorized_user: dict[str, str] = {}
+        self.admins: List[str] = []
 
-    def add_to_admins(self, sid: str):
+    def add_to_admins(self, sid: str) -> None:
         if sid in self.authorized_user.keys():
             self.admins.append(sid)
 
-    def remove_from_admins(self, sid: str):
+    def remove_from_admins(self, sid: str) -> None:
         if sid in self.admins:
             self.admins.remove(sid)
 
     def is_user_admin(self, sid: str) -> bool:
         return sid in self.admins
 
-    def is_user_authorize(self, sid) -> bool:
+    def is_user_authorize(self, sid: str) -> bool:
         return sid in self.authorized_user.keys()
 
-    def get_token_by_sid(self, sid: str) -> Union[str, None]:
+    def get_token_by_sid(self, sid: str) -> str | None:
         return self.authorized_user.get(sid, None)
 
     def authorize_user(self, sid: str, token: str) -> bool:
@@ -35,13 +36,15 @@ class UserManager:
 
         return False
 
-    def unauthorize_user(self, sid: str):
+    def unauthorize_user(self, sid: str) -> None:
         self.authorized_user.pop(sid, None)
 
-    def get_user_status(self, token: str) -> str:
+    def get_user_status(self, token: Optional[str]) -> UserStatus:
+        if token is None:
+            return 'user'
         return self.database.get_user_status(token=token)
 
-    def get_token(self, token: str, message_id: int) -> dict:
+    def get_token(self, token: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:
         if not self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='Неверный логин или пароль',
                                           error_type='invalid credentials')
@@ -53,7 +56,7 @@ class UserManager:
 
             return response
 
-    def get_user_data(self, token: str, message_id: int) -> dict:
+    def get_user_data(self, token: str, message_id: int) -> SetUserDataMessage:
         user = self.database.get_user_data(token=token)
         if user:
             response = create_set_user_data_response(message_id=message_id, nickname=user.nickname)
@@ -62,7 +65,7 @@ class UserManager:
             response = create_set_user_data_response(message_id=message_id, nickname='')
         return response
 
-    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> dict:
+    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:
         token = generate_token(login, password)
         if self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='login already used',

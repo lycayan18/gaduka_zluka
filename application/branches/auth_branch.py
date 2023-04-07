@@ -1,18 +1,22 @@
 from typing import Callable
 import datetime
+from application.contracts.flask_send_callback import FlaskSendCallback
 
-from application.branches.branch import Branch
+from application.contracts.request.send_chat_message import AuthSendChatMessage
+from application.branches.base_branch import BaseBranch
+from application.contracts.response.new_message import NewMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
-from application.utils.responses import *
+from application.utils.responses import create_new_message_response, create_message, \
+    create_delete_message_event_response
 
 
-class AuthBranch(Branch):
+class AuthBranch(BaseBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AuthBranch, self).__init__(database, user_manager)
 
-    def get_latest_messages(self) -> dict:
-        response = {
+    def get_latest_messages(self) -> NewMessage:
+        response: NewMessage = {
             "type": "new message",
             "result": []}
 
@@ -27,14 +31,14 @@ class AuthBranch(Branch):
     def add_message_to_database(self, **params):
         self.database.add_message_to_auth(**params)
 
-    def delete_message(self, message_id: int, callback: Callable, **params):
+    def delete_message(self, message_id: int, callback: FlaskSendCallback, **params):
         if self.user_manager.is_user_admin(params['sid']):
             self.database.delete_message_from_auth(message_id=message_id)
             callback(create_delete_message_event_response(message_id=message_id, branch='/auth'), to=self.clients)
 
-    def handle_message(self, query: dict, callback: Callable, **params):
+    def handle_message(self, query: AuthSendChatMessage, callback: FlaskSendCallback, **params):
         token = params.get('token')
-        ip = params.get('ip')
+        ip = params.get('ip', '0.0.0.0')
         status = self.user_manager.get_user_status(token=token)
 
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],

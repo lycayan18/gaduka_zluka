@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 from database.database_manager import DatabaseManager
 
@@ -6,7 +6,7 @@ from database.database_manager import DatabaseManager
 class SidManager:
     def __init__(self, database: DatabaseManager):
         self.database = database
-        self.users = {}
+        self.users: dict[str, str] = {}
 
     def get_ip_by_sid(self, sid: str) -> Union[str, None]:
         return self.users.get(sid, None)
@@ -25,7 +25,7 @@ class SidManager:
     def is_ip_banned(self, ip: str) -> bool:
         return self.database.is_user_banned(ip)
 
-    def get_banned_ips(self) -> list:
+    def get_banned_ips(self) -> List[str]:
         banned_ips = [item.ip for item in self.database.get_banned_ips()]
         return banned_ips
 
