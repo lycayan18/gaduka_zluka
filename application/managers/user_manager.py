@@ -1,4 +1,5 @@
 from typing import Literal, Optional
+from application.contracts.user_status import UserStatus
 
 from application.utils.responses import *
 from database.database_manager import DatabaseManager
@@ -38,7 +39,7 @@ class UserManager:
     def unauthorize_user(self, sid: str) -> None:
         self.authorized_user.pop(sid, None)
 
-    def get_user_status(self, token: Optional[str]) -> Literal['user'] | Literal['admin']:
+    def get_user_status(self, token: Optional[str]) -> UserStatus:
         if token is None:
             return 'user'
         return self.database.get_user_status(token=token)

@@ -1,5 +1,6 @@
 from typing import TypedDict, Literal
 from application.contracts.branch_type import BranchType
+from application.contracts.user_status import UserStatus
 
 
 class NewMessageResult(TypedDict):
@@ -7,7 +8,7 @@ class NewMessageResult(TypedDict):
     text: str
     time: str
     id: int
-    status: Literal["admin"] | Literal["user"]
+    status: UserStatus
     branch: BranchType
     ip: str
 

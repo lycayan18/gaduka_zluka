@@ -2,6 +2,7 @@ from typing import Callable, TypedDict
 
 from application.branches.anon_branch import AnonBranch
 from application.contracts.branch import Branch
+from application.contracts.flask_send_callback import FlaskSendCallback
 from application.managers.sid_manager import SidManager
 from application.managers.user_manager import UserManager
 from application.managers.event_manager import EventManager
@@ -19,7 +20,7 @@ class MessageManager:
         self.sid_manager = sid_manager
         self.event_manager = event_manager
 
-    def handle_message(self, ip: str, sid: str, query: RequestMessage, callback: Callable):
+    def handle_message(self, ip: str, sid: str, query: RequestMessage, callback: FlaskSendCallback):
         match query['type']:
             case 'subscribe':
                 for branch in self.branches.values():

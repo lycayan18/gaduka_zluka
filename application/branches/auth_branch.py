@@ -1,5 +1,6 @@
 from typing import Callable
 import datetime
+from application.contracts.flask_send_callback import FlaskSendCallback
 
 from application.contracts.request.send_chat_message import AuthSendChatMessage
 from application.branches.base_branch import BaseBranch
@@ -30,12 +31,12 @@ class AuthBranch(BaseBranch):
     def add_message_to_database(self, **params):
         self.database.add_message_to_auth(**params)
 
-    def delete_message(self, message_id: int, callback: Callable, **params):
+    def delete_message(self, message_id: int, callback: FlaskSendCallback, **params):
         if self.user_manager.is_user_admin(params['sid']):
             self.database.delete_message_from_auth(message_id=message_id)
             callback(create_delete_message_event_response(message_id=message_id, branch='/auth'), to=self.clients)
 
-    def handle_message(self, query: AuthSendChatMessage, callback: Callable, **params):
+    def handle_message(self, query: AuthSendChatMessage, callback: FlaskSendCallback, **params):
         token = params.get('token')
         ip = params.get('ip', '0.0.0.0')
         status = self.user_manager.get_user_status(token=token)
