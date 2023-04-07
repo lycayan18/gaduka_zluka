@@ -18,13 +18,15 @@ interface ICreateMessageBoxState {
 
 export default function CreateMessageBox(props: ICreateMessageBoxProps) {
     const [state, setState] = useState<ICreateMessageBoxState>({
-        nickname: "Anonymous",
+        nickname: localStorage.getItem("anonBranchNickname") || "Anonymous",
         messageText: "",
         disabled: props.disabled || props.gaduka.isBanned(),
         isBanned: props.gaduka.isBanned()
     });
 
     const handleNicknameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        localStorage.setItem("anonBranchNickname", e.target.value);
+
         setState({
             ...state,
             nickname: e.target.value
