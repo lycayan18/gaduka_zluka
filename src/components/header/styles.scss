@@ -8,9 +8,13 @@
     padding: 3px 30px;
     box-sizing: border-box;
 
-    background-color: #333;
+    background-color: #000;
     position: relative;
     z-index: 10;
+    
+    &.transparent {
+        background-color: #0003;
+    }
 
     .logo {
         display: flex;
@@ -35,7 +39,7 @@
             color: #fff;
 
             .cursor {
-                color: #333;
+                color: transparent;
 
                 animation: 1s linear 0s 15 running blink-effect;
             }
@@ -91,10 +95,10 @@
     }
 
     51% {
-        color: #333;
+        color: transparent;
     }
 
     100% {
-        color: #333;
+        color: transparent;
     }
 }

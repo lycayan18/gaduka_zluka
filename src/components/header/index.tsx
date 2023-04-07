@@ -6,6 +6,7 @@ import "./styles.scss";
 
 interface IHeaderProps {
     gaduka: Gaduka;
+    transparent?: boolean;
 }
 
 const Header: React.FunctionComponent<IHeaderProps> = (props: IHeaderProps) => {
@@ -24,7 +25,7 @@ const Header: React.FunctionComponent<IHeaderProps> = (props: IHeaderProps) => {
     });
 
     return (
-        <div className="header">
+        <div className={"header" + (props.transparent === true ? " transparent" : "")}>
             <Link to="/" className="non-underlined-link">
                 <div className="logo">
                     <div className="logo-icon-container">

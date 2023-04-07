@@ -52,7 +52,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props: ILoginPagePr
 
     return (
         <div className="login-register-page-wrapper">
-            <Header gaduka={props.gaduka} />
+            <Header gaduka={props.gaduka} transparent={true} />
             <form className="login-register-form" onSubmit={handleSubmit}>
                 <h1>Вход</h1>
                 <p className="error-message">
