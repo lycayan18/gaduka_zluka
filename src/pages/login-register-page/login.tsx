@@ -2,30 +2,29 @@ import React, { useState, useEffect } from "react";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from "react-router-dom";
-import Header from "../header";
-import Gaduka from "../../gaduka";
 import IErrorMessage from "../../contracts/messages/response/error-message";
+import Gaduka from "../../gaduka";
+import Header from "../../components/header";
+import MessageDisplayer from "../../components/message-displayer";
 import "./styles.scss";
-import MessageDisplayer from "../message-displayer";
 
-interface IRegisterPageProps {
+interface ILoginPageProps {
     gaduka: Gaduka;
 }
 
-const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) => {
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+const LoginPage: React.FunctionComponent<ILoginPageProps> = ({ gaduka }) => {
+    const [displayErrorMessage, setDisplayErrorMessage] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         gaduka.setCurrentBranch(null);
-    }, []);
+    }, [])
 
     const formik = useFormik({
         initialValues: {
             login: '',
             password: '',
-            nickname: ''
         },
         validationSchema: new Yup.ObjectSchema({
             login: Yup.string()
@@ -35,23 +34,15 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
             password: Yup.string()
                 .required('Это поле обязательно!')
                 .min(5, 'Длина пароля должна быть не менее 5')
-                .max(80, 'Длина логина должна быть не более 80'),
-            nickname: Yup.string()
-                .required("Это поле обязательно!")
-                .min(2, 'Длина никнейма должна быть не менее 2')
-                .max(40, 'Длина ника должна быть не более 40')
+                .max(80, 'Длина логина должна быть не более 80')
         }),
-        onSubmit: async ({ login, password, nickname }) => {
+        onSubmit: async ({ login, password }) => {
             try {
                 setIsFetching(true);
 
-                const status = await gaduka.createAccount(nickname, login, password);
+                const status = await gaduka.login(login, password);
 
-                if (status) {
-                    navigate("/");
-                } else {
-                    setErrorMessage("Не удалось создать аккаунт");
-                }
+                status ? navigate("/") : setDisplayErrorMessage(true);
             } catch (error) {
                 if (error instanceof Error) {
                     console.error(error);
@@ -60,22 +51,9 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
 
                 const errorMessage = error as IErrorMessage;
 
-                switch (errorMessage.result.error_type) {
-                    case "nickname already used": {
-                        setErrorMessage("Данный никнейм занят");
-                        break;
-                    }
-
-                    case "login already used": {
-                        setErrorMessage("Данный логин уже занят");
-                        break;
-                    }
-
-                    default: {
-                        gaduka.emit("ui_message", errorMessage.result.message, "error");
-                        break;
-                    }
-                }
+                gaduka.emit("ui_message", errorMessage.result.message, "error");
+            } finally {
+                setIsFetching(false);
             }
         }
     })
@@ -83,30 +61,13 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
     return (
         <div className="login-register-page-wrapper">
             <Header gaduka={gaduka} transparent={true} />
-            <form className="login-register-form" onSubmit={formik.handleSubmit}>
-                <h1>Регистрация</h1>
+            <form className="login-register-form" onSubmit={formik.handleSubmit} noValidate>
+                <h1>Вход</h1>
                 <p className="error-message">
-                    {errorMessage !== null ? errorMessage : ""}
+                    {displayErrorMessage ? "Неверные регистрационные данные" : ""}
                 </p>
                 <table className="credentials-table">
                     <tbody>
-                        <tr>
-                            <td>
-                                <p><label htmlFor="login">Никнейм:</label></p>
-                                <input
-                                    id="nickname"
-                                    type="text"
-                                    name="nickname"
-                                    placeholder="Введите никнейм"
-                                    value={formik.values.nickname}
-                                    onChange={formik.handleChange}
-                                    autoComplete="off"
-                                    className={formik.touched.nickname && formik.errors.nickname ? 'invalid' : ''}
-                                    disabled={isFetching}
-                                />
-                                {formik.touched.nickname && formik.errors.nickname && <p className='error-message small'>{formik.errors.nickname}</p>}
-                            </td>
-                        </tr>
                         <tr>
                             <td>
                                 <p><label htmlFor="login">Логин:</label></p>
@@ -118,7 +79,9 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                                     value={formik.values.login}
                                     onChange={formik.handleChange}
                                     autoComplete="off"
-                                    className={formik.touched.login && formik.errors.login ? 'invalid' : ''} />
+                                    className={formik.touched.login && formik.errors.login ? 'invalid' : ''}
+                                    disabled={isFetching}
+                                />
                                 {formik.touched.login && formik.errors.login && <p className='error-message small'>{formik.errors.login}</p>}
                             </td>
                         </tr>
@@ -134,6 +97,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                                     onChange={formik.handleChange}
                                     autoComplete="off"
                                     className={formik.touched.password && formik.errors.password ? 'invalid' : ''}
+                                    disabled={isFetching}
                                 />
                                 {formik.touched.password && formik.errors.password && <p className='error-message small'>{formik.errors.password}</p>}
                             </td>
@@ -145,12 +109,12 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <button className="btn-submit" type="submit" disabled={isFetching}>Зарегестрироваться</button>
+                                <button className="btn-submit" type="submit" disabled={isFetching}>Войти</button>
                             </td>
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <span className="small-text">Уже есть аккаунт? <Link to="/login">Войдите</Link></span>
+                                <span className="small-text">Ещё нет аккаунта? <Link to="/register">Зарегестрируйтесь</Link></span>
                             </td>
                         </tr>
                     </tbody>
@@ -161,4 +125,4 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
     )
 }
 
-export default RegisterPage;
+export default LoginPage;

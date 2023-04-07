@@ -110,8 +110,8 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
             }, true)
                 .then((res) => {
                     if (res.type === "success") {
-                        this._bannedIpsManager.requestBannedIpsList();
                         this.emit("admin_access_status_change", true);
+                        this._bannedIpsManager.requestBannedIpsList();
                     }
                 })
                 .catch((err: IErrorMessage) => {

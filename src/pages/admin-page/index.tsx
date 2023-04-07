@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Gaduka from "../../gaduka";
-import AnonChat from "../chat/anon";
-import AuthChat from "../chat/auth";
+import AnonChat from "../../components/chat/anon";
+import AuthChat from "../../components/chat/auth";
 import BanUnbanUserBox from "./ban-unban-user";
 import "./styles.scss";
 

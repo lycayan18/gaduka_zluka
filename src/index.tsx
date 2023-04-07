@@ -5,14 +5,14 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import App from "./app";
-import MainPage from "./components/main-page";
+import MainPage from "./pages/main-page";
 import ErrorElement from "./components/error-element";
 import AnonChat from "./components/chat/anon";
 import RandChat from "./components/chat/rand";
 import AuthChat from "./components/chat/auth";
-import LoginPage from "./components/login-register-page/login";
-import RegisterPage from "./components/login-register-page/register";
-import AdminPage from "./components/admin-page";
+import LoginPage from "./pages/login-register-page/login";
+import RegisterPage from "./pages/login-register-page/register";
+import AdminPage from "./pages/admin-page";
 import Gaduka from "./gaduka";
 import SocketTransmitter from "./transmitters/socket-transmitter";
 

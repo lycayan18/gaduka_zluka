@@ -46,18 +46,21 @@ const RandChat: React.FunctionComponent<IRandChatProps> = (props) => {
         }
     });
 
+    const participantStatus =
+        isAuthorized
+            ? participantState.available
+                ? participantState.nickname
+                    ? `Собеседник: ${participantState.nickname}`
+                    : "Собеседник найден"
+                : "Поиск собеседника..."
+            : "Вы не вошли в аккаунт";
+
     return (
         <div className="chat-content">
             <p className="chat-name">{window.location.pathname}</p>
             <div className="chat-box">
                 <p className={"participant-status" + (participantState.nickname !== undefined ? " with-nickname" : "")}>
-                    {
-                        isAuthorized ?
-                            (participantState.available
-                                ? (participantState.nickname || "Собеседник найден")
-                                : "Поиск собеседника...")
-                            : "Вы не вошли в аккаунт"
-                    }
+                    {participantStatus}
                 </p>
                 <MessagesHistory gaduka={props.gaduka} branch={props.branch} />
                 <CreateMessageBox branch={props.branch} gaduka={props.gaduka} disabled={isDisabled} />
