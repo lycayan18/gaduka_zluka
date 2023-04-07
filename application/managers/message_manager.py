@@ -81,7 +81,7 @@ class MessageManager:
 
                 if self.user_manager.is_user_authorize(sid=sid) and self.user_manager.get_user_status(token=self.user_manager.get_token_by_sid(sid=sid)) == 'admin':
                     self.user_manager.add_to_admins(sid=sid)
-                    callback(create_success_response(), to=sid)
+                    callback(create_success_response(message_id=query['id']), to=sid)
 
                     for branch in query['parameters']['branches']:
                         self.branches[branch].connect_client(sid=sid, callback=callback)

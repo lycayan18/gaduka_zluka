@@ -70,12 +70,8 @@ class DatabaseManager:
         return BlacklistModel.query.all()
 
     @staticmethod
-    def get_user_data(**filter_params) -> UsersModel:
-        user_data = UsersModel.query.filter_by(**filter_params).first()
-        if user_data:
-            return user_data
-        else:
-            return UsersModel(nickname='', token='', status='user')
+    def get_user_data(**filter_params) -> UsersModel | None:
+        return UsersModel.query.filter_by(**filter_params).first()
 
     @staticmethod
     def get_latest_message_from_auth() -> List[AuthBranchModel]:

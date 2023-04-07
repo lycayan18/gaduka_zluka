@@ -160,9 +160,10 @@ def create_unban_event_response(ip: str) -> UnbanEventMessage:
     return response
 
 
-def create_success_response() -> SuccessMessage:
+def create_success_response(message_id: int) -> SuccessMessage:
     response: SuccessMessage = {
         'type': 'success',
+        'id': message_id,
         'result': {}
     }
     return response
