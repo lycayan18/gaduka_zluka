@@ -254,6 +254,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
             this._transmitter.sendRequest(options, true)
                 .then(response => {
                     this._setToken(response.result.token);
+                    this._sendUserDataRequest();
                     res(true);
                 })
                 .catch(rej);
