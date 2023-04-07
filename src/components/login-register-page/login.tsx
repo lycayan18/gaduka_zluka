@@ -1,4 +1,6 @@
-import React, { FormEvent, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Link, useNavigate } from "react-router-dom";
 import IErrorMessage from "../../contracts/messages/response/error-message";
 import Gaduka from "../../gaduka";
@@ -10,50 +12,56 @@ interface ILoginPageProps {
     gaduka: Gaduka;
 }
 
-const LoginPage: React.FunctionComponent<ILoginPageProps> = (props: ILoginPageProps) => {
+const LoginPage: React.FunctionComponent<ILoginPageProps> = ({ gaduka }) => {
     const [displayErrorMessage, setDisplayErrorMessage] = useState<boolean>(false);
+    const [isFetching, setIsFetching] = useState(false);
     const navigate = useNavigate();
 
-    props.gaduka.setCurrentBranch(null);
+    useEffect(() => {
+        gaduka.setCurrentBranch(null);
+    }, [])
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const formik = useFormik({
+        initialValues: {
+            login: '',
+            password: '',
+        },
+        validationSchema: new Yup.ObjectSchema({
+            login: Yup.string()
+                .required('Это поле обязательно!')
+                .min(4, 'Длина логина должна быть не менее 4')
+                .max(40, 'Длина логина должна быть не более 40'),
+            password: Yup.string()
+                .required('Это поле обязательно!')
+                .min(5, 'Длина пароля должна быть не менее 5')
+                .max(80, 'Длина логина должна быть не более 80')
+        }),
+        onSubmit: async ({ login, password }) => {
+            try {
+                setIsFetching(true);
 
-        const formData = new FormData(e.currentTarget);
+                const status = await gaduka.login(login, password);
 
-        const gaduka = props.gaduka;
-
-        const login = formData.get("login"), password = formData.get("password");
-
-        if (typeof login !== "string" || typeof password !== "string") {
-            if (typeof login !== "string") {
-                gaduka.emit("ui_message", `К сожалению, в поле "login" пришёл тип "${typeof login}", а не "string"`, "error");
-            }
-
-            if (typeof password !== "string") {
-                gaduka.emit("ui_message", `К сожалению, в поле "password" пришёл тип "${typeof password}", а не "string"`, "error");
-            }
-
-            return;
-        }
-
-        gaduka.login(login, password)
-            .then(status => {
-                if (status) {
-                    navigate("/");
-                } else {
-                    setDisplayErrorMessage(true);
+                status ? navigate("/") : setDisplayErrorMessage(true);
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.error(error);
+                    return;
                 }
-            })
-            .catch((message: IErrorMessage) => {
-                gaduka.emit("ui_message", message.result.message, "error");
-            })
-    }
+
+                const errorMessage = error as IErrorMessage;
+
+                gaduka.emit("ui_message", errorMessage.result.message, "error");
+            } finally {
+                setIsFetching(false);
+            }
+        }
+    })
 
     return (
         <div className="login-register-page-wrapper">
-            <Header gaduka={props.gaduka} transparent={true} />
-            <form className="login-register-form" onSubmit={handleSubmit}>
+            <Header gaduka={gaduka} transparent={true} />
+            <form className="login-register-form" onSubmit={formik.handleSubmit} noValidate>
                 <h1>Вход</h1>
                 <p className="error-message">
                     {displayErrorMessage ? "Неверные регистрационные данные" : ""}
@@ -63,13 +71,35 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props: ILoginPagePr
                         <tr>
                             <td>
                                 <p><label htmlFor="login">Логин:</label></p>
-                                <input id="login" type="text" name="login" placeholder="Введите логин" required />
+                                <input
+                                    id="login"
+                                    type="text"
+                                    name="login"
+                                    placeholder="Введите логин"
+                                    value={formik.values.login}
+                                    onChange={formik.handleChange}
+                                    autoComplete="off"
+                                    className={formik.touched.login && formik.errors.login ? 'invalid' : ''}
+                                    disabled={isFetching}
+                                />
+                                {formik.touched.login && formik.errors.login && <p className='error-message small'>{formik.errors.login}</p>}
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <p><label htmlFor="password">Пароль:</label></p>
-                                <input id="password" type="password" name="password" placeholder="Введите пароль" required />
+                                <input
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Введите пароль"
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    autoComplete="off"
+                                    className={formik.touched.password && formik.errors.password ? 'invalid' : ''}
+                                    disabled={isFetching}
+                                />
+                                {formik.touched.password && formik.errors.password && <p className='error-message small'>{formik.errors.password}</p>}
                             </td>
                         </tr>
                         <tr>
@@ -79,7 +109,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props: ILoginPagePr
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <button className="btn-submit" type="submit">Войти</button>
+                                <button className="btn-submit" type="submit" disabled={isFetching}>Войти</button>
                             </td>
                         </tr>
                         <tr>
@@ -90,7 +120,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (props: ILoginPagePr
                     </tbody>
                 </table>
             </form>
-            <MessageDisplayer gaduka={props.gaduka} />
+            <MessageDisplayer gaduka={gaduka} />
         </div>
     )
 }

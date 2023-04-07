@@ -29,6 +29,20 @@
         background: white;
         box-sizing: content-box;
 
+        input.invalid {
+            border-color: red;
+
+            &:focus {
+                border-color: red !important;
+            }
+        }
+
+        .error-message {
+            &.small {
+                font-size: 16px;
+            }
+        }
+
         h1 {
             font-size: 35px;
         }
