@@ -1,13 +1,15 @@
-from typing import Callable
+from typing import Callable, TypedDict
 
+from application.branches.anon_branch import AnonBranch
+from application.contracts.branch import Branch
 from application.managers.sid_manager import SidManager
 from application.managers.user_manager import UserManager
 from application.managers.event_manager import EventManager
 from application.utils.responses import *
-from application.branches.branch import Branch
-from application.request_typing.branch import BranchType
+from application.branches.base_branch import BaseBranch
+from application.contracts.branch_type import BranchType
 from encryption.hashing import generate_token
-from application.request_typing.request_message import RequestMessage
+from application.contracts.request_message import RequestMessage
 
 
 class MessageManager:
@@ -18,8 +20,6 @@ class MessageManager:
         self.event_manager = event_manager
 
     def handle_message(self, ip: str, sid: str, query: RequestMessage, callback: Callable):
-        # Using query['parameters'] instead of query_parameters for proper mypy type linting
-
         match query['type']:
             case 'subscribe':
                 for branch in self.branches.values():
@@ -35,7 +35,7 @@ class MessageManager:
                 if not self.sid_manager.is_ip_banned(ip=ip):
                     token = self.user_manager.get_token_by_sid(sid)
                     self.branches[query['parameters']['branch']].handle_message(
-                        query, callback=callback, token=token, sid=sid, ip=ip)
+                        query=query, callback=callback, token=token, sid=sid, ip=ip)
                 else:
                     callback(create_error_response(
                         message_id=0, message='You was banned', error_type='banned'), to=sid)
@@ -49,6 +49,8 @@ class MessageManager:
                     login=query['parameters']['login'], password=query['parameters']['password'])
                 response = self.user_manager.get_token(
                     token=token, message_id=query['id'])
+
+                self.user_manager.authorize_user(sid, token=token)
                 callback(response, to=sid)
 
             case 'create account':
@@ -81,8 +83,7 @@ class MessageManager:
                     callback(create_success_response(), to=sid)
 
                     for branch in query['parameters']['branches']:
-                        self.branches[branch].connect_client(
-                            sid, callback=callback)
+                        self.branches[branch].connect_client(sid=sid, callback=callback)
                 else:
                     callback(create_error_response(message_id=query['id'], message='permission denied',
                                                    error_type='permission denied'))

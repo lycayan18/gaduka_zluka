@@ -1,24 +1,22 @@
-from typing import Callable
+from typing import Callable, List
 
-from application.request_typing.request.send_chat_message import AuthSendChatMessage, AnonSendChatMessage
+from application.contracts.response.new_message import NewMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
-from abc import abstractmethod
-from typing import TypeVar
 
 
-class Branch:
+class BaseBranch:
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
-        self.clients = []
+        self.clients: List[str] = []
         self.database = database
         self.user_manager = user_manager
 
-    def connect_client(self, sid: str, callback: Callable = None):
+    def connect_client(self, sid: str, callback: Callable):
         self.clients.append(sid)
         new_data = self.get_latest_messages()
         callback(new_data, to=sid)
 
-    def disconnect_client(self, sid: str, callback: Callable = None):
+    def disconnect_client(self, sid: str, callback: Callable):
         if sid in self.clients:
             self.clients.remove(sid)
 
@@ -28,9 +26,5 @@ class Branch:
     def add_message_to_database(self, **params):  # method will be redefined by the heirs
         raise NotImplementedError()
 
-    @abstractmethod
-    def handle_message(self, query: TypeVar("QueryType", AuthSendChatMessage, AnonSendChatMessage), callback: Callable, **params):  # method will be redefined by the heirs
-        raise NotImplementedError()
-
-    def get_latest_messages(self) -> dict:  # method will be redefined by the heirs
+    def get_latest_messages(self) -> NewMessage:  # method will be redefined by the heirs
         raise NotImplementedError()

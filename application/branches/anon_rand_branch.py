@@ -1,9 +1,9 @@
 from typing import Callable
 import datetime
 
-from application.request_typing.request.send_chat_message import AnonSendChatMessage
+from application.contracts.request.send_chat_message import AnonSendChatMessage
 from application.branches.rand_branch import RandBranch
-from application.request_typing.flask_send_callback import FlaskSendCallback
+from application.contracts.flask_send_callback import FlaskSendCallback
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import *
@@ -15,7 +15,7 @@ class AnonRandBranch(RandBranch):
         super(AnonRandBranch, self).__init__(database, user_manager)
 
     def handle_message(self, query: AnonSendChatMessage, callback: FlaskSendCallback, **params):
-        sid_1, sid_2 = self.get_two_users_sid(sid=params['sid'])
+        sid_1, sid_2 = self.get_two_users_sid(sid=params['sid']) or ('', '')  # shut up mypy
         status: Literal['admin', 'user'] = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
         response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch

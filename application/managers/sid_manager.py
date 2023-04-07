@@ -6,7 +6,7 @@ from database.database_manager import DatabaseManager
 class SidManager:
     def __init__(self, database: DatabaseManager):
         self.database = database
-        self.users = {}
+        self.users: dict[str, str] = {}
 
     def get_ip_by_sid(self, sid: str) -> Union[str, None]:
         return self.users.get(sid, None)

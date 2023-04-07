@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from database.models import UsersModel, AuthBranchModel, AnonBranchModel, BlacklistModel
-from typing import Literal
+from typing import Literal, List
 
 
 class DatabaseManager:
@@ -8,7 +8,7 @@ class DatabaseManager:
         self.database = database
         self.maximum_number = maximum_number
 
-    def checking_restriction(self):
+    def checking_restriction(self) -> None:
         if len(AnonBranchModel.query.all()) > self.maximum_number:
             self.database.session.delete(AnonBranchModel.query.all()[0])
             self.database.session.commit()
@@ -17,39 +17,39 @@ class DatabaseManager:
             self.database.session.delete(AuthBranchModel.query.all()[0])
             self.database.session.commit()
 
-    def add_user(self, **params):
+    def add_user(self, **params) -> None:
         user = UsersModel(**params)
         self.database.session.add(user)
         self.database.session.commit()
 
-    def add_message_to_anon(self, **params):
+    def add_message_to_anon(self, **params) -> None:
         message = AnonBranchModel(**params)
         self.database.session.add(message)
         self.database.session.commit()
         self.checking_restriction()
 
-    def add_message_to_auth(self, **params):
+    def add_message_to_auth(self, **params) -> None:
         message = AuthBranchModel(**params)
         self.database.session.add(message)
         self.database.session.commit()
         self.checking_restriction()
 
-    def add_ip_to_blacklist(self, ip):
+    def add_ip_to_blacklist(self, ip) -> None:
         ip = BlacklistModel(ip=ip)
         self.database.session.add(ip)
         self.database.session.commit()
 
-    def remove_from_blacklist(self, ip: str):
+    def remove_from_blacklist(self, ip: str) -> None:
         ip = BlacklistModel.query.filter_by(ip=ip).first()
         self.database.session.delete(ip)
         self.database.session.commit()
 
-    def delete_message_from_anon(self, message_id: int):
+    def delete_message_from_anon(self, message_id: int) -> None:
         message = AnonBranchModel.query.filter_by(id=message_id).first()
         self.database.session.delete(message)
         self.database.session.commit()
 
-    def delete_message_from_auth(self, message_id: int):
+    def delete_message_from_auth(self, message_id: int) -> None:
         message = AuthBranchModel.query.filter_by(id=message_id).first()
         self.database.session.delete(message)
         self.database.session.commit()
@@ -65,19 +65,23 @@ class DatabaseManager:
         return False
 
     @staticmethod
-    def get_banned_ips():
+    def get_banned_ips() -> List[BlacklistModel]:
         return BlacklistModel.query.all()
 
     @staticmethod
-    def get_user_data(**filter_params):
-        return UsersModel.query.filter_by(**filter_params).first()
+    def get_user_data(**filter_params) -> UsersModel:
+        user_data = UsersModel.query.filter_by(**filter_params).first()
+        if user_data:
+            return user_data
+        else:
+            return UsersModel(nickname='', token='', status='user')
 
     @staticmethod
-    def get_latest_message_from_auth():
+    def get_latest_message_from_auth() -> List[AuthBranchModel]:
         return AuthBranchModel.query.all()
 
     @staticmethod
-    def get_latest_message_from_anon():
+    def get_latest_message_from_anon() -> List[AnonBranchModel]:
         return AnonBranchModel.query.all()
 
     @staticmethod

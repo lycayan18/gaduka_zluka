@@ -1,6 +1,7 @@
 from typing import Callable
 
-from application.request_typing.request_message import RequestMessage
+from application.contracts.branch import Branch
+from application.contracts.request_message import RequestMessage
 from application.branches.anon_branch import AnonBranch
 from application.branches.auth_branch import AuthBranch
 from application.branches.anon_rand_branch import AnonRandBranch
@@ -9,8 +10,8 @@ from application.managers.event_manager import EventManager
 from application.managers.message_manager import MessageManager
 from application.managers.sid_manager import SidManager
 from application.managers.user_manager import UserManager
-from application.request_typing.branch import BranchType
-from application.branches.branch import Branch
+from application.contracts.branch_type import BranchType
+from application.branches.base_branch import BaseBranch
 
 from database.database_manager import *
 

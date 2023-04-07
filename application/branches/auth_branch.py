@@ -1,20 +1,21 @@
 from typing import Callable
 import datetime
 
-from application.request_typing.request.send_chat_message import AuthSendChatMessage
-from application.branches.branch import Branch
+from application.contracts.request.send_chat_message import AuthSendChatMessage
+from application.branches.base_branch import BaseBranch
+from application.contracts.response.new_message import NewMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_new_message_response, create_message, \
     create_delete_message_event_response
 
 
-class AuthBranch(Branch):
+class AuthBranch(BaseBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AuthBranch, self).__init__(database, user_manager)
 
-    def get_latest_messages(self) -> dict:
-        response = {
+    def get_latest_messages(self) -> NewMessage:
+        response: NewMessage = {
             "type": "new message",
             "result": []}
 
@@ -36,7 +37,7 @@ class AuthBranch(Branch):
 
     def handle_message(self, query: AuthSendChatMessage, callback: Callable, **params):
         token = params.get('token')
-        ip = params.get('ip')
+        ip = params.get('ip', '0.0.0.0')
         status = self.user_manager.get_user_status(token=token)
 
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],

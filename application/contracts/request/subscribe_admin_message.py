@@ -1,5 +1,5 @@
 from typing import TypedDict, Literal
-from application.request_typing.branch import BranchType
+from application.contracts.branch_type import BranchType
 
 
 class SubscribeAdminMessageParameters(TypedDict):
@@ -8,4 +8,5 @@ class SubscribeAdminMessageParameters(TypedDict):
 
 class SubscribeAdminMessage(TypedDict):
     type: Literal["subscribe admin"]
+    id: int
     parameters: SubscribeAdminMessageParameters

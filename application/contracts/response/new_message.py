@@ -1,17 +1,17 @@
 from typing import TypedDict, Literal
-from application.request_typing.branch import BranchType
+from application.contracts.branch_type import BranchType
 
 
-class NewMessageEventResult(TypedDict):
+class NewMessageResult(TypedDict):
     nickname: str
     text: str
-    time: int
+    time: str
     id: int
     status: Literal["admin"] | Literal["user"]
     branch: BranchType
     ip: str
 
 
-class NewMessageEvent(TypedDict):
+class NewMessage(TypedDict):
     type: Literal["new message"]
-    result: list[NewMessageEventResult]
+    result: list[NewMessageResult]

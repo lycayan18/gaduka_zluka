@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Literal, Optional
 
 from application.utils.responses import *
 from database.database_manager import DatabaseManager
@@ -11,21 +11,21 @@ class UserManager:
         self.authorized_user: dict[str, str] = {}
         self.admins: List[str] = []
 
-    def add_to_admins(self, sid: str):
+    def add_to_admins(self, sid: str) -> None:
         if sid in self.authorized_user.keys():
             self.admins.append(sid)
 
-    def remove_from_admins(self, sid: str):
+    def remove_from_admins(self, sid: str) -> None:
         if sid in self.admins:
             self.admins.remove(sid)
 
     def is_user_admin(self, sid: str) -> bool:
         return sid in self.admins
 
-    def is_user_authorize(self, sid) -> bool:
+    def is_user_authorize(self, sid: str) -> bool:
         return sid in self.authorized_user.keys()
 
-    def get_token_by_sid(self, sid: str) -> Union[str, None]:
+    def get_token_by_sid(self, sid: str) -> str | None:
         return self.authorized_user.get(sid, None)
 
     def authorize_user(self, sid: str, token: str) -> bool:
@@ -35,10 +35,12 @@ class UserManager:
 
         return False
 
-    def unauthorize_user(self, sid: str):
+    def unauthorize_user(self, sid: str) -> None:
         self.authorized_user.pop(sid, None)
 
-    def get_user_status(self, token: str) -> Literal['user'] | Literal['admin']:
+    def get_user_status(self, token: Optional[str]) -> Literal['user'] | Literal['admin']:
+        if token is None:
+            return 'user'
         return self.database.get_user_status(token=token)
 
     def get_token(self, token: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:

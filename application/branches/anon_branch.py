@@ -1,16 +1,16 @@
 from typing import Callable
 import datetime
 
-from application.branches.branch import Branch
-from application.request_typing.request.send_chat_message import AnonSendChatMessage
-from application.request_typing.response.new_message import NewMessage
+from application.branches.base_branch import BaseBranch
+from application.contracts.request.send_chat_message import AnonSendChatMessage
+from application.contracts.response.new_message import NewMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_message, create_delete_message_event_response, create_new_message_response
 from typing import Literal
 
 
-class AnonBranch(Branch):
+class AnonBranch(BaseBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AnonBranch, self).__init__(database, user_manager)
 
