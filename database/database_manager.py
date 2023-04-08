@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from application.contracts.user_status import UserStatus
 from database.models import UsersModel, AuthBranchModel, AnonBranchModel, BlacklistModel
-from typing import Literal, List
+from typing import List
 
 
 class DatabaseManager:

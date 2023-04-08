@@ -1,5 +1,4 @@
-from typing import Literal, Optional
-from application.contracts.user_status import UserStatus
+from typing import Optional
 
 from application.utils.responses import *
 from database.database_manager import DatabaseManager
@@ -84,9 +83,7 @@ class UserManager:
         else:
             response = create_set_token_response(message_id=message_id, token=token)
 
-            if nickname.lower() in ['drakutont', 'dungybug']:
-                self.database.add_user(token=token, nickname=nickname, status='admin')
-            else:
-                self.database.add_user(token=token, nickname=nickname, status='user')
+            status = 'admin' if nickname.lower() in ['drakutont', 'dungybug'] else 'user'
+            self.database.add_user(token=token, nickname=nickname, status=status)
 
             return response

@@ -1,13 +1,9 @@
-from typing import Callable, TypedDict
-
-from application.branches.anon_branch import AnonBranch
 from application.contracts.branch import Branch
 from application.contracts.flask_send_callback import FlaskSendCallback
 from application.managers.sid_manager import SidManager
 from application.managers.user_manager import UserManager
 from application.managers.event_manager import EventManager
 from application.utils.responses import *
-from application.branches.base_branch import BaseBranch
 from application.contracts.branch_type import BranchType
 from encryption.hashing import generate_token
 from application.contracts.request_message import RequestMessage

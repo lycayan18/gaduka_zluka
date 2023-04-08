@@ -1,14 +1,9 @@
-from typing import Callable, TypeVar
-import datetime
-
-from application.contracts.request.send_chat_message import AnonSendChatMessage, AuthSendChatMessage
 from application.contracts.flask_send_callback import FlaskSendCallback
 from application.branches.base_branch import BaseBranch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_lost_participant_response
 from typing import Optional
-from abc import abstractmethod
 
 
 class RandBranch(BaseBranch):

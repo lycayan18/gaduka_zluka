@@ -1,4 +1,3 @@
-from typing import Callable
 import datetime
 from application.contracts.flask_send_callback import FlaskSendCallback
 
