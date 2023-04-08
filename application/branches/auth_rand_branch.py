@@ -32,22 +32,26 @@ class AuthRandBranch(RandBranch):
 
         callback(response, to=[sid_1, sid_2])
 
+    def check_authorization(self):
+        for sid in self.waiting_list:
+            if not self.user_manager.is_user_authorize(sid=sid):
+                self.waiting_list.remove(sid)
+
     def try_connect_users(self, callback: FlaskSendCallback):
+        self.check_authorization()
+
         if len(self.waiting_list) >= 2:
-            try:
-                self.connect_users(sid_1=self.waiting_list[0], sid_2=self.waiting_list[1], callback=callback)
+            self.connect_users(sid_1=self.waiting_list[0], sid_2=self.waiting_list[1], callback=callback)
 
-                nickname_1 = self.database.get_user_data(
-                    token=self.user_manager.get_token_by_sid(self.waiting_list[0])).nickname
-                nickname_2 = self.database.get_user_data(
-                    token=self.user_manager.get_token_by_sid(self.waiting_list[1])).nickname
+            nickname_1 = self.database.get_user_data(
+                token=self.user_manager.get_token_by_sid(self.waiting_list[0])).nickname
+            nickname_2 = self.database.get_user_data(
+                token=self.user_manager.get_token_by_sid(self.waiting_list[1])).nickname
 
-                callback(create_auth_rand_new_participant_response(nickname=nickname_2), to=self.waiting_list[0])
-                callback(create_auth_rand_new_participant_response(nickname=nickname_1), to=self.waiting_list[1])
+            callback(create_auth_rand_new_participant_response(nickname=nickname_2), to=self.waiting_list[0])
+            callback(create_auth_rand_new_participant_response(nickname=nickname_1), to=self.waiting_list[1])
 
-                self.waiting_list.remove(self.waiting_list[0])
-                self.waiting_list.remove(self.waiting_list[0])
-            except AttributeError as e:  # a very rare error
-                print(e)
+            self.waiting_list.remove(self.waiting_list[0])
+            self.waiting_list.remove(self.waiting_list[0])
 
 

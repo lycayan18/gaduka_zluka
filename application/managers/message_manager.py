@@ -51,6 +51,7 @@ class MessageManager:
                 response = self.user_manager.get_token(
                     token=token, message_id=query['id'])
 
+                self.user_manager.authorize_user(sid=sid, token=token)
                 callback(response, to=sid)
 
             case 'create account':

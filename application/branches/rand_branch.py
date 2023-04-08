@@ -17,19 +17,13 @@ class RandBranch(BaseBranch):
         self.waiting_list: list[str] = []
         self.connected_users: dict[str, str] = {}
 
-    def connect_client(self, sid: str, callback: Optional[FlaskSendCallback] = None) -> None:
-        if callback is None:
-            return
-
+    def connect_client(self, sid: str, callback: FlaskSendCallback) -> None:
         self.clients.append(sid)
         self.add_to_waiting_list(sid=sid)
 
         self.try_connect_users(callback)
 
-    def disconnect_client(self, sid: str, callback: Optional[FlaskSendCallback] = None) -> None:
-        if callback is None:
-            return
-        
+    def disconnect_client(self, sid: str, callback: FlaskSendCallback) -> None:
         super(RandBranch, self).disconnect_client(sid=sid, callback=callback)
         self.remove_from_waiting_list(sid)
 
@@ -59,7 +53,7 @@ class RandBranch(BaseBranch):
 
             if value == sid:
                 return key
-            
+
         return None
 
     def get_two_users_sid(self, sid: str) -> Optional[tuple[str, str]]:
