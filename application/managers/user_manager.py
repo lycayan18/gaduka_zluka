@@ -66,14 +66,18 @@ class UserManager:
         return response
 
     def create_account(self, nickname: str, login: str, password: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:
+        if not (2 >= len(nickname) <= 40 or 5 >= len(login) <= 40 or 4 >= len(password) <= 40):
+            error = create_error_response(message_id=message_id, message='invalid data', error_type='invalid data')
+            return error
+
         token = generate_token(login, password)
         if self.database.get_user_data(token=token):
-            error = create_error_response(message_id=message_id, message='login already used',
+            error = create_error_response(message_id=message_id, message='Логин уже используется',
                                           error_type='login already used')
             return error
 
         elif self.database.get_user_data(nickname=nickname):
-            error = create_error_response(message_id=message_id, message='nickname already used',
+            error = create_error_response(message_id=message_id, message='Никнейм уже используется',
                                           error_type='nickname already used')
             return error
 
