@@ -76,6 +76,8 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                         break;
                     }
                 }
+            } finally {
+                setIsFetching(false);
             }
         }
     })
@@ -118,7 +120,9 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                                     value={formik.values.login}
                                     onChange={formik.handleChange}
                                     autoComplete="off"
-                                    className={formik.touched.login && formik.errors.login ? 'invalid' : ''} />
+                                    className={formik.touched.login && formik.errors.login ? 'invalid' : ''}
+                                    disabled={isFetching}
+                                />
                                 {formik.touched.login && formik.errors.login && <p className='error-message small'>{formik.errors.login}</p>}
                             </td>
                         </tr>
@@ -134,6 +138,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                                     onChange={formik.handleChange}
                                     autoComplete="off"
                                     className={formik.touched.password && formik.errors.password ? 'invalid' : ''}
+                                    disabled={isFetching}
                                 />
                                 {formik.touched.password && formik.errors.password && <p className='error-message small'>{formik.errors.password}</p>}
                             </td>
