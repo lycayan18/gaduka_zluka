@@ -64,7 +64,7 @@ class UserManager:
             response = create_set_user_data_response(message_id=message_id, nickname='')
         return response
 
-    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> Union[SetTokenMessage, ErrorMessageWithId]:
+    def create_account(self, nickname: str, login: str, password: str, message_id: int, sid: str) -> Union[SetTokenMessage, ErrorMessageWithId]:
         if (len(nickname) < 2 or len(nickname) > 40) or (len(login) < 5 or len(login) > 40) or (len(password) < 4 or len(password) > 40):
             error = create_error_response(message_id=message_id, message='invalid credentials', error_type='invalid credentials')
             return error
@@ -85,5 +85,6 @@ class UserManager:
 
             status = 'admin' if nickname.lower() in ['drakutont', 'dungybug'] else 'user'
             self.database.add_user(token=token, nickname=nickname, status=status)
+            self.authorize_user(sid=sid, token=token)
 
             return response

@@ -53,7 +53,8 @@ class MessageManager:
             response = self.user_manager.create_account(nickname=query['parameters']['nickname'],
                                                         login=query['parameters']['login'],
                                                         password=query['parameters']['password'],
-                                                        message_id=query['id'])
+                                                        message_id=query['id'],
+                                                        sid=sid)
             callback(response, to=sid)
 
         elif query['type'] == 'get user data':
