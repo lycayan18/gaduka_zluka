@@ -65,7 +65,7 @@ class UserManager:
         return response
 
     def create_account(self, nickname: str, login: str, password: str, message_id: int) -> Union[SetTokenMessage, ErrorMessageWithId]:
-        if not (2 <= len(nickname) <= 40 or 5 <= len(login) <= 40 or 4 <= len(password) <= 40):
+        if (len(nickname) < 2 or len(nickname) > 40) or (len(login) < 5 or len(login) > 40) or (len(password) < 4 or len(password) > 40):
             error = create_error_response(message_id=message_id, message='invalid credentials', error_type='invalid credentials')
             return error
 
