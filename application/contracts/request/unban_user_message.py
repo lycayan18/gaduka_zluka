@@ -1,5 +1,6 @@
 from typing import TypedDict, Literal
 
+
 class UnbanUserMessageParameters(TypedDict):
     ip: str
 

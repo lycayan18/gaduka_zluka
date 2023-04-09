@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from application.utils.responses import *
 from database.database_manager import DatabaseManager
@@ -25,7 +25,7 @@ class UserManager:
     def is_user_authorize(self, sid: str) -> bool:
         return sid in self.authorized_user.keys()
 
-    def get_token_by_sid(self, sid: str) -> str | None:
+    def get_token_by_sid(self, sid: str) -> Optional[str]:
         return self.authorized_user.get(sid, None)
 
     def authorize_user(self, sid: str, token: str) -> bool:
@@ -43,7 +43,7 @@ class UserManager:
             return 'user'
         return self.database.get_user_status(token=token)
 
-    def get_token(self, token: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:
+    def get_token(self, token: str, message_id: int) -> Union[SetTokenMessage, ErrorMessageWithId]:
         if not self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='Неверный логин или пароль',
                                           error_type='invalid credentials')
@@ -64,9 +64,9 @@ class UserManager:
             response = create_set_user_data_response(message_id=message_id, nickname='')
         return response
 
-    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> SetTokenMessage | ErrorMessageWithId:
+    def create_account(self, nickname: str, login: str, password: str, message_id: int) -> Union[SetTokenMessage, ErrorMessageWithId]:
         if not (2 >= len(nickname) <= 40 or 5 >= len(login) <= 40 or 4 >= len(password) <= 40):
-            error = create_error_response(message_id=message_id, message='invalid data', error_type='invalid data')
+            error = create_error_response(message_id=message_id, message='invalid credentials', error_type='invalid credentials')
             return error
 
         token = generate_token(login, password)

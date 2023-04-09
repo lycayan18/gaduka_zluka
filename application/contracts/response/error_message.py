@@ -1,12 +1,12 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
 
-ErrorType = Literal["invalid credentials"] \
-            | Literal["invalid token"] \
-            | Literal["internal error"] \
-            | Literal["permission denied"] \
-            | Literal["nickname already used"] \
-            | Literal["login already used"] \
-            | Literal["banned"]
+ErrorType = Union[Literal["invalid credentials"],
+                  Literal["invalid token"],
+                  Literal["internal error"],
+                  Literal["permission denied"],
+                  Literal["nickname already used"],
+                  Literal["login already used"],
+                  Literal["banned"]]
 
 
 class ErrorMessageResult(TypedDict):

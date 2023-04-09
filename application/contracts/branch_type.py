@@ -1,3 +1,3 @@
-from typing import Literal
+from typing import Literal, Union
 
-BranchType = Literal["/anon"] | Literal["/auth"] | Literal["/anon/rand"] | Literal["/auth/rand"]
+BranchType = Union[Literal["/anon"], Literal["/auth"], Literal["/anon/rand"], Literal["/auth/rand"]]

@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
 
 
 class BaseSendChatMessageParameters(TypedDict):
@@ -7,11 +7,11 @@ class BaseSendChatMessageParameters(TypedDict):
 
 class AnonSendChatMessageParameters(BaseSendChatMessageParameters):
     nickname: str
-    branch: Literal["/anon"] | Literal["/anon/rand"]
+    branch: Union[Literal["/anon"], Literal["/anon/rand"]]
 
 
 class AuthSendChatMessageParameters(BaseSendChatMessageParameters):
-    branch: Literal["/auth"] | Literal["/auth/rand"]
+    branch: Union[Literal["/auth"],  Literal["/auth/rand"]]
 
 
 class BaseSendChatMessage(TypedDict):

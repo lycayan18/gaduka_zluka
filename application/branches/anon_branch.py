@@ -10,7 +10,6 @@ from database.database_manager import DatabaseManager
 from application.utils.responses import create_message, create_delete_message_event_response, create_new_message_response
 
 
-
 class AnonBranch(BaseBranch):
     def __init__(self, database: DatabaseManager, user_manager: UserManager):
         super(AnonBranch, self).__init__(database, user_manager)
