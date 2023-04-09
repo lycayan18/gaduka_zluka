@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from application.contracts.user_status import UserStatus
 from database.models import UsersModel, AuthBranchModel, AnonBranchModel, BlacklistModel
-from typing import Literal, List
+from typing import List, Optional
 
 
 class DatabaseManager:
@@ -70,7 +70,7 @@ class DatabaseManager:
         return BlacklistModel.query.all()
 
     @staticmethod
-    def get_user_data(**filter_params) -> UsersModel | None:
+    def get_user_data(**filter_params) -> Optional[UsersModel]:
         return UsersModel.query.filter_by(**filter_params).first()
 
     @staticmethod

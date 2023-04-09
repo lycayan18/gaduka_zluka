@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import List
 
 from application.contracts.branch_type import BranchType
 from application.contracts.response.error_message import ErrorMessageWithId

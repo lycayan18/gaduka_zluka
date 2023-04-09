@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
 
 
 class NewParticipantMessageResult(TypedDict):
@@ -7,4 +7,4 @@ class NewParticipantMessageResult(TypedDict):
 
 class NewParticipantMessage(TypedDict):
     type: Literal["new participant"]
-    result: dict[str, None] | NewParticipantMessageResult
+    result: Union[dict[str, None], NewParticipantMessageResult]

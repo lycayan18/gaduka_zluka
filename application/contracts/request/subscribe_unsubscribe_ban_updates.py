@@ -1,6 +1,6 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
 
 
 class SubscribeUnsubscribeBanUpdatesMessage(TypedDict):
-    type: Literal["subscribe ban updates"] | Literal["unsubscribe ban updates"]
+    type: Union[Literal["subscribe ban updates"], Literal["unsubscribe ban updates"]]
     parameters: dict[str, str]

@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Optional
 
 from database.database_manager import DatabaseManager
 
@@ -8,7 +8,7 @@ class SidManager:
         self.database = database
         self.users: dict[str, str] = {}
 
-    def get_ip_by_sid(self, sid: str) -> Union[str, None]:
+    def get_ip_by_sid(self, sid: str) -> Optional[str]:
         return self.users.get(sid, None)
 
     def get_sid_by_ip(self, ip: str):

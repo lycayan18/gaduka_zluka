@@ -1,6 +1,6 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
 
-LogMessageType = Literal["info"] | Literal["debug"] | Literal["warning"] | Literal["error"]
+LogMessageType = Union[Literal["info"], Literal["debug"], Literal["warning"], Literal["error"]]
 
 
 class LogMessageResult(TypedDict):

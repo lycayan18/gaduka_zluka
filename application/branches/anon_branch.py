@@ -1,4 +1,3 @@
-from typing import Callable
 import datetime
 
 from application.branches.base_branch import BaseBranch
@@ -9,7 +8,6 @@ from application.contracts.user_status import UserStatus
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_message, create_delete_message_event_response, create_new_message_response
-from typing import Literal
 
 
 class AnonBranch(BaseBranch):

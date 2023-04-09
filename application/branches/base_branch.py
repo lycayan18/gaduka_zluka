@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import List
 from application.contracts.flask_send_callback import FlaskSendCallback
 
 from application.contracts.response.new_message import NewMessage

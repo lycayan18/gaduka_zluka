@@ -1,8 +1,6 @@
-from typing import Callable
 import datetime
 
 from application.contracts.request.send_chat_message import AuthSendChatMessage
-from application.contracts.response_message import ResponseMessage
 from application.branches.rand_branch import RandBranch
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager

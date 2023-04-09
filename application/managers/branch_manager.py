@@ -1,5 +1,3 @@
-from typing import Callable
-
 from application.contracts.branch import Branch
 from application.contracts.flask_send_callback import FlaskSendCallback
 from application.contracts.request_message import RequestMessage
@@ -12,7 +10,6 @@ from application.managers.message_manager import MessageManager
 from application.managers.sid_manager import SidManager
 from application.managers.user_manager import UserManager
 from application.contracts.branch_type import BranchType
-from application.branches.base_branch import BaseBranch
 
 from database.database_manager import *
 

@@ -1,14 +1,11 @@
-from typing import Callable
 import datetime
 
 from application.contracts.request.send_chat_message import AnonSendChatMessage
 from application.branches.rand_branch import RandBranch
 from application.contracts.flask_send_callback import FlaskSendCallback
-from application.contracts.user_status import UserStatus
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import *
-from typing import Literal
 
 
 class AnonRandBranch(RandBranch):
