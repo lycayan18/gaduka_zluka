@@ -15,16 +15,12 @@ class AuthRandBranch(RandBranch):
     def handle_message(self, query: AuthSendChatMessage, callback: FlaskSendCallback, **params):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid']) or ('', '')  # shut up mypy
 
-        token = params.get('token')
-
-        # Extra type checks for mypy
-        if token is None or not isinstance(token, str):
-            return
+        token = self.user_manager.get_token_by_sid(params['sid'])
 
         status = self.user_manager.get_user_status(token=token)
 
         response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch
-                                               nickname=self.database.get_user_data(token=params['token']).nickname,
+                                               nickname=self.database.get_user_data(token=token).nickname,
                                                text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
                                                branch='/auth/rand', ip=params['ip'], status=status)
 

@@ -36,17 +36,17 @@ class AuthBranch(BaseBranch):
             callback(create_delete_message_event_response(message_id=message_id, branch='/auth'), to=self.clients)
 
     def handle_message(self, query: AuthSendChatMessage, callback: FlaskSendCallback, **params):
-        token = params.get('token')
+        token = self.user_manager.get_token_by_sid(params['sid'])
         ip = params.get('ip', '0.0.0.0')
         status = self.user_manager.get_user_status(token=token)
+        if token:
+            self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
+                                         token=token, ip=ip, status=status)
 
-        self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
-                                     token=token, ip=ip, status=status)
+            response = create_new_message_response(message_id=self.database.get_latest_id_from_auth(),
+                                                   nickname=self.database.get_user_data(token=token).nickname,
+                                                   text=query['parameters']['text'],
+                                                   time=f'{datetime.datetime.now()}', branch='/auth', ip=ip,
+                                                   status=status)
 
-        response = create_new_message_response(message_id=self.database.get_latest_id_from_auth(),
-                                               nickname=self.database.get_user_data(token=token).nickname,
-                                               text=query['parameters']['text'],
-                                               time=f'{datetime.datetime.now()}', branch='/auth', ip=ip,
-                                               status=status)
-
-        callback(response, to=self.clients)
+            callback(response, to=self.clients)

@@ -29,9 +29,8 @@ class MessageManager:
 
         elif query['type'] == 'send':
             if not self.sid_manager.is_ip_banned(ip=ip):
-                token = self.user_manager.get_token_by_sid(sid)
                 self.branches[query['parameters']['branch']].handle_message(
-                    query=query, callback=callback, token=token, sid=sid, ip=ip)
+                    query=query, callback=callback, sid=sid, ip=ip)
             else:
                 callback(create_error_response(
                     message_id=0, message='You was banned', error_type='banned'), to=sid)
@@ -107,14 +106,10 @@ class MessageManager:
                     self.sid_manager.unban_user(
                         ip=query['parameters']['ip'])
 
-                    callback(
-                        create_unban_event_response(
-                            query['parameters']['ip']),
-                        to=self.event_manager.get_subscribed_sids_list('ban updates'))
+                    callback(create_unban_event_response(query['parameters']['ip']), to=self.event_manager.get_subscribed_sids_list('ban updates'))
 
                     if self.sid_manager.get_sid_by_ip(ip=query['parameters']['ip']):
-                        callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(
-                            ip=query['parameters']['ip']))
+                        callback(create_unban_response(), to=self.sid_manager.get_sid_by_ip(ip=query['parameters']['ip']))
 
         elif query['type'] == 'subscribe ban updates':
             self.event_manager.subscribe(event='ban updates', sid=sid)
