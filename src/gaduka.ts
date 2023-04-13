@@ -144,10 +144,10 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         }
     }
 
-    send(branch: "/anon" | "/anon/rand", nick: string, text: string): void;
-    send(branch: "/auth" | "/auth/rand", text: string): void;
+    send(branch: "/anon" | "/anon/rand", replyTo: number | null, nick: string, text: string): void;
+    send(branch: "/auth" | "/auth/rand", replyTo: number | null, text: string): void;
 
-    send(branch: Branch, nickOrText: string, text?: string) {
+    send(branch: Branch, replyTo: number | null, nickOrText: string, text?: string) {
         if (this._currentBranch === null) {
             return;
         }
@@ -155,7 +155,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         switch (branch) {
             case "/anon":
             case "/anon/rand": {
-                this._messagesManager.sendMessage(branch, nickOrText, text);
+                this._messagesManager.sendMessage(branch, replyTo, nickOrText, text);
 
                 break;
             }
@@ -166,7 +166,7 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                     return;
                 }
 
-                this._messagesManager.sendMessage(branch, nickOrText);
+                this._messagesManager.sendMessage(branch, replyTo, nickOrText);
 
                 break;
             }

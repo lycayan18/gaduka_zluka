@@ -15,8 +15,8 @@ export default interface IGaduka {
     sendBanRequest(ip: string): void;
     sendUnbanRequest(ip: string): void;
 
-    send(branch: "/anon" | "/anon/rand", nick: string, text: string): void;
-    send(branch: "/auth" | "/auth/rand", text: string): void;
+    send(branch: "/anon" | "/anon/rand", replyTo: number | null, nick: string, text: string): void;
+    send(branch: "/auth" | "/auth/rand", replyTo: number | null, text: string): void;
 
     /**
      * Can be helpful to get chat history beyond 100 last messages

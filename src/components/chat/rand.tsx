@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Gaduka from "../../gaduka";
-import CreateMessageBox from "./create-message-box";
-import MessagesHistory from "./messages-history";
+import ChatBox from "./chat-box";
 import "./styles.scss";
 
 interface IRandChatProps {
@@ -62,8 +61,7 @@ const RandChat: React.FunctionComponent<IRandChatProps> = (props) => {
                 <p className={"participant-status" + (participantState.nickname !== undefined ? " with-nickname" : "")}>
                     {participantStatus}
                 </p>
-                <MessagesHistory gaduka={props.gaduka} branch={props.branch} />
-                <CreateMessageBox branch={props.branch} gaduka={props.gaduka} disabled={isDisabled} />
+                <ChatBox branch={props.branch} gaduka={props.gaduka} showAdminTools={false} disabled={isDisabled} />
             </div>
         </div>
     )

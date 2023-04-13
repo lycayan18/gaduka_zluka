@@ -31,10 +31,10 @@ export default class MessagesManager {
         return [...this._messagesHistory[branch]];
     }
 
-    sendMessage(branch: "/anon" | "/anon/rand", nick: string, text: string | undefined): void;
-    sendMessage(branch: "/auth" | "/auth/rand", text: string): void;
+    sendMessage(branch: "/anon" | "/anon/rand", replyTo: number | null, nick: string, text: string | undefined): void;
+    sendMessage(branch: "/auth" | "/auth/rand", replyTo: number | null, text: string): void;
 
-    sendMessage(branch: Branch, nickOrText: string, text?: string | undefined) {
+    sendMessage(branch: Branch, replyTo: number | null, nickOrText: string, text?: string | undefined) {
         switch (branch) {
             case "/anon":
             case "/anon/rand": {
@@ -47,7 +47,8 @@ export default class MessagesManager {
                     parameters: {
                         nickname: nickOrText,
                         text,
-                        branch
+                        branch,
+                        replyTo: replyTo || undefined
                     }
                 }, false);
 
@@ -64,7 +65,8 @@ export default class MessagesManager {
                     type: "send",
                     parameters: {
                         text: nickOrText,
-                        branch
+                        branch,
+                        replyTo: replyTo || undefined
                     }
                 }, false);
 
@@ -115,7 +117,8 @@ export default class MessagesManager {
                         branch: branch,
                         status: chatMessage.status || "user",
                         ip: chatMessage.ip,
-                        id: chatMessage.id
+                        id: chatMessage.id,
+                        replyTo: chatMessage.replyTo || undefined
                     };
 
                     messages.push(message);

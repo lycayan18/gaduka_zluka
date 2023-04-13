@@ -37,7 +37,16 @@
             max-height: 60vh;
 
             overflow-y: scroll;
+        }
 
+        .reply-to-message {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-history,
+        .reply-to-message {
             .message-box {
                 width: 100%;
 
@@ -48,6 +57,18 @@
                 padding: 5px 10px;
                 box-sizing: border-box;
                 border-radius: 3px;
+
+                .replying-to-message {
+                    border-left: 2px solid #444;
+                    padding-left: 3px;
+
+                    .deleted-message-text {
+                        padding-left: 10px;
+                        line-height: 160%;
+                        color: #888;
+                        font-size: 14px;
+                    }
+                }
 
                 .message-info {
                     display: flex;
@@ -82,7 +103,7 @@
                 }
 
                 .text {
-                    max-inline-size: max-content;
+                    // max-inline-size: max-content; // Causes different text sizes in different messages
                     word-break: break-word;
                     font-family: Arial;
                     font-size: 17px;
@@ -119,6 +140,13 @@
                             fill: white;
                         }
                     }
+                }
+
+                .reply-button {
+                    font-size: 0;
+                    border: none;
+                    background: transparent;
+                    padding: 0;
                 }
 
                 .ip {
