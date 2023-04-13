@@ -21,37 +21,31 @@ class MessageManager:
             for branch in self.branches.values():
                 branch.disconnect_client(sid, callback=callback)
 
-            self.branches[query['parameters']['branch']
-                          ].connect_client(sid, callback=callback)
+            self.branches[query['parameters']['branch']].connect_client(sid, callback=callback)
             if self.sid_manager.is_ip_banned(ip=ip):
                 callback(create_error_response(
                     message_id=0, message='You was banned', error_type='banned'), to=sid)
 
         elif query['type'] == 'send':
             if not self.sid_manager.is_ip_banned(ip=ip):
-                self.branches[query['parameters']['branch']].handle_message(
-                    query=query, callback=callback, sid=sid, ip=ip)
+                self.branches[query['parameters']['branch']].handle_message(query=query, callback=callback, sid=sid, ip=ip)
             else:
-                callback(create_error_response(
-                    message_id=0, message='You was banned', error_type='banned'), to=sid)
+                callback(create_error_response(message_id=0, message='You was banned', error_type='banned'), to=sid)
 
         elif query['type'] == 'unsubscribe all':
             for branch in self.branches.values():
                 branch.disconnect_client(sid, callback=callback)
 
         elif query['type'] == 'get token':
-            token = generate_token(
-                login=query['parameters']['login'], password=query['parameters']['password'])
-            response = self.user_manager.get_token(
-                token=token, message_id=query['id'])
+            response = self.user_manager.get_token(login=query['parameters']['login'], password=query['parameters']['password'],
+                                                   message_id=query['id'], sid=sid)
 
-            self.user_manager.authorize_user(sid=sid, token=token)
             callback(response, to=sid)
 
         elif query['type'] == 'create account':
-            response = self.user_manager.create_account(nickname=query['parameters']['nickname'],
-                                                        login=query['parameters']['login'],
-                                                        password=query['parameters']['password'],
+            response = self.user_manager.create_account(nickname=query['parameters']['nickname'].strip(),
+                                                        login=query['parameters']['login'].strip(),
+                                                        password=query['parameters']['password'].strip(),
                                                         message_id=query['id'],
                                                         sid=sid)
             callback(response, to=sid)
