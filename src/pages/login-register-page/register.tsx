@@ -93,7 +93,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
         <div className="login-register-page-wrapper">
             <Header gaduka={gaduka} transparent={true} />
             <form className="login-register-form" onSubmit={formik.handleSubmit}>
-                <h1>Регистрация</h1>
+                <h1>Загадючивание</h1>
                 <p className="error-message">
                     {errorMessage !== null ? errorMessage : ""}
                 </p>
@@ -180,7 +180,12 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <span className="small-text">Уже есть аккаунт? <Link to="/login">Войдите</Link></span>
+                                <span className="small-text">Уже в дурке? <Link to="/login">Вползти</Link></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colSpan={2}>
+                                <span className="small-text">Уж анонимус? <Link to="/">Вползай!</Link></span>
                             </td>
                         </tr>
                     </tbody>

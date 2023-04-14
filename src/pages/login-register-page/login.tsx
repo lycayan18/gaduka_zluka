@@ -64,7 +64,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = ({ gaduka }) => {
         <div className="login-register-page-wrapper">
             <Header gaduka={gaduka} transparent={true} />
             <form className="login-register-form" onSubmit={formik.handleSubmit} noValidate>
-                <h1>Вход</h1>
+                <h1>Вползание</h1>
                 <p className="error-message">
                     {displayErrorMessage ? "Неверные регистрационные данные" : ""}
                 </p>
@@ -110,12 +110,17 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = ({ gaduka }) => {
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <button className="btn-submit" type="submit" disabled={isFetching}>Войти</button>
+                                <button className="btn-submit" type="submit" disabled={isFetching}>Вползти</button>
                             </td>
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <span className="small-text">Ещё нет аккаунта? <Link to="/register">Зарегестрируйтесь</Link></span>
+                                <span className="small-text">Ещё не в дурке? <Link to="/register">Загадючиться</Link></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colSpan={2}>
+                                <span className="small-text">Уж анонимус? <Link to="/">Вползай!</Link></span>
                             </td>
                         </tr>
                     </tbody>

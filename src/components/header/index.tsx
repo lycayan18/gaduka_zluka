@@ -48,8 +48,8 @@ const Header: React.FunctionComponent<IHeaderProps> = (props: IHeaderProps) => {
                         :
                         (
                             <>
-                                <Link to="/login">Вход</Link>
-                                <Link to="/register">Регистрация</Link>
+                                <Link to="/login">Вползти</Link>
+                                <Link to="/register">Загадючиться</Link>
                             </>
                         )
                 }

@@ -87,7 +87,7 @@
                         background: #fff;
                         display: inline-block;
                         padding: 0 4px;
-                        font-weight: 100;
+                        font-weight: 500;
                         color: #888;
                     }
                 }
@@ -98,6 +98,9 @@
                     height: 36px;
                     box-sizing: border-box;
                     border-color: #ccc;
+                    padding: 10px 15px;
+                    height: unset;
+                    border-width: 2px;
 
                     &:focus+.label {
                         color: #43044e;
