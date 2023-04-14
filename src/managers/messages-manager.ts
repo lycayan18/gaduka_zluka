@@ -123,7 +123,9 @@ export default class MessagesManager {
 
                     messages.push(message);
 
-                    this._messagesHistory[branch].push(message);
+                    if (branch !== "/anon/rand" && branch !== "/auth/rand") {
+                        this._messagesHistory[branch].push(message);
+                    }
                 }
 
                 this._gaduka.emit("message", messages);

@@ -37,8 +37,11 @@ const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) 
             setHistory(history.filter(message => message.id !== id));
         }
 
+        const handleLostParticipant = () => setHistory([]);
+
         props.gaduka.on("message", handleMessages);
         props.gaduka.on("message_delete", handleMessageDelete);
+        props.gaduka.on("lost_participant", handleLostParticipant);
 
         // Sometimes, somewhere in between getting chat history from props.gaduka.getChatHistory(props.branch)
         // and subscribing on "message" event that "message" event emits, and we miss chat history.
@@ -56,6 +59,7 @@ const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) 
         return () => {
             props.gaduka.off("message", handleMessages)
             props.gaduka.off("message_delete", handleMessageDelete);
+            props.gaduka.off("lost_participant", handleLostParticipant);
         };
     });
 
