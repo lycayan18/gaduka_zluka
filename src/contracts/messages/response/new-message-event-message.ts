@@ -6,7 +6,7 @@ interface IMessage {
     nickname: string;
     text: string;
     time: number;
-    id: number;
+    id?: number;
     ip: string;
     status?: UserStatus;
     branch?: Branch;

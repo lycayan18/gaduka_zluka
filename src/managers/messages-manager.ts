@@ -8,6 +8,7 @@ export default class MessagesManager {
     private readonly _gaduka: Gaduka;
     private readonly _transmitter: BaseTransmitter;
     private readonly _messagesHistory: Record<Branch, IBaseChatMessage[]>;
+    private readonly _messagesCount: Record<Branch, number>;
 
     constructor(gaduka: Gaduka, transmitter: BaseTransmitter) {
         this._gaduka = gaduka;
@@ -22,7 +23,22 @@ export default class MessagesManager {
             "/auth/rand": []
         }
 
+        this._messagesCount = {
+            "/anon/rand": 0,
+            "/auth/rand": 0,
+
+            // Theese are unused
+            "/anon": 0,
+            "/auth": 0
+        }
+
         this._gaduka.on("unhandled_message", this._handleMessage.bind(this));
+        this._gaduka.on("lost_participant", () => {
+            for (const branch of <Branch[]>["/anon/rand", "/auth/rand"]) {
+                this._messagesCount[branch] = 0;
+                this._messagesHistory[branch].length = 0;
+            }
+        })
     }
 
     getMessagesHistory(branch: Branch) {
@@ -117,15 +133,14 @@ export default class MessagesManager {
                         branch: branch,
                         status: chatMessage.status || "user",
                         ip: chatMessage.ip,
-                        id: chatMessage.id,
+                        id: chatMessage.id || this._messagesCount[branch],
                         replyTo: chatMessage.replyTo || undefined
                     };
 
+                    this._messagesCount[branch]++;
                     messages.push(message);
 
-                    if (branch !== "/anon/rand" && branch !== "/auth/rand") {
-                        this._messagesHistory[branch].push(message);
-                    }
+                    this._messagesHistory[branch].push(message);
                 }
 
                 this._gaduka.emit("message", messages);
