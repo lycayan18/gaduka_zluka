@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal, Union
+from typing import TypedDict, Literal, Union, Optional
 
 ErrorType = Union[Literal["invalid credentials"],
                   Literal["invalid token"],
@@ -21,4 +21,4 @@ class ErrorMessage(TypedDict):
 
 
 class ErrorMessageWithId(ErrorMessage):
-    id: int
+    id: Optional[int]

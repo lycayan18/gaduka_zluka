@@ -52,4 +52,4 @@ class AuthBranch(BaseBranch):
 
             callback(response, to=self.clients)
         else:
-            callback(create_error_response(message_id=0, message='not authorized', error_type='not authorized'))
+            callback(create_error_response(message_id=None, message='not authorized', error_type='not authorized'))

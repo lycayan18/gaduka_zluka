@@ -19,7 +19,7 @@ from application.contracts.response.error_message import ErrorType
 from application.contracts.user_status import UserStatus
 
 
-def create_error_response(message_id: int, message: str, error_type: ErrorType) -> ErrorMessageWithId:
+def create_error_response(message_id: Optional[int], message: str, error_type: ErrorType) -> ErrorMessageWithId:
     error: ErrorMessageWithId = {
         "type": "error",
         "id": message_id,
