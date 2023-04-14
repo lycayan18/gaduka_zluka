@@ -64,7 +64,7 @@ export default class MessagesManager {
                         nickname: nickOrText,
                         text,
                         branch,
-                        replyTo: replyTo || undefined
+                        replyTo: replyTo ?? undefined
                     }
                 }, false);
 
@@ -82,7 +82,7 @@ export default class MessagesManager {
                     parameters: {
                         text: nickOrText,
                         branch,
-                        replyTo: replyTo || undefined
+                        replyTo: replyTo ?? undefined
                     }
                 }, false);
 
