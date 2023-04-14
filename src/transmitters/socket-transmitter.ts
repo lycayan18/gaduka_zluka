@@ -26,7 +26,6 @@ export default class SocketTransmitter extends BaseTransmitter {
         }
 
         this._socket.on("message", this.handleMessage.bind(this));
-
         this._socket.on("disconnect", () => this.emit("disconnect"));
 
         this._socket.io.on("error", error => {
@@ -34,6 +33,8 @@ export default class SocketTransmitter extends BaseTransmitter {
 
             console.error("SocketTransmitter:", error);
         });
+
+        this._socket.io.on("reconnect", () => this.emit("reconnect"));
     }
 
     isReady() {

@@ -50,19 +50,16 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this._transmitter.on("disconnect", () => this.emit("ui_message", "Соединение с сервером разорвано.", "error"));
         this._transmitter.on("error", this._handleError.bind(this));
 
+        this._transmitter.on("reconnect", this._tryToAuthorize.bind(this))
+
         // Initialize managers
         this._bannedIpsManager = new BannedIpsManager(this, this._transmitter);
         this._messagesManager = new MessagesManager(this, this._transmitter);
 
         // Get token, authorize user and get user data
-        const token = localStorage.getItem("token");
+        this._token = localStorage.getItem("token");
 
-        if (token !== null) {
-            this._token = token;
-
-            this._sendUserDataRequest();
-            this._authorizeUser();
-        }
+        this._tryToAuthorize();
     }
 
     isBanned() {
@@ -261,6 +258,13 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         })
     }
 
+    private _tryToAuthorize() {
+        if (this._token !== null) {
+            this._sendUserDataRequest();
+            this._authorizeUser();
+        }
+    }
+
     private _setBannedStatus(isBanned: boolean) {
         if (this._isBanned === isBanned) {
             return;
@@ -276,12 +280,22 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
     }
 
     private _handleUnhandledError(message: IErrorMessage) {
-        if (message.result.error_type === "banned") {
-            this._setBannedStatus(true);
-            return;
-        }
+        switch (message.result.error_type) {
+            case "banned": {
+                this._setBannedStatus(true);
+                break;
+            }
 
-        this.emit("ui_message", message.result.message, "error");
+            case "not authorized": {
+                this._tryToAuthorize();
+                break;
+            }
+
+            default: {
+                this.emit("ui_message", message.result.message, "error");
+                break;
+            }
+        }
     }
 
     private _setToken(token: string) {

@@ -7,6 +7,7 @@ type ErrorType =
     | "permission denied"
     | "nickname already used"
     | "login already used"
+    | "not authorized"
     | "banned";
 
 export default interface IErrorMessage extends IBaseResponseMessage {

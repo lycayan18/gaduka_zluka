@@ -6,5 +6,6 @@ export default interface ITransmitterEvents {
     unhandled_error: [IErrorMessage];
     unhandled_message: [ResponseMessage];
     disconnect: [];
+    reconnect: [];
     error: [Error];
 }
