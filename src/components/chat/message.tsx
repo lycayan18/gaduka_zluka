@@ -39,7 +39,7 @@ const Message: React.FunctionComponent<IMessageProps> = (props) => (
                             branch={props.branch}
                             id={props.id}
                             ip={props.ip}
-                            status={props.status || "user"}
+                            status={props.replyTo.status || "user"}
                         />
                     </div>
                 : null

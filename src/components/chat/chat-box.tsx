@@ -27,10 +27,22 @@ const ChatBox: React.FunctionComponent<IChatBoxParams> = ({ gaduka, branch, show
         }
     }
 
+    const onReplyCancel = () => setReplyTo(undefined);
+
     return (
         <div className="chat-box">
-            <MessagesHistory gaduka={gaduka} branch={branch} showAdminTools={showAdminTools || false} onReply={onReply} />
-            <CreateMessageBox branch={branch} replyTo={replyTo} gaduka={gaduka} disabled={disabled || false} onSend={() => setReplyTo(undefined)} />
+            <MessagesHistory
+                gaduka={gaduka}
+                branch={branch}
+                showAdminTools={showAdminTools || false}
+                onReply={onReply} />
+            <CreateMessageBox
+                branch={branch}
+                replyTo={replyTo}
+                gaduka={gaduka}
+                disabled={disabled || false}
+                onSend={() => setReplyTo(undefined)}
+                onReplyCancel={onReplyCancel} />
         </div>
     )
 }

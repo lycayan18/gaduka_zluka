@@ -43,6 +43,14 @@
             display: flex;
             gap: 8px;
             align-items: center;
+
+            .cancel-button {
+                font-size: 18px;
+                padding: 0;
+                border: none;
+                color: black;
+                background: transparent;
+            }
         }
 
         .chat-history,
@@ -81,19 +89,15 @@
                     }
                 }
 
-                &.admin {
-                    .message-info {
-                        .author {
-                            color: #9600cd;
-                        }
+                &.admin>.message-info {
+                    .author {
+                        color: #9600cd;
                     }
                 }
 
-                &.user {
-                    .message-info {
-                        .author {
-                            color: #333;
-                        }
+                &.user>.message-info {
+                    .author {
+                        color: #333;
                     }
                 }
 

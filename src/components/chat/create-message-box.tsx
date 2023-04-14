@@ -11,6 +11,7 @@ interface ICreateMessageBoxProps {
     disabled?: boolean;
     replyTo?: IBaseChatMessage | undefined;
     onSend?: () => any;
+    onReplyCancel?: () => any;
 }
 
 interface ICreateMessageBoxState {
@@ -131,6 +132,9 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
                             branch={props.branch}
                             id={props.replyTo.id}
                         />
+                        <button className="cancel-button" onClick={() => props.onReplyCancel ? props.onReplyCancel() : null}>
+                            &#x2715;
+                        </button>
                     </div>
                     : null
             }
