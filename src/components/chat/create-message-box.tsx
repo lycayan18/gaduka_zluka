@@ -2,11 +2,16 @@ import React, { FormEvent, useState, useEffect } from "react";
 import Gaduka from "../../gaduka";
 import Branch from "../../contracts/branch";
 import "./styles.scss";
+import IBaseChatMessage from "../../contracts/base-chat-message";
+import Message from "./message";
 
 interface ICreateMessageBoxProps {
     branch: Branch;
     gaduka: Gaduka;
     disabled?: boolean;
+    replyTo?: IBaseChatMessage | undefined;
+    onSend?: () => any;
+    onReplyCancel?: () => any;
 }
 
 interface ICreateMessageBoxState {
@@ -51,25 +56,33 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
             return;
         }
 
+        const replyTo = props.replyTo ? props.replyTo.id : null;
+
         switch (props.branch) {
             case "/anon":
             case "/anon/rand": {
-                props.gaduka.send(props.branch, state.nickname, state.messageText);
+                props.gaduka.send(props.branch, replyTo, state.nickname, state.messageText);
+
+                if (props.onSend) {
+                    props.onSend();
+                }
                 break;
             }
 
             case "/auth":
             case "/auth/rand": {
-                props.gaduka.send(props.branch, state.messageText);
+                props.gaduka.send(props.branch, replyTo, state.messageText);
+
+                if (props.onSend) {
+                    props.onSend();
+                }
                 break;
             }
         }
 
         setState({
-            nickname: state.nickname,
+            ...state,
             messageText: '',
-            disabled: state.disabled,
-            isBanned: state.isBanned
         });
     }
 
@@ -104,6 +117,25 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
                             <input type="text" placeholder="ъ" value={state.nickname} onInput={handleNicknameInput} maxLength={40} />
                         </div>
                     )
+                    : null
+            }
+            {
+                props.replyTo
+                    ? <div className="reply-to-message">
+                        <img src="/assets/icons/reply.svg" width="32" height="32" alt="" />
+                        <Message
+                            from={props.replyTo.author}
+                            text={props.replyTo.text}
+                            status={props.replyTo.status}
+                            date={props.replyTo.date}
+                            gaduka={props.gaduka}
+                            branch={props.branch}
+                            id={props.replyTo.id}
+                        />
+                        <button className="cancel-button" type="reset" onClick={() => props.onReplyCancel ? props.onReplyCancel() : null}>
+                            &#x2715;
+                        </button>
+                    </div>
                     : null
             }
             <div className="type-box">

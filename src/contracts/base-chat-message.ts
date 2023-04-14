@@ -9,4 +9,5 @@ export default interface IBaseChatMessage {
     status: UserStatus;
     ip: string;
     id: number;
+    replyTo?: number | undefined;
 }

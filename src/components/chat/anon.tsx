@@ -1,8 +1,7 @@
 import React from "react";
 import Gaduka from "../../gaduka";
 import "./styles.scss";
-import CreateMessageBox from "./create-message-box";
-import MessagesHistory from "./messages-history";
+import ChatBox from "./chat-box";
 
 interface IChatProps {
     gaduka: Gaduka;
@@ -12,10 +11,7 @@ interface IChatProps {
 const AnonChat: React.FunctionComponent<IChatProps> = (props: IChatProps) => (
     <div className="chat-content">
         <p className="chat-name">/anon</p>
-        <div className="chat-box">
-            <MessagesHistory gaduka={props.gaduka} branch="/anon" showAdminTools={props.showAdminTools || false} />
-            <CreateMessageBox branch="/anon" gaduka={props.gaduka} />
-        </div>
+        <ChatBox branch={"/anon"} gaduka={props.gaduka} showAdminTools={props.showAdminTools || false} />
     </div>
 )
 

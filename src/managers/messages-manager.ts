@@ -8,6 +8,7 @@ export default class MessagesManager {
     private readonly _gaduka: Gaduka;
     private readonly _transmitter: BaseTransmitter;
     private readonly _messagesHistory: Record<Branch, IBaseChatMessage[]>;
+    private readonly _messagesCount: Record<Branch, number>;
 
     constructor(gaduka: Gaduka, transmitter: BaseTransmitter) {
         this._gaduka = gaduka;
@@ -22,7 +23,22 @@ export default class MessagesManager {
             "/auth/rand": []
         }
 
+        this._messagesCount = {
+            "/anon/rand": 0,
+            "/auth/rand": 0,
+
+            // Theese are unused
+            "/anon": 0,
+            "/auth": 0
+        }
+
         this._gaduka.on("unhandled_message", this._handleMessage.bind(this));
+        this._gaduka.on("lost_participant", () => {
+            for (const branch of <Branch[]>["/anon/rand", "/auth/rand"]) {
+                this._messagesCount[branch] = 0;
+                this._messagesHistory[branch].length = 0;
+            }
+        })
     }
 
     getMessagesHistory(branch: Branch) {
@@ -31,10 +47,10 @@ export default class MessagesManager {
         return [...this._messagesHistory[branch]];
     }
 
-    sendMessage(branch: "/anon" | "/anon/rand", nick: string, text: string | undefined): void;
-    sendMessage(branch: "/auth" | "/auth/rand", text: string): void;
+    sendMessage(branch: "/anon" | "/anon/rand", replyTo: number | null, nick: string, text: string | undefined): void;
+    sendMessage(branch: "/auth" | "/auth/rand", replyTo: number | null, text: string): void;
 
-    sendMessage(branch: Branch, nickOrText: string, text?: string | undefined) {
+    sendMessage(branch: Branch, replyTo: number | null, nickOrText: string, text?: string | undefined) {
         switch (branch) {
             case "/anon":
             case "/anon/rand": {
@@ -47,7 +63,8 @@ export default class MessagesManager {
                     parameters: {
                         nickname: nickOrText,
                         text,
-                        branch
+                        branch,
+                        replyTo: replyTo ?? undefined
                     }
                 }, false);
 
@@ -64,7 +81,8 @@ export default class MessagesManager {
                     type: "send",
                     parameters: {
                         text: nickOrText,
-                        branch
+                        branch,
+                        replyTo: replyTo ?? undefined
                     }
                 }, false);
 
@@ -115,15 +133,25 @@ export default class MessagesManager {
                         branch: branch,
                         status: chatMessage.status || "user",
                         ip: chatMessage.ip,
-                        id: chatMessage.id
+                        id: chatMessage.id ?? this._messagesCount[branch],
+                        replyTo: chatMessage.replyTo ?? undefined
                     };
 
+                    this._messagesCount[branch]++;
                     messages.push(message);
 
                     this._messagesHistory[branch].push(message);
                 }
 
                 this._gaduka.emit("message", messages);
+
+                break;
+            }
+
+            case "delete message event": {
+                this._messagesHistory[message.result.branch] = this._messagesHistory[message.result.branch].filter(chatMessage => chatMessage.id !== message.result.id);
+
+                this._gaduka.emit("message_delete", message.result.id, message.result.branch);
 
                 break;
             }

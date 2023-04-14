@@ -3,6 +3,7 @@ import "./styles.scss";
 import UserStatus from "../../contracts/user-status";
 import Gaduka from "../../gaduka";
 import Branch from "../../contracts/branch";
+import IBaseChatMessage from "../../contracts/base-chat-message";
 
 interface IMessageProps {
     from: string;
@@ -10,14 +11,39 @@ interface IMessageProps {
     date: Date;
     gaduka: Gaduka;
     branch: Branch;
-    showDeleteButton?: boolean;
-    ip?: string | undefined;
     id: number;
+    onReply?: ((messageId: number) => any) | undefined;
+    showDeleteButton?: boolean;
+    showReplyButton?: boolean;
+    replyTo?: IBaseChatMessage | undefined | "deleted message";
+    ip?: string | undefined;
     status?: UserStatus;
 }
 
 const Message: React.FunctionComponent<IMessageProps> = (props) => (
     <div className={"message-box" + (props.status ? " " + props.status : "")}>
+        {
+            props.replyTo
+                ? props.replyTo === "deleted message"
+                    ? <div className="replying-to-message">
+                        <span className="deleted-message-text">
+                            &#91;Deleted message&#93;
+                        </span>
+                    </div>
+                    : <div className="replying-to-message">
+                        <Message
+                            from={props.replyTo.author}
+                            text={props.replyTo.text}
+                            date={props.replyTo.date}
+                            gaduka={props.gaduka}
+                            branch={props.branch}
+                            id={props.id}
+                            ip={props.ip}
+                            status={props.replyTo.status || "user"}
+                        />
+                    </div>
+                : null
+        }
         <div className="message-info">
             {
                 props.showDeleteButton ?
@@ -38,6 +64,13 @@ const Message: React.FunctionComponent<IMessageProps> = (props) => (
                 :
                 {props.date.getMinutes().toString().padStart(2, '0')}
             </div>
+            {
+                props.showReplyButton === true ?
+                    <button className="reply-button" onClick={() => props.onReply ? props.onReply(props.id) : null}>
+                        <img src="/assets/icons/reply.svg" width="32" height="32" alt="" />
+                    </button>
+                    : null
+            }
             <div className="ip">
                 {props.ip || null}
             </div>

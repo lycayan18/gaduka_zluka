@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Gaduka from "../../gaduka";
 import "./styles.scss";
-import CreateMessageBox from "./create-message-box";
 import IUserData from "../../contracts/user-data";
-import MessagesHistory from "./messages-history";
+import ChatBox from "./chat-box";
 
 interface IChatProps {
     gaduka: Gaduka;
@@ -38,10 +37,7 @@ const AuthChat: React.FunctionComponent<IChatProps> = (props: IChatProps) => {
     return (
         <div className="chat-content">
             <p className="chat-name">/auth</p>
-            <div className="chat-box">
-                <MessagesHistory gaduka={props.gaduka} branch="/auth" showAdminTools={props.showAdminTools || false} />
-                <CreateMessageBox branch="/auth" gaduka={props.gaduka} disabled={!props.gaduka.isLoggedIn()} />
-            </div>
+            <ChatBox branch={"/auth"} gaduka={props.gaduka} showAdminTools={props.showAdminTools || false} disabled={!props.gaduka.isLoggedIn()} />
         </div>
     )
 }

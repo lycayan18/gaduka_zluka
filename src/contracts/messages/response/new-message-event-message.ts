@@ -6,10 +6,11 @@ interface IMessage {
     nickname: string;
     text: string;
     time: number;
-    id: number;
+    id?: number;
+    ip: string;
     status?: UserStatus;
     branch?: Branch;
-    ip: string;
+    replyTo?: number;
 }
 
 export default interface INewMessageEvent extends IBaseResponseMessage {
