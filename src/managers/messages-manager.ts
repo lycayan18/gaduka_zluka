@@ -132,7 +132,9 @@ export default class MessagesManager {
             }
 
             case "delete message event": {
-                this._messagesHistory[message.result.branch].filter(chatMessage => chatMessage.id === message.result.id);
+                this._messagesHistory[message.result.branch] = this._messagesHistory[message.result.branch].filter(chatMessage => chatMessage.id !== message.result.id);
+
+                this._gaduka.emit("message_delete", message.result.id, message.result.branch);
 
                 break;
             }

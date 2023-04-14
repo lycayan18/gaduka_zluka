@@ -404,11 +404,6 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
                 break;
             }
 
-            case "delete message event": {
-                this.emit("message_delete", message.result.id, message.result.branch);
-                break;
-            }
-
             case "lost participant": {
                 this.emit("lost_participant");
                 break;
