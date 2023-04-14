@@ -130,6 +130,12 @@ export default class MessagesManager {
 
                 break;
             }
+
+            case "delete message event": {
+                this._messagesHistory[message.result.branch].filter(chatMessage => chatMessage.id === message.result.id);
+
+                break;
+            }
         }
     }
 }
