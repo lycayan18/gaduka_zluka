@@ -50,19 +50,6 @@ export default function MainPage() {
                         </li>
                     </ul>
                 </div>
-                <div className="author">
-                    <div className="author-nickname">Kirill</div>
-                    <ul className="account-links">
-                        <li>
-                            <img src="https://telegram.org/img/website_icon.svg" width="20" alt="" />
-                            <a href="https://t.me/zaboluev" target="_blank">@zaboluev</a>
-                        </li>
-                        <li>
-                            <img src="https://github.githubassets.com/favicons/favicon.svg" width="20" alt="" />
-                            <a href="https://github.com/ZaboluevK" target="_blank">ZaboluevK</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
     )
