@@ -23,29 +23,36 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
 
     const formik = useFormik({
         initialValues: {
+            nickname: '',
             login: '',
             password: '',
-            nickname: ''
+            passwordConfirm: '',
         },
         validationSchema: new Yup.ObjectSchema({
+            nickname: Yup.string()
+                .required("Это поле обязательно!")
+                .matches(/.*[0-9a-zA-Z]+.*/g, "Никнейм должен состоять только из латинских букв, цифр и пробелов между ними")
+                .matches(/[0-9a-zA-Z]{2}/g, "Длина никнейма без пробелов слева и справа должна быть не менее 2")
+                .max(40, 'Длина ника должна быть не более 40'),
             login: Yup.string()
                 .required('Это поле обязательно!')
+                .matches(/^\S*$/ig, "Логин не должен содержать пробелов")
                 .min(4, 'Длина логина должна быть не менее 4')
                 .max(40, 'Длина логина должна быть не более 40'),
             password: Yup.string()
                 .required('Это поле обязательно!')
                 .min(5, 'Длина пароля должна быть не менее 5')
                 .max(80, 'Длина логина должна быть не более 80'),
-            nickname: Yup.string()
+            passwordConfirm: Yup.string()
                 .required("Это поле обязательно!")
-                .min(2, 'Длина никнейма должна быть не менее 2')
-                .max(40, 'Длина ника должна быть не более 40')
+                .oneOf([Yup.ref('password')], 'Passwords must match')
+
         }),
         onSubmit: async ({ login, password, nickname }) => {
             try {
                 setIsFetching(true);
 
-                const status = await gaduka.createAccount(nickname, login, password);
+                const status = await gaduka.createAccount(nickname.trim(), login, password);
 
                 if (status) {
                     navigate("/");
@@ -94,58 +101,76 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                     <tbody>
                         <tr>
                             <td>
-                                <p><label htmlFor="login">Никнейм:</label></p>
-                                <input
-                                    id="nickname"
-                                    type="text"
-                                    name="nickname"
-                                    placeholder="Введите никнейм"
-                                    value={formik.values.nickname}
-                                    onChange={formik.handleChange}
-                                    autoComplete="off"
-                                    className={formik.touched.nickname && formik.errors.nickname ? 'invalid' : ''}
-                                    disabled={isFetching}
-                                />
-                                {formik.touched.nickname && formik.errors.nickname && <p className='error-message small'>{formik.errors.nickname}</p>}
+                                <label>
+                                    <input
+                                        type="text"
+                                        name="nickname"
+                                        placeholder="Введите никнейм"
+                                        value={formik.values.nickname}
+                                        onChange={formik.handleChange}
+                                        autoComplete="off"
+                                        className={formik.touched.nickname && formik.errors.nickname ? 'invalid' : ''}
+                                        disabled={isFetching}
+                                    />
+                                    <div className="label">Никнейм</div>
+                                    {formik.touched.nickname && formik.errors.nickname && <span className='error-message'>{formik.errors.nickname}</span>}
+                                </label>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <p><label htmlFor="login">Логин:</label></p>
-                                <input
-                                    id="login"
-                                    type="text"
-                                    name="login"
-                                    placeholder="Введите логин"
-                                    value={formik.values.login}
-                                    onChange={formik.handleChange}
-                                    autoComplete="off"
-                                    className={formik.touched.login && formik.errors.login ? 'invalid' : ''}
-                                    disabled={isFetching}
-                                />
-                                {formik.touched.login && formik.errors.login && <p className='error-message small'>{formik.errors.login}</p>}
+                                <label>
+                                    <input
+                                        id="login"
+                                        type="text"
+                                        name="login"
+                                        placeholder="Введите логин"
+                                        value={formik.values.login}
+                                        onChange={formik.handleChange}
+                                        autoComplete="off"
+                                        className={formik.touched.login && formik.errors.login ? 'invalid' : ''}
+                                        disabled={isFetching}
+                                    />
+                                    <div className="label">Логин</div>
+                                    {formik.touched.login && formik.errors.login && <span className='error-message'>{formik.errors.login}</span>}
+                                </label>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <p><label htmlFor="password">Пароль:</label></p>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    placeholder="Введите пароль"
-                                    value={formik.values.password}
-                                    onChange={formik.handleChange}
-                                    autoComplete="off"
-                                    className={formik.touched.password && formik.errors.password ? 'invalid' : ''}
-                                    disabled={isFetching}
-                                />
-                                {formik.touched.password && formik.errors.password && <p className='error-message small'>{formik.errors.password}</p>}
+                                <label>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        placeholder="Введите пароль"
+                                        value={formik.values.password}
+                                        onChange={formik.handleChange}
+                                        autoComplete="off"
+                                        className={formik.touched.password && formik.errors.password ? 'invalid' : ''}
+                                        disabled={isFetching}
+                                    />
+                                    <div className="label">Пароль</div>
+                                    {formik.touched.password && formik.errors.password && <span className='error-message'>{formik.errors.password}</span>}
+                                </label>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <div className="space"></div>
+                                <label>
+                                    <input
+                                        type="password"
+                                        name="passwordConfirm"
+                                        placeholder="Повторите пароль"
+                                        value={formik.values.passwordConfirm}
+                                        onChange={formik.handleChange}
+                                        autoComplete="off"
+                                        className={formik.touched.passwordConfirm && formik.errors.passwordConfirm ? 'invalid' : ''}
+                                        disabled={isFetching}
+                                    />
+                                    <div className="label">Повторите пароль</div>
+                                    {formik.touched.passwordConfirm && formik.errors.passwordConfirm && <span className='error-message'>{formik.errors.passwordConfirm}</span>}
+                                </label>
                             </td>
                         </tr>
                         <tr>

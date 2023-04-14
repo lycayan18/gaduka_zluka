@@ -11,9 +11,9 @@
     background-color: #000;
     position: relative;
     z-index: 10;
-    
+
     &.transparent {
-        background-color: #0003;
+        background-color: transparent;
     }
 
     .logo {
@@ -52,10 +52,15 @@
 
     .links {
         display: flex;
-        gap: 10px;
+        gap: 12px;
 
         a {
             color: white;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
         }
     }
 }
