@@ -22,7 +22,8 @@ class AuthRandBranch(RandBranch):
         response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch
                                                nickname=self.database.get_user_data(token=token).nickname,
                                                text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
-                                               branch='/auth/rand', ip=params['ip'], status=status)
+                                               branch='/auth/rand', ip=params['ip'], status=status,
+                                               reply_to=query['parameters'].get('replyTo'))
 
         callback(response, to=[sid_1, sid_2])
 

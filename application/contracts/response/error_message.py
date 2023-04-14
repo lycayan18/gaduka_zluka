@@ -6,7 +6,8 @@ ErrorType = Union[Literal["invalid credentials"],
                   Literal["permission denied"],
                   Literal["nickname already used"],
                   Literal["login already used"],
-                  Literal["banned"]]
+                  Literal["banned"],
+                  Literal["not authorized"]]
 
 
 class ErrorMessageResult(TypedDict):
