@@ -7,7 +7,7 @@ class NewMessageResult(TypedDict):
     nickname: str
     text: str
     time: str
-    id: int
+    id: Optional[int]
     status: UserStatus
     branch: BranchType
     ip: str

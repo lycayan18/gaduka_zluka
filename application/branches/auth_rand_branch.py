@@ -19,7 +19,7 @@ class AuthRandBranch(RandBranch):
 
         status = self.user_manager.get_user_status(token=token)
 
-        response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch
+        response = create_new_message_response(message_id=None,  # a constant value is used because it doesn't matter in this branch
                                                nickname=self.database.get_user_data(token=token).nickname,
                                                text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
                                                branch='/auth/rand', ip=params['ip'], status=status,
