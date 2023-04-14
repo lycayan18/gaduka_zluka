@@ -134,7 +134,7 @@ export default class MessagesManager {
                         status: chatMessage.status || "user",
                         ip: chatMessage.ip,
                         id: chatMessage.id ?? this._messagesCount[branch],
-                        replyTo: chatMessage.replyTo || undefined
+                        replyTo: chatMessage.replyTo ?? undefined
                     };
 
                     this._messagesCount[branch]++;
