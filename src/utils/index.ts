@@ -1,0 +1,1 @@
+export {default as isImageLink} from './is-image-link';

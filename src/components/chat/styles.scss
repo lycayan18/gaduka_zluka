@@ -112,6 +112,10 @@
                     font-family: Arial;
                     font-size: 17px;
                     margin-top: 2px;
+
+                    &--image {
+                        max-width: 50%;
+                    }
                 }
 
                 .delete-button {
