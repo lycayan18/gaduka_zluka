@@ -12,6 +12,7 @@ from application.contracts.request.subscribe_unsubscribe_ban_updates import Subs
 from application.contracts.request.unauthorize_user_message import UnauthorizeUserMessage
 from application.contracts.request.unban_user_message import UnbanUserMessage
 from application.contracts.request.unsubscribe_all_message import UnsubscribeAllMessage
+from application.contracts.request.subscribe_unsubscribe_log_messages import SubscribeUnsubscribeLogMessages
 from typing import TypeVar
 
 RequestMessage = TypeVar("RequestMessage", AuthorizeUserMessage,
@@ -25,6 +26,7 @@ RequestMessage = TypeVar("RequestMessage", AuthorizeUserMessage,
                          AuthSendChatMessage,
                          SubscribeAdminMessage,
                          SubscribeMessage,
+                         SubscribeUnsubscribeLogMessages,
                          SubscribeUnsubscribeBanUpdatesMessage,
                          UnauthorizeUserMessage,
                          UnbanUserMessage,

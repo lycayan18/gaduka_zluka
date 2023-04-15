@@ -7,16 +7,25 @@ from application.utils.responses import *
 from application.contracts.branch_type import BranchType
 from encryption.hashing import generate_token
 from application.contracts.request_message import RequestMessage
+from application.managers.logger_manager import LoggerManager
 
 
 class MessageManager:
-    def __init__(self, branches: dict[BranchType, Branch], user_manager: UserManager, sid_manager: SidManager, event_manager: EventManager):
+    def __init__(self, branches: dict[BranchType, Branch], user_manager: UserManager, sid_manager: SidManager, event_manager: EventManager, logger_manager: LoggerManager):
         self.branches = branches
         self.user_manager = user_manager
         self.sid_manager = sid_manager
         self.event_manager = event_manager
+        self.logger_manager = logger_manager
 
     def handle_message(self, ip: str, sid: str, query: RequestMessage, callback: FlaskSendCallback):
+        self.logger_manager.log_message({
+            "type": "query",
+            "sid": sid,
+            "ip": ip,
+            "query": query
+        }, callback)
+
         if query['type'] == 'subscribe':
             for branch in self.branches.values():
                 branch.disconnect_client(sid, callback=callback)
@@ -115,3 +124,9 @@ class MessageManager:
             if self.user_manager.is_user_admin(sid=sid):
                 self.branches[query['parameters']['branch']].delete_message(
                     message_id=query['parameters']['id'], callback=callback, sid=sid)
+        
+        elif query['type'] == 'subscribe log messages':
+            self.logger_manager.subscribe_logger(sid)
+
+        elif query['type'] == 'unsubscribe log messages':
+            self.logger_manager.unsubscribe_logger(sid)
