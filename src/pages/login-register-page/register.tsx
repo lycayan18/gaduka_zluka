@@ -175,7 +175,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = ({ gaduka }) =
                         </tr>
                         <tr>
                             <td colSpan={2}>
-                                <button className="btn-submit" type="submit" disabled={isFetching}>Зарегестрироваться</button>
+                                <button className="btn-submit" type="submit" disabled={isFetching}>Загадючиться</button>
                             </td>
                         </tr>
                         <tr>

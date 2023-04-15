@@ -14,6 +14,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "allowUnreachableCode": false,
+    "resolveJsonModule": true,
     "strictPropertyInitialization": true,
     "jsx": "react",
     "allowJs": true
