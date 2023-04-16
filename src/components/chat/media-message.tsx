@@ -47,9 +47,7 @@ const MediaMessage: React.FunctionComponent<IImageMessageProps> = ({ src }) => {
             video.removeEventListener('canplaythrough', onVideoLoad);
             audio.removeEventListener('canplaythrough', onAudioLoad);
         }
-    }, [])
-
-    console.log(dataType);
+    }, []);
 
     switch(dataType) {
         case "text": {
