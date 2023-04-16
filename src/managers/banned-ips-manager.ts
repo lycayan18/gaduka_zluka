@@ -2,6 +2,14 @@ import { Message } from "../contracts/messages/message";
 import Gaduka from "../gaduka";
 import BaseTransmitter from "../transmitters/base-transmitter";
 
+/**
+ * This manager stands for managing banned ips and banning/unbanning some ips.
+ * It cathes following events:
+ *      ban event
+ *      unban event
+ * 
+ * Allows to reduce logic and lines of code in Gaduka class
+ */
 export default class BannedIpsManager {
     private readonly _bannedIps: string[]
     private readonly _gaduka: Gaduka;

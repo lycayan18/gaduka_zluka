@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Gaduka from "../../gaduka";
 import IBaseChatMessage from "../../contracts/base-chat-message";
 import Message from "./message";
@@ -14,6 +14,7 @@ interface IMessagesHistoryProps {
 
 const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) => {
     const [history, setHistory] = useState<IBaseChatMessage[]>(props.gaduka.getChatHistory(props.branch).reverse());
+    const historyDivRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleMessages = (messages: IBaseChatMessage[]) => {
@@ -56,6 +57,12 @@ const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) 
             }
         });
 
+        // In order to keep view always scrolled down, we always scroll down on every
+        // new message if scroll from top is small enough
+        if(historyDivRef.current !== null && historyDivRef.current.scrollTop >= -100) {
+            historyDivRef.current.scrollBy(0, -historyDivRef.current.scrollTop);
+        }
+
         return () => {
             props.gaduka.off("message", handleMessages)
             props.gaduka.off("message_delete", handleMessageDelete);
@@ -64,7 +71,7 @@ const MessagesHistory: React.FunctionComponent<IMessagesHistoryProps> = (props) 
     });
 
     return (
-        <div className="chat-history">
+        <div className="chat-history" ref={historyDivRef}>
             {
                 history.map((message) => (
                     <Message

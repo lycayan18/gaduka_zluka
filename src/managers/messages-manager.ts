@@ -4,6 +4,14 @@ import { Message } from "../contracts/messages/message";
 import Gaduka from "../gaduka";
 import BaseTransmitter from "../transmitters/base-transmitter";
 
+/**
+ * This manager stands for managing messages with ability to send and remove them.
+ * It cathes following events:
+ *      new message
+ *      delete message event
+ * 
+ * Allows to reduce logic and lines of code in Gaduka class
+ */
 export default class MessagesManager {
     private readonly _gaduka: Gaduka;
     private readonly _transmitter: BaseTransmitter;

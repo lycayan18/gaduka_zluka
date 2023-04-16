@@ -22,8 +22,6 @@ const ChatBox: React.FunctionComponent<IChatBoxParams> = ({ gaduka, branch, show
 
         setReplyTo(message);
 
-        window.scrollTo(0, 100);
-
         if (!message) {
             throw new Error(`No such message with id ${messageId}`);
         }
