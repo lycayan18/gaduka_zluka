@@ -10,7 +10,6 @@ interface IChatProps {
 
 const AnonChat: React.FunctionComponent<IChatProps> = (props: IChatProps) => (
     <div className="chat-content">
-        <p className="chat-name">/anon</p>
         <ChatBox branch={"/anon"} gaduka={props.gaduka} showAdminTools={props.showAdminTools || false} />
     </div>
 )

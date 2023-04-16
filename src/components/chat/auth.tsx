@@ -36,7 +36,6 @@ const AuthChat: React.FunctionComponent<IChatProps> = (props: IChatProps) => {
 
     return (
         <div className="chat-content">
-            <p className="chat-name">/auth</p>
             <ChatBox branch={"/auth"} gaduka={props.gaduka} showAdminTools={props.showAdminTools || false} disabled={!props.gaduka.isLoggedIn()} />
         </div>
     )

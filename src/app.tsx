@@ -30,10 +30,10 @@ const App: React.FunctionComponent<IAppProps> = (props: IAppProps) => {
             <MessageDisplayer gaduka={props.gaduka} />
             <Header gaduka={props.gaduka} />
             <div className="content">
+                <Navigation currentURL={window.location.pathname} />
                 <div className="wrapper">
                     <Outlet />
                 </div>
-                <Navigation currentURL={window.location.pathname} />
             </div>
         </>
     )

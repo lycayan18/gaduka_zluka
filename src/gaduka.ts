@@ -1,4 +1,4 @@
-import EventEmitter from "./utils/event-emitter";
+import EventEmitter from "./services/event-emitter";
 import IBaseChatMessage from "./contracts/base-chat-message";
 import Branch from "./contracts/branch";
 import { Message, ResponseMessage } from "./contracts/messages/message";
@@ -47,8 +47,9 @@ export default class Gaduka extends EventEmitter<keyof IEvents, IEvents> impleme
         this._transmitter.on("message", this._parseServerMessage.bind(this));
         this._transmitter.on("unhandled_error", this._handleUnhandledError.bind(this));
         this._transmitter.on("unhandled_message", this._handleUnhandledMessage.bind(this));
-        this._transmitter.on("disconnect", () => this.emit("ui_message", "Соединение с сервером разорвано.", "error"));
-        this._transmitter.on("error", this._handleError.bind(this));
+        // Not always we need that
+        // this._transmitter.on("disconnect", () => this.emit("ui_message", "Соединение с сервером разорвано.", "error"));
+        // this._transmitter.on("error", this._handleError.bind(this));
 
         this._transmitter.on("reconnect", this._tryToAuthorize.bind(this))
 

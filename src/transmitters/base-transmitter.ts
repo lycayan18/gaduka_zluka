@@ -1,4 +1,4 @@
-import EventEmitter from "../utils/event-emitter";
+import EventEmitter from "../services/event-emitter";
 import ITransmitterEvents from "../contracts/transmitter-events";
 import { RequestMessage, RequestType, ResponseMessage } from "../contracts/messages/message";
 import ResponseMessageFromRequestMessage from "../contracts/messages/response-message-from-request-message";

@@ -16,7 +16,7 @@ const config = {
   },
   devServer: {
     historyApiFallback: true,
-    open: true,
+    open: true
   },
   plugins: [
     new HtmlWebpackPlugin({

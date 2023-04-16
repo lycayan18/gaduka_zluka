@@ -1,4 +1,4 @@
-import React, { FormEvent, useState, useEffect } from "react";
+import React, { FormEvent, useState, useEffect, useRef } from "react";
 import Gaduka from "../../gaduka";
 import Branch from "../../contracts/branch";
 import "./styles.scss";
@@ -29,6 +29,8 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
         isBanned: props.gaduka.isBanned()
     });
 
+    const inputRef = useRef<HTMLInputElement>(null);
+
     const handleNicknameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         localStorage.setItem("anonBranchNickname", e.target.value);
 
@@ -53,6 +55,10 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
         }
 
         if (state.nickname === "" || state.messageText === "") {
+            return;
+        }
+
+        if (state.messageText.trim() === "" || state.nickname.trim() === "") {
             return;
         }
 
@@ -92,6 +98,12 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
 
         props.gaduka.on("banned", handleBannedCallback);
         props.gaduka.on("unbanned", handleUnbannedCallback);
+
+        if(props.replyTo) {
+            if(inputRef.current !== null) {
+                inputRef.current.focus();
+            }
+        }
 
         return () => {
             props.gaduka.off("banned", handleBannedCallback);
@@ -142,9 +154,10 @@ export default function CreateMessageBox(props: ICreateMessageBoxProps) {
                 <input type="text" className="message-input" placeholder="Трататата..."
                     onInput={handleMessageTextInput} value={state.messageText} maxLength={1000}
                     disabled={props.disabled === true}
+                    ref={inputRef}
                 />
                 <button type="submit"
-                    disabled={state.nickname === "" || state.messageText === "" || props.disabled === true}>
+                    disabled={state.nickname.trim() === "" || state.messageText.trim() === "" || props.disabled === true}>
                     <div className="send-icon-container">
                         <img src="/assets/icons/send.svg" className="send-icon" alt=">" />
                     </div>

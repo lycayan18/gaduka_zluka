@@ -1,23 +1,12 @@
 .chat-content {
-    .chat-name {
-        font-size: 32px;
-        line-height: 160%;
-        font-weight: bold;
-        margin: 20px 0;
-    }
-
-    .chat-name::after {
-        content: " >>";
-        color: #ccc;
-    }
-
     .chat-box {
         width: 100%;
-        padding: 20px 0;
+        padding: 0 0 0 10px;
+        box-sizing: border-box;
 
         .participant-status {
             color: #888;
-            padding: 15px 5px;
+            padding: 15px 10px;
 
             &.with-nickname {
                 color: #555;
@@ -34,7 +23,7 @@
             background: #f8f8f8;
             border: 1px solid #ccc;
             border-radius: 10px;
-            max-height: 60vh;
+            max-height: 76vh;
 
             overflow-y: scroll;
         }
@@ -50,6 +39,13 @@
                 border: none;
                 color: black;
                 background: transparent;
+            }
+        }
+
+        .replying-to-message {
+            .text--image {
+                max-width: 40% !important;
+                max-height: 160px !important;
             }
         }
 
@@ -115,6 +111,12 @@
 
                     &--image {
                         max-width: 50%;
+                        max-height: 260px;
+                    }
+
+                    &--video {
+                        max-width: 480px;
+                        max-height: 360px;
                     }
                 }
 
@@ -170,6 +172,7 @@
 
         .create-message-box {
             margin-top: 20px;
+            padding: 0 50px;
 
             .nickname-box {
                 span {
@@ -242,8 +245,10 @@
 @media screen and (max-width: 1199px) {
     .chat-content {
         .chat-box {
+            padding: 10px 0;
+
             .chat-history {
-                max-height: 50vh;
+                max-height: 60vh;
             }
         }
     }
@@ -253,7 +258,7 @@
     .chat-content {
         .chat-box {
             .chat-history {
-                padding: 10px 10px;
+                padding: 10px;
 
                 .message-box {
                     font-size: 15px;
@@ -268,9 +273,13 @@
                     }
 
                     .text {
-                        font-size: 18px !important;
+                        font-size: 13px !important;
                     }
                 }
+            }
+
+            .create-message-box {
+                padding: 0 10px;
             }
         }
     }

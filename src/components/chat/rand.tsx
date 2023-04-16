@@ -56,7 +56,6 @@ const RandChat: React.FunctionComponent<IRandChatProps> = (props) => {
 
     return (
         <div className="chat-content">
-            <p className="chat-name">{window.location.pathname}</p>
             <div className="chat-box">
                 <p className={"participant-status" + (participantState.nickname !== undefined ? " with-nickname" : "")}>
                     {participantStatus}
