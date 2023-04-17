@@ -1,5 +1,7 @@
 from application.contracts.flask_send_callback import FlaskSendCallback
+from datetime import datetime
 from typing import Any
+import json
 
 
 class LoggerManager:
@@ -16,5 +18,14 @@ class LoggerManager:
         self.subscribed_sids.remove(sid)
 
     def log_message(self, message: Any, send: FlaskSendCallback):
+        try:
+            log_file = open("log.txt", "a")
+
+            print(f"[{datetime.now()}]:", json.dumps(message), file=log_file)
+
+            log_file.close()
+        except Exception:
+            pass
+
         for sid in self.subscribed_sids:
             send(message, to=sid)
