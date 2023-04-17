@@ -10,13 +10,12 @@ from application.managers.message_manager import MessageManager
 from application.managers.sid_manager import SidManager
 from application.managers.user_manager import UserManager
 from application.contracts.branch_type import BranchType
-from application.managers.logger_manager import LoggerManager
 
 from database.database_manager import *
 
 
 class BranchManager:
-    def __init__(self, database: DatabaseManager, user_manager: UserManager, sid_manager: SidManager, logger_manager: LoggerManager):
+    def __init__(self, database: DatabaseManager, user_manager: UserManager, sid_manager: SidManager):
         self.database = database
         self.user_manager = user_manager
         self.sid_manager = sid_manager
@@ -38,8 +37,7 @@ class BranchManager:
         self.message_manager = MessageManager(branches=self.branches,
                                               user_manager=self.user_manager,
                                               sid_manager=self.sid_manager,
-                                              event_manager=self.event_manager,
-                                              logger_manager=logger_manager)
+                                              event_manager=self.event_manager)
 
     def disconnect_user_from_branch(self, sid: str, callback: FlaskSendCallback):
         for branch in self.branches.values():

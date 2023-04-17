@@ -7,7 +7,7 @@ from application.managers.user_manager import UserManager
 from config import app, socketio, database
 from application.managers.branch_manager import BranchManager
 from database.database_manager import DatabaseManager
-from application.managers.logger_manager import LoggerManager
+from application.utils.logger import log_message
 
 with app.app_context():
     database.create_all()
@@ -16,8 +16,7 @@ database_manager = DatabaseManager(database=database, maximum_number=10000)
 
 user_manager = UserManager(database=database_manager)
 sid_manager = SidManager(database=database_manager)
-logger_manager = LoggerManager()
-branch_manager = BranchManager(database=database_manager, user_manager=user_manager, sid_manager=sid_manager, logger_manager=logger_manager)
+branch_manager = BranchManager(database=database_manager, user_manager=user_manager, sid_manager=sid_manager)
 
 
 @app.route('/')
@@ -45,25 +44,24 @@ def message_handler(query: dict):
 
 @socketio.on('disconnect')
 def disconnect_handler():
-    logger_manager.log_message({
+    log_message({
         "type": "disconnect",
         "sid": request.sid,
         "ip": request.remote_addr
-    }, send)
+    })
 
     sid_manager.disconnect_user(sid=request.sid)
     user_manager.unauthorize_user(sid=request.sid)
-    logger_manager.unsubscribe_logger(request.sid)
     branch_manager.disconnect_user_from_branch(request.sid, callback=send)
 
 
 @socketio.on('connect')
 def connect_handler():
-    logger_manager.log_message({
+    log_message({
         "type": "connect",
         "sid": request.sid,
         "ip": request.remote_addr
-    }, send)
+    })
 
     sid_manager.connect_user(sid=request.sid, ip=request.remote_addr)
 
