@@ -16,10 +16,11 @@ class AnonRandBranch(RandBranch):
         sid_1, sid_2 = self.get_two_users_sid(sid=params['sid']) or ('', '')  # shut up mypy
         status: UserStatus = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
-        response = create_new_message_response(message_id=0,  # a constant value is used because it doesn't matter in this branch
+        response = create_new_message_response(message_id=None,  # a constant value is used because it doesn't matter in this branch
                                                nickname=query['parameters']['nickname'],
                                                text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
-                                               branch='/anon/rand', ip=params['ip'], status=status)
+                                               branch='/anon/rand', ip=params['ip'], status=status,
+                                               reply_to=query['parameters'].get('replyTo'))
 
         callback(response, to=[sid_1, sid_2])
 

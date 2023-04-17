@@ -9,6 +9,7 @@ class AnonBranchModel(database.Model):
     nickname = database.Column(database.String(255))
     ip = database.Column(database.String(255))
     status = database.Column(database.String(255))
+    reply_to = database.Column(database.Integer)
 
     def __repr__(self):
         return '<AnonBranch %r>'
@@ -22,6 +23,7 @@ class AuthBranchModel(database.Model):
     token = database.Column(database.String(255))
     ip = database.Column(database.String(255))
     status = database.Column(database.String(255))
+    reply_to = database.Column(database.Integer)
 
     def __repr__(self):
         return '<AuthBranch %r>'

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from application.contracts.branch_type import BranchType
 from application.contracts.response.error_message import ErrorMessageWithId
@@ -19,7 +19,7 @@ from application.contracts.response.error_message import ErrorType
 from application.contracts.user_status import UserStatus
 
 
-def create_error_response(message_id: int, message: str, error_type: ErrorType) -> ErrorMessageWithId:
+def create_error_response(message_id: Optional[int], message: str, error_type: ErrorType) -> ErrorMessageWithId:
     error: ErrorMessageWithId = {
         "type": "error",
         "id": message_id,
@@ -56,8 +56,8 @@ def create_set_user_data_response(message_id: int, nickname: str) -> SetUserData
     return response
 
 
-def create_new_message_response(message_id: int, nickname: str, text: str, time: str, branch: BranchType, ip: str,
-                                status: UserStatus) -> NewMessage:
+def create_new_message_response(message_id: Optional[int], nickname: str, text: str, time: str, branch: BranchType, ip: str,
+                                status: UserStatus, reply_to: Optional[int] = None) -> NewMessage:
     response: NewMessage = {
         "type": "new message",
         "result": [{
@@ -67,13 +67,15 @@ def create_new_message_response(message_id: int, nickname: str, text: str, time:
             "time": time,
             'branch': branch,
             'ip': ip,
-            'status': status
+            'status': status,
+            'replyTo': reply_to
         }]
     }
     return response
 
 
-def create_message(message_id: int, nickname: str, text: str, time: str, branch: BranchType, ip: str, status: UserStatus) -> NewMessageResult:
+def create_message(message_id: Optional[int], nickname: str, text: str, time: str, branch: BranchType, ip: str, status: UserStatus,
+                   reply_to: Optional[int] = None) -> NewMessageResult:
     message: NewMessageResult = {
         'id': message_id,
         "nickname": nickname,
@@ -81,7 +83,8 @@ def create_message(message_id: int, nickname: str, text: str, time: str, branch:
         "time": time,
         'branch': branch,
         'ip': ip,
-        'status': status
+        'status': status,
+        'replyTo': reply_to
     }
     return message
 

@@ -22,7 +22,7 @@ class AnonBranch(BaseBranch):
         last_messages = self.database.get_latest_message_from_anon()
         for item in last_messages:
             message = create_message(message_id=item.id, nickname=item.nickname, text=item.text, time=item.time, branch='/anon',
-                                     ip=item.ip, status=item.status)
+                                     ip=item.ip, status=item.status, reply_to=item.reply_to)
             response['result'].append(message)
 
         return response
@@ -45,10 +45,12 @@ class AnonBranch(BaseBranch):
         status: UserStatus = 'admin' if query['parameters']['nickname'] in ['drakutont', 'dungybug'] and self.user_manager.is_user_admin(sid=params['sid']) else 'user'
 
         self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
-                                     nickname=query['parameters']['nickname'], ip=ip, status=status)
+                                     nickname=query['parameters']['nickname'], ip=ip, status=status,
+                                     reply_to=query['parameters'].get('replyTo'))
 
         response = create_new_message_response(message_id=self.database.get_latest_id_from_anon(), nickname=query['parameters']['nickname'],
                                                text=query['parameters']['text'], time=f'{datetime.datetime.now()}',
-                                               branch='/anon', ip=ip, status=status)
+                                               branch='/anon', ip=ip, status=status,
+                                               reply_to=query['parameters'].get('replyTo'))
 
         callback(response, to=self.clients)

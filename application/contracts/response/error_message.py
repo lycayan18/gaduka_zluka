@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal, Union
+from typing import TypedDict, Literal, Union, Optional
 
 ErrorType = Union[Literal["invalid credentials"],
                   Literal["invalid token"],
@@ -6,7 +6,8 @@ ErrorType = Union[Literal["invalid credentials"],
                   Literal["permission denied"],
                   Literal["nickname already used"],
                   Literal["login already used"],
-                  Literal["banned"]]
+                  Literal["banned"],
+                  Literal["not authorized"]]
 
 
 class ErrorMessageResult(TypedDict):
@@ -20,4 +21,4 @@ class ErrorMessage(TypedDict):
 
 
 class ErrorMessageWithId(ErrorMessage):
-    id: int
+    id: Optional[int]

@@ -43,7 +43,8 @@ class UserManager:
             return 'user'
         return self.database.get_user_status(token=token)
 
-    def get_token(self, token: str, message_id: int) -> Union[SetTokenMessage, ErrorMessageWithId]:
+    def get_token(self, sid: str, login: str, password: str, message_id: int) -> Union[SetTokenMessage, ErrorMessageWithId]:
+        token = generate_token(login=login, password=password)
         if not self.database.get_user_data(token=token):
             error = create_error_response(message_id=message_id, message='Неверный логин или пароль',
                                           error_type='invalid credentials')
@@ -52,7 +53,7 @@ class UserManager:
 
         else:
             response = create_set_token_response(message_id=message_id, token=token)
-
+            self.authorize_user(sid=sid, token=token)
             return response
 
     def get_user_data(self, token: str, message_id: int) -> SetUserDataMessage:
@@ -65,7 +66,7 @@ class UserManager:
         return response
 
     def create_account(self, nickname: str, login: str, password: str, message_id: int, sid: str) -> Union[SetTokenMessage, ErrorMessageWithId]:
-        if (len(nickname) < 2 or len(nickname) > 40) or (len(login) < 5 or len(login) > 40) or (len(password) < 4 or len(password) > 40):
+        if (len(nickname) < 2 or len(nickname) > 40) or (len(login) < 4 or len(login) > 40) or (len(password) < 5 or len(password) > 80):
             error = create_error_response(message_id=message_id, message='invalid credentials', error_type='invalid credentials')
             return error
 

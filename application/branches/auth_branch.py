@@ -7,7 +7,7 @@ from application.contracts.response.new_message import NewMessage
 from application.managers.user_manager import UserManager
 from database.database_manager import DatabaseManager
 from application.utils.responses import create_new_message_response, create_message, \
-    create_delete_message_event_response
+    create_delete_message_event_response, create_error_response
 
 
 class AuthBranch(BaseBranch):
@@ -22,7 +22,7 @@ class AuthBranch(BaseBranch):
         last_messages = self.database.get_latest_message_from_auth()
         for item in last_messages:
             message = create_message(message_id=item.id, nickname=self.database.get_user_data(token=item.token).nickname, text=item.text,
-                                     time=item.time, branch='/auth', ip=item.ip, status=item.status)
+                                     time=item.time, branch='/auth', ip=item.ip, status=item.status, reply_to=item.reply_to)
             response['result'].append(message)
 
         return response
@@ -41,12 +41,15 @@ class AuthBranch(BaseBranch):
         status = self.user_manager.get_user_status(token=token)
         if token:
             self.add_message_to_database(time=f'{datetime.datetime.now()}', text=query['parameters']['text'],
-                                         token=token, ip=ip, status=status)
+                                         token=token, ip=ip, status=status, reply_to=query['parameters'].get('replyTo'))
 
             response = create_new_message_response(message_id=self.database.get_latest_id_from_auth(),
                                                    nickname=self.database.get_user_data(token=token).nickname,
                                                    text=query['parameters']['text'],
                                                    time=f'{datetime.datetime.now()}', branch='/auth', ip=ip,
-                                                   status=status)
+                                                   status=status,
+                                                   reply_to=query['parameters'].get('replyTo'))
 
             callback(response, to=self.clients)
+        else:
+            callback(create_error_response(message_id=None, message='not authorized', error_type='not authorized'))
