@@ -69,4 +69,4 @@ def connect_handler():
 
 
 if __name__ == '__main__':
-    socketio.run(app=app, host=environ['HOST'], port=3030, debug=True)
+    socketio.run(app=app, host=environ['HOST'], port=8080, debug=True)
