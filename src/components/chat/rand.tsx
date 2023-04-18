@@ -56,12 +56,10 @@ const RandChat: React.FunctionComponent<IRandChatProps> = (props) => {
 
     return (
         <div className="chat-content">
-            <div className="chat-box">
-                <p className={"participant-status" + (participantState.nickname !== undefined ? " with-nickname" : "")}>
-                    {participantStatus}
-                </p>
-                <ChatBox branch={props.branch} gaduka={props.gaduka} showAdminTools={false} disabled={isDisabled} />
-            </div>
+            <p className={"participant-status" + (participantState.nickname !== undefined ? " with-nickname" : "")}>
+                {participantStatus}
+            </p>
+            <ChatBox branch={props.branch} gaduka={props.gaduka} showAdminTools={false} disabled={isDisabled} />
         </div>
     )
 }
