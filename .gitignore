@@ -1,4 +1,5 @@
 .idea
+backend/.idea
 **/__pycache__/**
-dist/
-node_modules/
+frontend/dist/
+frontend/node_modules/
