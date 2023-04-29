@@ -1,0 +1,109 @@
+.header {
+    display: flex;
+    width: 100%;
+    height: 64px;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 3px 30px;
+    box-sizing: border-box;
+
+    background-color: #000;
+    position: relative;
+    z-index: 10;
+
+    &.transparent {
+        background-color: transparent;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        height: 100%;
+
+        gap: 10px;
+
+        .logo-icon-container {
+            height: 48px;
+
+            .logo-icon {
+                height: 100%;
+                filter: invert(1);
+            }
+        }
+
+        .logo-text {
+            font-family: "SansBold";
+            line-height: 160%;
+            font-size: 32px;
+            color: #fff;
+
+            .cursor {
+                color: transparent;
+
+                animation: 1s linear 0s 15 running blink-effect;
+            }
+        }
+    }
+
+    .account {
+        color: white;
+    }
+
+    .links {
+        display: flex;
+        gap: 12px;
+
+        a {
+            color: white;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 720px) {
+    .header {
+        .logo {
+            .logo-icon-container {
+                height: 32px;
+
+                .logo-icon {
+                    height: 100%;
+                    filter: invert(1);
+                }
+            }
+
+            .logo-text {
+                display: none;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .header {
+        padding: 3px 10px;
+    }
+}
+
+@keyframes blink-effect {
+    0% {
+        color: #fff;
+    }
+
+    49% {
+        color: #fff;
+    }
+
+    51% {
+        color: transparent;
+    }
+
+    100% {
+        color: transparent;
+    }
+}
