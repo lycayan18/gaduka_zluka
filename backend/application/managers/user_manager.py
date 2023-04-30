@@ -66,20 +66,17 @@ class UserManager:
         return response
 
     def create_account(self, nickname: str, login: str, password: str, message_id: int, sid: str) -> Union[SetTokenMessage, ErrorMessageWithId]:
-        if (len(nickname) < 2 or len(nickname) > 40) or (len(login) < 4 or len(login) > 40) or (len(password) < 5 or len(password) > 80):
-            error = create_error_response(message_id=message_id, message='invalid credentials', error_type='invalid credentials')
-            return error
-
         token = generate_token(login, password)
-        if self.database.get_user_data(token=token):
-            error = create_error_response(message_id=message_id, message='Логин уже используется',
-                                          error_type='login already used')
-            return error
+        if (len(nickname) < 2 or len(nickname) > 40) or (len(login) < 4 or len(login) > 40) or (len(password) < 5 or len(password) > 80):
+            response = create_error_response(message_id=message_id, message='invalid credentials', error_type='invalid credentials')
+
+        elif self.database.get_user_data(token=token):
+            response = create_error_response(message_id=message_id, message='Логин уже используется',
+                                             error_type='login already used')
 
         elif self.database.get_user_data(nickname=nickname):
-            error = create_error_response(message_id=message_id, message='Никнейм уже используется',
-                                          error_type='nickname already used')
-            return error
+            response = create_error_response(message_id=message_id, message='Никнейм уже используется',
+                                             error_type='nickname already used')
 
         else:
             response = create_set_token_response(message_id=message_id, token=token)
@@ -88,4 +85,4 @@ class UserManager:
             self.database.add_user(token=token, nickname=nickname, status=status)
             self.authorize_user(sid=sid, token=token)
 
-            return response
+        return response
